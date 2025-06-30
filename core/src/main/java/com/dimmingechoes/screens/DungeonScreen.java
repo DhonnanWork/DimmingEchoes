@@ -10,39 +10,47 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.dimmingEchoes.TheDimmingEcho;
+import com.dimmingEchoes.dialogue.DialogueChoice;
+import com.dimmingEchoes.dialogue.DialogueNode;
 import com.dimmingEchoes.dungeon.Room;
 import com.dimmingEchoes.dungeon.RoomGraph;
+import com.dimmingEchoes.dungeon.RoomType;
 import com.dimmingEchoes.entities.NPC;
+import com.dimmingEchoes.save.SaveManager;
 
 public class DungeonScreen implements Screen, InputProcessor {
 
     private final TheDimmingEcho game;
     private final ShapeRenderer shapeRenderer;
-    private final SpriteBatch batch;
+    private final SpriteBatch spriteBatch;
     private final BitmapFont font;
 
     private Room currentRoom;
-    private RoomGraph roomGraph;
+    private final RoomGraph roomGraph;
 
     private int playerX = 2, playerY = 2;
     private static final int CELL_SIZE = 64;
 
-    private final int MESSAGE_BOX_HEIGHT = 120;
-    private final Color MESSAGE_BOX_COLOR = new Color(0, 0, 0, 0.75f);
+    private boolean moveUp, moveDown, moveLeft, moveRight;
+    private float moveTimer = 0f;
+    private final float moveDelay = 0.15f;
 
-    private String fullDialogueText = "";
-    private String currentText = "";
-    private float charTimer = 0f;
-    private int currentCharIndex = 0;
+    private DialogueNode currentDialogueNode = null;
+    private NPC dialogueNPC = null;
+    private int selectedChoiceIndex = 0;
+    private boolean endingShown = false;
+
+    // Typing effect
+    private String displayedText = "";
+    private float charTimer = 0;
+    private int charIndex = 0;
     private final float CHAR_DELAY = 0.03f;
-    private boolean showingDialogue = false;
 
     public DungeonScreen(TheDimmingEcho game) {
         this.game = game;
         this.shapeRenderer = new ShapeRenderer();
-        this.batch = new SpriteBatch();
+        this.spriteBatch = new SpriteBatch();
         this.font = new BitmapFont();
-        this.font.setColor(Color.WHITE);
         this.roomGraph = new RoomGraph();
         this.currentRoom = roomGraph.getStartingRoom();
         Gdx.input.setInputProcessor(this);
@@ -52,136 +60,194 @@ public class DungeonScreen implements Screen, InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        moveTimer += delta;
 
-        int[][] grid = currentRoom.getGrid();
-        int offsetX = (Gdx.graphics.getWidth() - grid.length * CELL_SIZE) / 2;
-        int offsetY = (Gdx.graphics.getHeight() - grid[0].length * CELL_SIZE) / 2;
+        if (currentDialogueNode == null && moveTimer >= moveDelay) {
+            handleMovement();
+            moveTimer = 0f;
+        }
 
-        // === Draw Grid ===
+        renderGame();
+
+        if (currentDialogueNode != null) {
+            renderDialogue();
+        }
+    }
+
+    private void renderGame() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        int[][] grid = currentRoom.getGrid();
+
         for (int y = 0; y < grid[0].length; y++) {
             for (int x = 0; x < grid.length; x++) {
-                if (grid[x][y] == 1) shapeRenderer.setColor(Color.DARK_GRAY); // Wall
-                else if (grid[x][y] == 2) shapeRenderer.setColor(Color.GOLD); // Door
-                else shapeRenderer.setColor(Color.BLACK); // Floor
-
-                shapeRenderer.rect(offsetX + x * CELL_SIZE, offsetY + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                if (grid[x][y] == 1) {
+                    shapeRenderer.setColor(Color.DARK_GRAY);
+                } else if (grid[x][y] == 2 && currentRoom.getConnectedFromDoorAt(x, y) != null) {
+                    shapeRenderer.setColor(Color.GOLD);
+                } else {
+                    shapeRenderer.setColor(Color.BLACK);
+                }
+                shapeRenderer.rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
             }
         }
 
-        // === Draw NPCs ===
-        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.setColor(Color.CYAN);
+        shapeRenderer.rect(playerX * CELL_SIZE, playerY * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
         for (NPC npc : currentRoom.getNpcs()) {
-            shapeRenderer.rect(offsetX + npc.getX() * CELL_SIZE, offsetY + npc.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            shapeRenderer.setColor(npc.hasReceivedCrystal() ? Color.GREEN : Color.MAGENTA);
+            shapeRenderer.rect(npc.getX() * CELL_SIZE, npc.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
 
-        // === Draw Player ===
-        shapeRenderer.setColor(Color.CYAN);
-        shapeRenderer.rect(offsetX + playerX * CELL_SIZE, offsetY + playerY * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         shapeRenderer.end();
 
-        // === Update Typing Effect ===
-        if (showingDialogue && currentCharIndex < fullDialogueText.length()) {
-            charTimer += delta;
-            while (charTimer > CHAR_DELAY && currentCharIndex < fullDialogueText.length()) {
-                currentText += fullDialogueText.charAt(currentCharIndex++);
-                charTimer -= CHAR_DELAY;
+        spriteBatch.begin();
+        font.setColor(Color.WHITE);
+        font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10);
+        spriteBatch.end();
+    }
+
+    private void renderDialogue() {
+        spriteBatch.begin();
+        float x = 20;
+        float y = 180;
+
+        // Typing effect
+        charTimer += Gdx.graphics.getDeltaTime();
+        if (charIndex < currentDialogueNode.text.length()) {
+            if (charTimer >= CHAR_DELAY) {
+                displayedText += currentDialogueNode.text.charAt(charIndex++);
+                charTimer = 0;
             }
         }
 
-        // === Draw UI ===
-        batch.begin();
+        font.setColor(Color.WHITE);
+        font.draw(spriteBatch, displayedText, x, y);
 
-        // Crystal Count (Top Left)
-        font.draw(batch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10);
-
-        // Dialogue Box
-        if (showingDialogue) {
-            batch.end();
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setColor(MESSAGE_BOX_COLOR);
-            shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), MESSAGE_BOX_HEIGHT);
-            shapeRenderer.end();
-            batch.begin();
-            font.draw(batch, currentText, 20, MESSAGE_BOX_HEIGHT - 20);
+        if (charIndex >= currentDialogueNode.text.length() && currentDialogueNode.choices != null) {
+            for (int i = 0; i < currentDialogueNode.choices.length; i++) {
+                String prefix = (i == selectedChoiceIndex ? "> " : "  ");
+                font.draw(spriteBatch, prefix + (i + 1) + ") " + currentDialogueNode.choices[i].choiceText, x, y - (30 * (i + 1)));
+            }
         }
 
-        batch.end();
+        spriteBatch.end();
     }
 
-    private boolean isValidMove(int x, int y) {
-        int[][] grid = currentRoom.getGrid();
-        if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length) return false;
-        if (grid[x][y] == 1) return false; // wall
-        for (NPC npc : currentRoom.getNpcs()) {
-            if (npc.getX() == x && npc.getY() == y) return false;
-        }
-        return true;
-    }
-
-    private boolean isAdjacent(int x1, int y1, int x2, int y2) {
-        return (Math.abs(x1 - x2) + Math.abs(y1 - y2)) == 1;
-    }
-
-    private void showDialogue(String text) {
-        fullDialogueText = text;
-        currentText = "";
-        currentCharIndex = 0;
-        charTimer = 0;
-        showingDialogue = true;
-    }
-
-    private void skipOrFinishDialogue() {
-        if (!showingDialogue) return;
-        if (currentCharIndex < fullDialogueText.length()) {
-            // Finish text immediately
-            currentText = fullDialogueText;
-            currentCharIndex = fullDialogueText.length();
-        } else {
-            // End dialogue
-            showingDialogue = false;
-            fullDialogueText = "";
-            currentText = "";
-        }
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.ENTER) {
-            skipOrFinishDialogue();
-            return true;
-        }
-
-        if (showingDialogue) return false;
-
+    private void handleMovement() {
         int nextX = playerX;
         int nextY = playerY;
 
-        if (keycode == Input.Keys.W || keycode == Input.Keys.UP) nextY += 1;
-        if (keycode == Input.Keys.S || keycode == Input.Keys.DOWN) nextY -= 1;
-        if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) nextX -= 1;
-        if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) nextX += 1;
+        if (moveUp) nextY++;
+        if (moveDown) nextY--;
+        if (moveLeft) nextX--;
+        if (moveRight) nextX++;
 
         if (isValidMove(nextX, nextY)) {
             playerX = nextX;
             playerY = nextY;
         }
 
-        if (keycode == Input.Keys.SPACE) {
-            for (NPC npc : currentRoom.getNpcs()) {
-                if (isAdjacent(playerX, playerY, npc.getX(), npc.getY())) {
-                    showDialogue(npc.getDialogue());
+        if (currentRoom.getGrid()[playerX][playerY] == 2) {
+            Room next = currentRoom.getConnectedFromDoorAt(playerX, playerY);
+            if (next != null) {
+                currentRoom = next;
+                playerX = 2;
+                playerY = 2;
+                currentDialogueNode = null;
+                dialogueNPC = null;
+                displayedText = "";
+                charIndex = 0;
+
+                if (currentRoom.getRoomType() == RoomType.FINAL && !endingShown) {
+                    triggerEnding();
+                }
+            }
+        }
+    }
+
+    private void triggerEnding() {
+        int used = game.getUsageLog().totalGiven();
+        String ending;
+
+        if (used == 0) {
+            ending = "Ending: A Place That No Longer Exists\nYou remembered, but never acted.";
+        } else if (used == 5) {
+            ending = "Ending: Petals in the Void\nYou gave all. And something beautiful bloomed.";
+        } else {
+            ending = "Ending: The Keeper Becomes Stone\nSome memories returned, others stayed buried.";
+        }
+
+        game.setScreen(new EndingScreen(ending));
+        endingShown = true;
+    }
+
+    private boolean isValidMove(int x, int y) {
+        int[][] grid = currentRoom.getGrid();
+        if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length) return false;
+        if (grid[x][y] == 1) return false;
+
+        for (NPC npc : currentRoom.getNpcs()) {
+            if (npc.getX() == x && npc.getY() == y) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.F5) {
+            game.saveGame();
+            return true;
+        }
+
+        if (currentDialogueNode != null) {
+            if (keycode == Input.Keys.ENTER) {
+                if (charIndex < currentDialogueNode.text.length()) {
+                    displayedText = currentDialogueNode.text;
+                    charIndex = currentDialogueNode.text.length();
+                    return true;
+                } else if (currentDialogueNode.endDialogue) {
+                    currentDialogueNode = null;
+                    dialogueNPC = null;
+                    displayedText = "";
+                    charIndex = 0;
                     return true;
                 }
             }
 
-            if (currentRoom.getGrid()[playerX][playerY] == 2) {
-                Room nextRoom = currentRoom.getConnectedFromDoorAt(playerX, playerY);
-                if (nextRoom != null) {
-                    currentRoom = nextRoom;
-                    playerX = 2;
-                    playerY = 2;
-                    showDialogue("You stepped into a new memory...");
+            if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+                int index = keycode - Input.Keys.NUM_1;
+                if (currentDialogueNode.choices != null && index < currentDialogueNode.choices.length) {
+                    DialogueNode next = currentDialogueNode.choices[index].next;
+
+                    if (next.requiresCrystal && dialogueNPC != null && !dialogueNPC.hasReceivedCrystal()) {
+                        if (!game.getCrystalInventory().useCrystal()) return true;
+                        game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+                    }
+
+                    currentDialogueNode = next;
+                    if (dialogueNPC != null) dialogueNPC.setLastDialogue(currentDialogueNode);
+                    displayedText = "";
+                    charIndex = 0;
+                }
+                return true;
+            }
+        }
+
+        if (keycode == Input.Keys.W) moveUp = true;
+        if (keycode == Input.Keys.S) moveDown = true;
+        if (keycode == Input.Keys.A) moveLeft = true;
+        if (keycode == Input.Keys.D) moveRight = true;
+
+        if (keycode == Input.Keys.SPACE) {
+            for (NPC npc : currentRoom.getNpcs()) {
+                if (isAdjacent(npc)) {
+                    dialogueNPC = npc;
+                    currentDialogueNode = npc.getLastDialogue() != null ? npc.getLastDialogue() : npc.getRootDialogue();
+                    selectedChoiceIndex = 0;
+                    displayedText = "";
+                    charIndex = 0;
+                    break;
                 }
             }
         }
@@ -189,14 +255,28 @@ public class DungeonScreen implements Screen, InputProcessor {
         return true;
     }
 
-    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean keyUp(int keycode) { return false; }
+    private boolean isAdjacent(NPC npc) {
+        int dx = Math.abs(npc.getX() - playerX);
+        int dy = Math.abs(npc.getY() - playerY);
+        return (dx + dy == 1);
+    }
+
+    @Override public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.W) moveUp = false;
+        if (keycode == Input.Keys.S) moveDown = false;
+        if (keycode == Input.Keys.A) moveLeft = false;
+        if (keycode == Input.Keys.D) moveRight = false;
+        return false;
+    }
+
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
+    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
+
     @Override public void show() {}
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
@@ -206,7 +286,7 @@ public class DungeonScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         shapeRenderer.dispose();
-        batch.dispose();
+        spriteBatch.dispose();
         font.dispose();
     }
 }

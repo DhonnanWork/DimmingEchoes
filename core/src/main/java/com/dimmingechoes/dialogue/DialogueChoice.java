@@ -1,4 +1,4 @@
-package com.dimmingEchoes.entities;
+package com.dimmingEchoes.dialogue;
 
 public class DialogueChoice {
     public final String choiceText;
@@ -9,4 +9,3 @@ public class DialogueChoice {
         this.next = next;
     }
 }
-

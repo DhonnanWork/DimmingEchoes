@@ -24,6 +24,11 @@ public class Room {
     public List<NPC> getNpcs() { return npcs; }
     public void addNPC(NPC npc) { npcs.add(npc); }
 
+    // Returns this room's type (e.g., FINAL, BATTLE, etc.)
+    public RoomType getRoomType() {
+        return type;
+    }
+
     public void setConnections(Room left, Room right, Room center) {
         connections[0] = left;
         connections[1] = right;

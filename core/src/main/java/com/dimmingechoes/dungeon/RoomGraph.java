@@ -31,27 +31,10 @@ public class RoomGraph {
         Room finalRoom = new Room(RoomType.FINAL, GridBuilder.build(15, 9, true, true));
 
         // START ROOM: 2 NPCs
-        start.addNPC(new NPC("The Keeper", new String[]{
-            "You shouldn't be here.",
-            "But... here you are again."
-        }, 3, 5));
-
-        start.addNPC(new NPC("The Whisper", new String[]{
-            "Echoes remain, even after silence.",
-            "Will you listen this time?"
-        }, 8, 4));
-
-        // MEMORY ROOM: 1 NPC
-        memory.addNPC(new NPC("The Laughing Girl", new String[]{
-            "You remembered something happy.",
-            "You almost smiled."
-        }, 6, 5));
-
-        // BATTLE ROOM: 1 NPC
-        battle.addNPC(new NPC("The Stranger", new String[]{
-            "You again?",
-            "Let’s see if you’ve grown stronger."
-        }, 5, 4));
+        start.addNPC(new NPC("The Keeper", RoomType.START, 3, 5));
+        start.addNPC(new NPC("The Whisper", RoomType.START, 8, 4));
+        memory.addNPC(new NPC("The Laughing Girl", RoomType.MEMORY, 6, 5));
+        battle.addNPC(new NPC("The Stranger", RoomType.BATTLE, 5, 4));
 
         // FINAL ROOM: no NPC, ending trigger
 

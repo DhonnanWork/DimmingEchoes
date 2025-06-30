@@ -1,4 +1,4 @@
-package com.dimmingEchoes.entities;
+package com.dimmingEchoes.dialogue;
 
 public class DialogueNode {
     public final String text;
