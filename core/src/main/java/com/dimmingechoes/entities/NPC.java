@@ -1,5 +1,6 @@
 package com.dimmingEchoes.entities;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.dimmingEchoes.TheDimmingEcho;
 import com.dimmingEchoes.dialogue.DialogueChoice;
 import com.dimmingEchoes.dialogue.DialogueNode;
@@ -7,21 +8,26 @@ import com.dimmingEchoes.dungeon.RoomType;
 
 public class NPC {
     private final String name;
-    private final int x, y;
+    private final float x, y;
+    private final Rectangle bounds;
     private boolean receivedCrystal = false;
     private final DialogueNode rootDialogue;
     private DialogueNode lastDialogueNode = null;
 
-    public NPC(String name, RoomType room, int x, int y) {
+    private static final float NPC_SIZE = 48f;
+
+    public NPC(String name, RoomType room, float x, float y) {
         this.name = name;
         this.x = x;
         this.y = y;
+        this.bounds = new Rectangle(x - NPC_SIZE / 2, y - NPC_SIZE / 2, NPC_SIZE, NPC_SIZE);
         this.rootDialogue = buildDialogue(name, room);
     }
 
     public String getName() { return name; }
-    public int getX() { return x; }
-    public int getY() { return y; }
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public Rectangle getBounds() { return bounds; }
 
     public boolean hasReceivedCrystal() { return receivedCrystal; }
     public DialogueNode getRootDialogue() { return rootDialogue; }
@@ -47,7 +53,8 @@ public class NPC {
     }
 
     private DialogueNode buildDialogue(String name, RoomType roomType) {
-        // Provide full branching trees per NPC based on previous implementation
-        return new DialogueNode("...", null, false, false, true);
+        // TODO: This is where you'll build the actual branching dialogue trees.
+        // MODIFICATION: Return an empty array instead of null for choices.
+        return new DialogueNode("...", new DialogueChoice[0], false, false, true);
     }
 }

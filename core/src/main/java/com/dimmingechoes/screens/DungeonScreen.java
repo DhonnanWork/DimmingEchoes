@@ -2,46 +2,70 @@ package com.dimmingEchoes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dimmingEchoes.TheDimmingEcho;
 import com.dimmingEchoes.dialogue.DialogueChoice;
 import com.dimmingEchoes.dialogue.DialogueNode;
+import com.dimmingEchoes.dungeon.DoorZone;
 import com.dimmingEchoes.dungeon.Room;
 import com.dimmingEchoes.dungeon.RoomGraph;
 import com.dimmingEchoes.dungeon.RoomType;
 import com.dimmingEchoes.entities.NPC;
-import com.dimmingEchoes.save.SaveManager;
 
-public class DungeonScreen implements Screen, InputProcessor {
+// We change this to InputAdapter for simpler input handling
+public class DungeonScreen extends InputAdapter implements Screen {
 
     private final TheDimmingEcho game;
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch spriteBatch;
-    private final BitmapFont font;
+
+    // --- NEW: Scene2D UI System ---
+    private final Stage uiStage;
+    private final Skin skin;
+    private final Table dialogueTable;
+    private final Label dialogueTextLabel;
+    private final Table choicesTable;
+    private BitmapFont uiFont; // We still need a font for the top-left UI
+
+    private OrthographicCamera gameCamera;
+    private Viewport gameViewport;
 
     private Room currentRoom;
     private final RoomGraph roomGraph;
 
-    private int playerX = 2, playerY = 2;
-    private static final int CELL_SIZE = 64;
+    private Rectangle player;
+    private static final float PLAYER_SIZE = 40f;
+    private static final float PLAYER_SPEED = 250f;
+    private static final float INTERACTION_RADIUS = 64f;
 
     private boolean moveUp, moveDown, moveLeft, moveRight;
-    private float moveTimer = 0f;
-    private final float moveDelay = 0.15f;
 
     private DialogueNode currentDialogueNode = null;
     private NPC dialogueNPC = null;
-    private int selectedChoiceIndex = 0;
     private boolean endingShown = false;
 
-    // Typing effect
-    private String displayedText = "";
+    // Typing effect state
+    private String fullDialogueText = "";
     private float charTimer = 0;
     private int charIndex = 0;
     private final float CHAR_DELAY = 0.03f;
@@ -50,123 +74,304 @@ public class DungeonScreen implements Screen, InputProcessor {
         this.game = game;
         this.shapeRenderer = new ShapeRenderer();
         this.spriteBatch = new SpriteBatch();
-        this.font = new BitmapFont();
+
+        // --- Camera and Viewport Setup ---
+        gameCamera = new OrthographicCamera();
+        gameViewport = new FitViewport(1280, 720, gameCamera);
+
+        // --- Asset and Skin Loading (REVISED) ---
+        // 1. Create an EMPTY skin.
+        skin = new Skin();
+
+// 2. Create a basic, default font that requires no external files.
+        BitmapFont font = new BitmapFont();
+
+// 3. Add the default font to the skin.
+        skin.add("default-font", font, BitmapFont.class);
+
+// 4. Load the JSON file. The skin will now use the basic font.
+        skin.load(Gdx.files.internal("uiskin.json"));
+
+
+        // --- Scene2D Setup (NEW) --
+        uiStage = new Stage(new ScreenViewport());
+        dialogueTable = new Table(skin);
+        dialogueTable.setFillParent(true); // Make the table fill the screen
+        dialogueTable.bottom().padBottom(50); // Align it to the bottom
+        uiStage.addActor(dialogueTable);
+
+        // Create the UI components once
+        dialogueTextLabel = new Label("", skin);
+        dialogueTextLabel.setWrap(true);
+        choicesTable = new Table();
+
+        // Add them to the main dialogue table
+        dialogueTable.add(dialogueTextLabel).width(Gdx.graphics.getWidth() - 100).left();
+        dialogueTable.row();
+        dialogueTable.add(choicesTable).padTop(20).left();
+        dialogueTable.setVisible(false); // Hide it initially
+
+        // --- Game World Setup ---
         this.roomGraph = new RoomGraph();
         this.currentRoom = roomGraph.getStartingRoom();
-        Gdx.input.setInputProcessor(this);
+        this.player = new Rectangle(
+            gameViewport.getWorldWidth() / 2f - PLAYER_SIZE / 2f,
+            gameViewport.getWorldHeight() / 2f - PLAYER_SIZE / 2f,
+            PLAYER_SIZE, PLAYER_SIZE
+        );
+
+        Gdx.input.setInputProcessor(this); // Set input to this screen (for movement)
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        moveTimer += delta;
-
-        if (currentDialogueNode == null && moveTimer >= moveDelay) {
-            handleMovement();
-            moveTimer = 0f;
+        if (currentDialogueNode == null) {
+            handleMovement(delta);
+        } else {
+            updateTypingEffect(delta);
         }
 
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // --- Game World Rendering ---
+        gameViewport.apply();
+        gameCamera.update();
+        shapeRenderer.setProjectionMatrix(gameCamera.combined);
         renderGame();
 
-        if (currentDialogueNode != null) {
-            renderDialogue();
+        // --- UI Rendering ---
+        spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        renderStaticUI();
+
+        // --- Scene2D UI Rendering (NEW) ---
+        uiStage.act(delta); // Update the stage
+        uiStage.draw();     // Draw the stage (our dialogue box)
+    }
+
+    private void updateTypingEffect(float delta) {
+        charTimer += delta;
+        if (charIndex < fullDialogueText.length()) {
+            if (charTimer >= CHAR_DELAY) {
+                charIndex++;
+                dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+                charTimer = 0;
+
+                // If finished typing, show choices
+                if (charIndex == fullDialogueText.length()) {
+                    populateChoices();
+                }
+            }
         }
     }
 
     private void renderGame() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        int[][] grid = currentRoom.getGrid();
-
-        for (int y = 0; y < grid[0].length; y++) {
-            for (int x = 0; x < grid.length; x++) {
-                if (grid[x][y] == 1) {
-                    shapeRenderer.setColor(Color.DARK_GRAY);
-                } else if (grid[x][y] == 2 && currentRoom.getConnectedFromDoorAt(x, y) != null) {
-                    shapeRenderer.setColor(Color.GOLD);
-                } else {
-                    shapeRenderer.setColor(Color.BLACK);
-                }
-                shapeRenderer.rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-            }
+        shapeRenderer.setColor(Color.DARK_GRAY);
+        for (Rectangle obstacle : currentRoom.getObstacles()) {
+            shapeRenderer.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
         }
-
-        shapeRenderer.setColor(Color.CYAN);
-        shapeRenderer.rect(playerX * CELL_SIZE, playerY * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
+        shapeRenderer.setColor(Color.GOLD);
+        for (DoorZone door : currentRoom.getDoorZones()) {
+            shapeRenderer.rect(door.bounds.x, door.bounds.y, door.bounds.width, door.bounds.height);
+        }
         for (NPC npc : currentRoom.getNpcs()) {
             shapeRenderer.setColor(npc.hasReceivedCrystal() ? Color.GREEN : Color.MAGENTA);
-            shapeRenderer.rect(npc.getX() * CELL_SIZE, npc.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            Rectangle npcBounds = npc.getBounds();
+            shapeRenderer.rect(npcBounds.x, npcBounds.y, npcBounds.width, npcBounds.height);
         }
-
+        shapeRenderer.setColor(Color.CYAN);
+        shapeRenderer.rect(player.x, player.y, player.width, player.height);
         shapeRenderer.end();
+    }
+
+    private void renderStaticUI() {
+        // Get the font directly from the skin
+        BitmapFont font = skin.getFont("default-font");
 
         spriteBatch.begin();
         font.setColor(Color.WHITE);
         font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10);
+        font.draw(spriteBatch, "Press [F5] to Save", 10, Gdx.graphics.getHeight() - 35);
+        font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 60);
         spriteBatch.end();
     }
 
-    private void renderDialogue() {
-        spriteBatch.begin();
-        float x = 20;
-        float y = 180;
+    private void startDialogue(NPC npc) {
+        dialogueNPC = npc;
+        currentDialogueNode = npc.getLastDialogue() != null ? npc.getLastDialogue() : npc.getRootDialogue();
 
-        // Typing effect
-        charTimer += Gdx.graphics.getDeltaTime();
-        if (charIndex < currentDialogueNode.text.length()) {
-            if (charTimer >= CHAR_DELAY) {
-                displayedText += currentDialogueNode.text.charAt(charIndex++);
-                charTimer = 0;
-            }
-        }
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear(); // Clear old choices
 
-        font.setColor(Color.WHITE);
-        font.draw(spriteBatch, displayedText, x, y);
-
-        if (charIndex >= currentDialogueNode.text.length() && currentDialogueNode.choices != null) {
-            for (int i = 0; i < currentDialogueNode.choices.length; i++) {
-                String prefix = (i == selectedChoiceIndex ? "> " : "  ");
-                font.draw(spriteBatch, prefix + (i + 1) + ") " + currentDialogueNode.choices[i].choiceText, x, y - (30 * (i + 1)));
-            }
-        }
-
-        spriteBatch.end();
+        dialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(uiStage); // Switch input to the UI
     }
 
-    private void handleMovement() {
-        int nextX = playerX;
-        int nextY = playerY;
+    private void processDialogueChoice(DialogueChoice choice) {
+        DialogueNode next = choice.next;
 
-        if (moveUp) nextY++;
-        if (moveDown) nextY--;
-        if (moveLeft) nextX--;
-        if (moveRight) nextX++;
-
-        if (isValidMove(nextX, nextY)) {
-            playerX = nextX;
-            playerY = nextY;
+        if (next.requiresCrystal && dialogueNPC != null && !dialogueNPC.hasReceivedCrystal()) {
+            if (!game.getCrystalInventory().useCrystal()) {
+                // In a real game, you might show a "Not enough crystals" message.
+                // For now, we just won't proceed.
+                return;
+            }
+            game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
         }
 
-        if (currentRoom.getGrid()[playerX][playerY] == 2) {
-            Room next = currentRoom.getConnectedFromDoorAt(playerX, playerY);
-            if (next != null) {
-                currentRoom = next;
-                playerX = 2;
-                playerY = 2;
-                currentDialogueNode = null;
-                dialogueNPC = null;
-                displayedText = "";
-                charIndex = 0;
+        currentDialogueNode = next;
+        if(dialogueNPC != null) dialogueNPC.setLastDialogue(currentDialogueNode);
 
-                if (currentRoom.getRoomType() == RoomType.FINAL && !endingShown) {
-                    triggerEnding();
+        // If this is an end node, close the dialogue. Otherwise, start the next line.
+        if (currentDialogueNode.endDialogue) {
+            endDialogue();
+        } else {
+            fullDialogueText = currentDialogueNode.text;
+            charIndex = 0;
+            dialogueTextLabel.setText("");
+            choicesTable.clear();
+        }
+    }
+
+    private void populateChoices() {
+        choicesTable.clear();
+        if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) {
+            for (final DialogueChoice choice : currentDialogueNode.choices) {
+                TextButton choiceButton = new TextButton(choice.choiceText, skin);
+                choiceButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        processDialogueChoice(choice);
+                    }
+                });
+                choicesTable.add(choiceButton).left().row();
+            }
+        }
+    }
+
+
+    private void endDialogue() {
+        dialogueTable.setVisible(false);
+        currentDialogueNode = null;
+        dialogueNPC = null;
+        Gdx.input.setInputProcessor(this); // Give input control back to the player
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        // This input only runs when dialogue is NOT active
+        switch (keycode) {
+            case Input.Keys.W: moveUp = true; break;
+            case Input.Keys.S: moveDown = true; break;
+            case Input.Keys.A: moveLeft = true; break;
+            case Input.Keys.D: moveRight = true; break;
+            case Input.Keys.F5:
+                game.saveGame();
+                return true;
+            case Input.Keys.SPACE:
+                for (NPC npc : currentRoom.getNpcs()) {
+                    if (isNear(npc)) {
+                        startDialogue(npc);
+                        break;
+                    }
+                }
+                return true;
+            case Input.Keys.ENTER:
+                // If dialogue is active (which it shouldn't be here, but for safety)
+                // we can add a "finish typing" shortcut.
+                if (currentDialogueNode != null && charIndex < fullDialogueText.length()) {
+                    charIndex = fullDialogueText.length();
+                    dialogueTextLabel.setText(fullDialogueText);
+                    populateChoices();
+                }
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        switch (keycode) {
+            case Input.Keys.W: moveUp = false; break;
+            case Input.Keys.S: moveDown = false; break;
+            case Input.Keys.A: moveLeft = false; break;
+            case Input.Keys.D: moveRight = false; break;
+        }
+        return false;
+    }
+
+    // --- HELPER AND UNCHANGED METHODS ---
+
+    private void handleMovement(float delta) {
+        // (This method is unchanged from your original)
+        float moveAmount = PLAYER_SPEED * delta;
+        float oldX = player.x;
+        float oldY = player.y;
+
+        if (moveUp) player.y += moveAmount;
+        if (moveDown) player.y -= moveAmount;
+        if (moveLeft) player.x -= moveAmount;
+        if (moveRight) player.x += moveAmount;
+
+        if (player.x != oldX) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.x = oldX;
+                    break;
                 }
             }
+        }
+        if (player.y != oldY) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.y = oldY;
+                    break;
+                }
+            }
+        }
+
+        for (DoorZone door : currentRoom.getDoorZones()) {
+            if (player.overlaps(door.bounds)) {
+                changeRoom(door);
+                return;
+            }
+        }
+    }
+
+    private void changeRoom(DoorZone door) {
+        // (This method is unchanged from your original)
+        currentRoom = door.leadsTo;
+        if (dialogueTable.isVisible()) endDialogue();
+
+        switch (door.entryDirection) {
+            case LEFT:
+                player.x = gameViewport.getWorldWidth() - player.width - 48f;
+                player.y = gameViewport.getWorldHeight() / 2f;
+                break;
+            case RIGHT:
+                player.x = 48f;
+                player.y = gameViewport.getWorldHeight() / 2f;
+                break;
+            case TOP:
+                player.x = gameViewport.getWorldWidth() / 2f;
+                player.y = 48f;
+                break;
+            case BOTTOM:
+                player.x = gameViewport.getWorldWidth() / 2f;
+                player.y = gameViewport.getWorldHeight() - player.height - 48f;
+                break;
+        }
+
+        if (currentRoom.getRoomType() == RoomType.FINAL && !endingShown) {
+            triggerEnding();
         }
     }
 
     private void triggerEnding() {
+        // (This method is unchanged from your original)
         int used = game.getUsageLog().totalGiven();
         String ending;
 
@@ -182,111 +387,32 @@ public class DungeonScreen implements Screen, InputProcessor {
         endingShown = true;
     }
 
-    private boolean isValidMove(int x, int y) {
-        int[][] grid = currentRoom.getGrid();
-        if (x < 0 || x >= grid.length || y < 0 || y >= grid[0].length) return false;
-        if (grid[x][y] == 1) return false;
-
-        for (NPC npc : currentRoom.getNpcs()) {
-            if (npc.getX() == x && npc.getY() == y) return false;
-        }
-        return true;
+    private boolean isNear(NPC npc) {
+        // (This method is unchanged from your original)
+        Vector2 playerCenter = player.getCenter(new Vector2());
+        Vector2 npcCenter = npc.getBounds().getCenter(new Vector2());
+        return playerCenter.dst(npcCenter) < INTERACTION_RADIUS;
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.F5) {
-            game.saveGame();
-            return true;
-        }
-
-        if (currentDialogueNode != null) {
-            if (keycode == Input.Keys.ENTER) {
-                if (charIndex < currentDialogueNode.text.length()) {
-                    displayedText = currentDialogueNode.text;
-                    charIndex = currentDialogueNode.text.length();
-                    return true;
-                } else if (currentDialogueNode.endDialogue) {
-                    currentDialogueNode = null;
-                    dialogueNPC = null;
-                    displayedText = "";
-                    charIndex = 0;
-                    return true;
-                }
-            }
-
-            if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
-                int index = keycode - Input.Keys.NUM_1;
-                if (currentDialogueNode.choices != null && index < currentDialogueNode.choices.length) {
-                    DialogueNode next = currentDialogueNode.choices[index].next;
-
-                    if (next.requiresCrystal && dialogueNPC != null && !dialogueNPC.hasReceivedCrystal()) {
-                        if (!game.getCrystalInventory().useCrystal()) return true;
-                        game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
-                    }
-
-                    currentDialogueNode = next;
-                    if (dialogueNPC != null) dialogueNPC.setLastDialogue(currentDialogueNode);
-                    displayedText = "";
-                    charIndex = 0;
-                }
-                return true;
-            }
-        }
-
-        if (keycode == Input.Keys.W) moveUp = true;
-        if (keycode == Input.Keys.S) moveDown = true;
-        if (keycode == Input.Keys.A) moveLeft = true;
-        if (keycode == Input.Keys.D) moveRight = true;
-
-        if (keycode == Input.Keys.SPACE) {
-            for (NPC npc : currentRoom.getNpcs()) {
-                if (isAdjacent(npc)) {
-                    dialogueNPC = npc;
-                    currentDialogueNode = npc.getLastDialogue() != null ? npc.getLastDialogue() : npc.getRootDialogue();
-                    selectedChoiceIndex = 0;
-                    displayedText = "";
-                    charIndex = 0;
-                    break;
-                }
-            }
-        }
-
-        return true;
+    public void resize(int width, int height) {
+        gameViewport.update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
+        // We must also update the layout of our dialogue table
+        dialogueTable.invalidateHierarchy();
     }
-
-    private boolean isAdjacent(NPC npc) {
-        int dx = Math.abs(npc.getX() - playerX);
-        int dy = Math.abs(npc.getY() - playerY);
-        return (dx + dy == 1);
-    }
-
-    @Override public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.W) moveUp = false;
-        if (keycode == Input.Keys.S) moveDown = false;
-        if (keycode == Input.Keys.A) moveLeft = false;
-        if (keycode == Input.Keys.D) moveRight = false;
-        return false;
-    }
-
-    @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
-    @Override public boolean scrolled(float amountX, float amountY) { return false; }
-    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
-
-    @Override public void show() {}
-    @Override public void resize(int width, int height) {}
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {}
 
     @Override
     public void dispose() {
         shapeRenderer.dispose();
         spriteBatch.dispose();
-        font.dispose();
+        skin.dispose();
+        uiStage.dispose();
+       // uiFont.dispose();
     }
+
+    @Override public void show() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
 }

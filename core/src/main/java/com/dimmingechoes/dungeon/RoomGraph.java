@@ -1,17 +1,21 @@
 package com.dimmingEchoes.dungeon;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.dimmingEchoes.entities.NPC;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RoomGraph {
 
     private Room startingRoom;
-    private Map<Room, Room[]> connections;
+
+    // --- Define the world dimensions ---
+    // Using a fixed design resolution is good practice.
+    private static final float WORLD_WIDTH = 1280;
+    private static final float WORLD_HEIGHT = 720;
+    private static final float WALL_THICKNESS = 32;
+    private static final float DOOR_WIDTH = 120;
+    private static final float DOOR_THICKNESS = 32;
 
     public RoomGraph() {
-        connections = new HashMap<>();
         generateRooms();
     }
 
@@ -19,39 +23,56 @@ public class RoomGraph {
         return startingRoom;
     }
 
-    public Room[] getConnected(Room room) {
-        return connections.getOrDefault(room, new Room[0]);
+    private void generateRooms() {
+        // Build all the room objects first
+        Room start = new Room(RoomType.START);
+        Room memory = new Room(RoomType.MEMORY);
+        Room battle = new Room(RoomType.BATTLE);
+        Room finalRoom = new Room(RoomType.FINAL);
+
+        // --- Define START Room Layout ---
+        setupRoomBoundaries(start);
+        start.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), memory, DoorZone.Direction.LEFT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), battle, DoorZone.Direction.RIGHT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, WORLD_HEIGHT - DOOR_THICKNESS, DOOR_WIDTH, DOOR_THICKNESS), finalRoom, DoorZone.Direction.TOP));
+        start.addNPC(new NPC("The Keeper", RoomType.START, 300, 500));
+        start.addNPC(new NPC("The Whisper", RoomType.START, 800, 400));
+
+        // --- Define MEMORY Room Layout ---
+        setupRoomBoundaries(memory);
+        // This door leads back to the start room
+        memory.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.RIGHT));
+        memory.addNPC(new NPC("The Laughing Girl", RoomType.MEMORY, WORLD_WIDTH / 2, WORLD_HEIGHT / 2));
+        // Add some decorative obstacles
+        memory.addObstacle(new Rectangle(200, 200, 50, 50));
+        memory.addObstacle(new Rectangle(900, 450, 80, 80));
+
+        // --- Define BATTLE Room Layout ---
+        setupRoomBoundaries(battle);
+        battle.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.LEFT));
+        battle.addNPC(new NPC("The Stranger", RoomType.BATTLE, WORLD_WIDTH / 2, 400));
+
+
+        // --- Define FINAL Room Layout ---
+        setupRoomBoundaries(finalRoom);
+        finalRoom.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, 0, DOOR_WIDTH, DOOR_THICKNESS), start, DoorZone.Direction.BOTTOM));
+        // This room is intentionally empty of NPCs.
+
+        this.startingRoom = start;
     }
 
-    private void generateRooms() {
-        // Build all rooms
-        Room start = new Room(RoomType.START, GridBuilder.build(15, 9, true, true));
-        Room memory = new Room(RoomType.MEMORY, GridBuilder.build(15, 9, true, true));
-        Room battle = new Room(RoomType.BATTLE, GridBuilder.build(15, 9, true, true));
-        Room finalRoom = new Room(RoomType.FINAL, GridBuilder.build(15, 9, true, true));
-
-        // START ROOM: 2 NPCs
-        start.addNPC(new NPC("The Keeper", RoomType.START, 3, 5));
-        start.addNPC(new NPC("The Whisper", RoomType.START, 8, 4));
-        memory.addNPC(new NPC("The Laughing Girl", RoomType.MEMORY, 6, 5));
-        battle.addNPC(new NPC("The Stranger", RoomType.BATTLE, 5, 4));
-
-        // FINAL ROOM: no NPC, ending trigger
-
-        // Connections from START
-        start.setConnections(memory, battle, finalRoom);
-
-        // Each room connects back to START only
-        memory.setConnections(start, null, null);
-        battle.setConnections(null, start, null);
-        finalRoom.setConnections(null, null, start);
-
-        // Set graph
-        this.startingRoom = start;
-
-        connections.put(start, new Room[]{memory, battle, finalRoom});
-        connections.put(memory, new Room[]{start});
-        connections.put(battle, new Room[]{start});
-        connections.put(finalRoom, new Room[]{start});
+    /**
+     * A helper method to add the four outer walls to any room.
+     * @param room The room to add boundaries to.
+     */
+    private void setupRoomBoundaries(Room room) {
+        // Bottom wall
+        room.addObstacle(new Rectangle(0, 0, WORLD_WIDTH, WALL_THICKNESS));
+        // Top wall
+        room.addObstacle(new Rectangle(0, WORLD_HEIGHT - WALL_THICKNESS, WORLD_WIDTH, WALL_THICKNESS));
+        // Left wall
+        room.addObstacle(new Rectangle(0, 0, WALL_THICKNESS, WORLD_HEIGHT));
+        // Right wall
+        room.addObstacle(new Rectangle(WORLD_WIDTH - WALL_THICKNESS, 0, WALL_THICKNESS, WORLD_HEIGHT));
     }
 }

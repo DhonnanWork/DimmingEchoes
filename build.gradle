@@ -71,3 +71,27 @@ subprojects {
 }
 
 eclipse.project.name = 'Dimming Echoes' + '-parent'
+
+project(":core") {
+  apply plugin: "java-library"
+
+  dependencies {
+    // This line is for the base LibGDX library
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+    // This is the new line we are adding for better fonts
+    api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+  }
+}
+project(":lwjgl3") {
+  apply plugin: "java-library"
+
+  dependencies {
+    implementation project(":core")
+    api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+    // THIS LINE IS NEW AND VERY IMPORTANT
+    api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+  }
+}
