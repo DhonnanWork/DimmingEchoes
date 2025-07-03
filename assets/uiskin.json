@@ -5,11 +5,22 @@
     "gray": { "r": 0.3, "g": 0.3, "b": 0.3, "a": 1 },
     "gold": { "r": 1, "g": 0.84, "b": 0, "a": 1 }
   },
+  "com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator": {
+    "libertinus-generator": {
+      "font": "LibertinusMono-Regular.ttf"
+    }
+  },
+  "com.badlogic.gdx.graphics.g2d.BitmapFont": {
+    "default-font": {
+      "generator": "libertinus-generator",
+      "size": 24
+    }
+  },
   "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
     "default": { "font": "default-font", "fontColor": "white" }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
-    "default": { "font": "default-font", "fontColor": "white", "overFontColor": "gold", "downFontColor": "gray" }
+    "default": { "font": "default-font", "fontColor": "white", "overFontColor": "gold" }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
     "default": { "titleFont": "default-font", "titleFontColor": "white" }

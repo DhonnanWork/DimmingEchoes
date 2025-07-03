@@ -90,7 +90,7 @@ project(":lwjgl3") {
     implementation project(":core")
     api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-
+    api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
     // THIS LINE IS NEW AND VERY IMPORTANT
     api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   }

@@ -1,5 +1,6 @@
 package com.dimmingEchoes.dungeon;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.dimmingEchoes.entities.NPC;
 
@@ -9,15 +10,19 @@ import java.util.List;
 public class Room {
 
     private final RoomType type;
+    private final Color backgroundColor; // <-- ADDED
     private final List<NPC> npcs = new ArrayList<>();
     private final List<Rectangle> obstacles = new ArrayList<>();
     private final List<DoorZone> doorZones = new ArrayList<>();
 
-    public Room(RoomType type) {
+    // Constructor is now updated
+    public Room(RoomType type, Color backgroundColor) {
         this.type = type;
+        this.backgroundColor = backgroundColor;
     }
 
     public RoomType getRoomType() { return type; }
+    public Color getBackgroundColor() { return backgroundColor; } // <-- ADDED
 
     public List<NPC> getNpcs() { return npcs; }
     public void addNPC(NPC npc) { npcs.add(npc); }
