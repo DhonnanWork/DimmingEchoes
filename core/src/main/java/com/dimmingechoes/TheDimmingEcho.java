@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.dimmingEchoes.screens.DungeonScreen;
 import com.dimmingEchoes.save.SaveData;
 import com.dimmingEchoes.save.SaveManager;
+import com.dimmingEchoes.logic.CrystalInventory ;
+import com.dimmingEchoes.logic.UsageLog;
 
 public class TheDimmingEcho extends Game {
 

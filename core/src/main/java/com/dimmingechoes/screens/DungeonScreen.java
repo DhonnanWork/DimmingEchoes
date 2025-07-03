@@ -32,6 +32,7 @@ import com.dimmingEchoes.dungeon.Room;
 import com.dimmingEchoes.dungeon.RoomGraph;
 import com.dimmingEchoes.dungeon.RoomType;
 import com.dimmingEchoes.entities.NPC;
+import com.dimmingEchoes.logic.CrystalInventory;
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
