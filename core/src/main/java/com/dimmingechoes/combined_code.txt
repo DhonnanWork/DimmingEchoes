@@ -1,0 +1,1435 @@
+--- Combined Code from folder: C:\Users\Pongo\IdeaProjects\StrukdatGame\core\src\main\java\com\dimmingEchoes ---
+
+
+================================================================================
+// File: Main.java
+================================================================================
+
+package com.dimmingechoes;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ScreenUtils;
+
+public class Main extends ApplicationAdapter {
+
+    // --- Core Rendering Tools ---
+    private ShapeRenderer shapeRenderer;
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private OrthographicCamera uiCamera;
+    private OrthographicCamera gameCamera;
+    private GlyphLayout layout = new GlyphLayout();
+
+    // --- Game State Management ---
+    enum GameState {
+        PLAYING,
+        CONFIRM_TRANSITION
+    }
+    private GameState currentState;
+    private Door pendingDoor;
+    private boolean isYesSelected = true; // --- NEW: Tracks which option is highlighted
+
+    // --- Player State ---
+    private Rectangle player;
+    private Texture playerTexture;
+    private final float PLAYER_SIZE = 50f;
+    private final float PLAYER_SPEED = 300f;
+    private int playerHp;
+    private int playerMaxHp;
+
+    // --- Item System State ---
+    private Array<ItemType> inventory;
+    private int currentItemIndex;
+
+    // --- World State ---
+    private Room[][] rooms;
+    private int currentRoomX;
+    private int currentRoomY;
+    private final int WORLD_WIDTH = 3;
+    private final int WORLD_HEIGHT = 3;
+    private final char[][] roomNames = {
+        {'A', 'B', 'C'},
+        {'D', 'E', 'F'},
+        {'G', 'H', 'I'}
+    };
+
+    private static final String TAG = "GameLog";
+
+    enum ItemType {
+        HEALING_POTION, SPEED_BOOST, TELEPORT_BOMB, SHIELD, DECOY
+    }
+
+    enum Direction {
+        NORTH, SOUTH, EAST, WEST
+    }
+
+    static class Door {
+        Rectangle rect;
+        Direction dir;
+
+        Door(float x, float y, float width, float height, Direction dir) {
+            this.rect = new Rectangle(x, y, width, height);
+            this.dir = dir;
+        }
+    }
+
+    static class Room {
+        Array<Rectangle> walls = new Array<>();
+        Array<Door> doors = new Array<>();
+
+        public Room(float x, float y, float width, float height, float thickness, boolean north, boolean south, boolean east, boolean west) {
+            float doorSize = 100f;
+            walls.add(new Rectangle(x, y, thickness, height));
+            walls.add(new Rectangle(x + width - thickness, y, thickness, height));
+            walls.add(new Rectangle(x, y, width, thickness));
+            walls.add(new Rectangle(x, y + height - thickness, width, thickness));
+            if (north) doors.add(new Door(x + width/2 - doorSize/2, y + height - thickness, doorSize, thickness, Direction.NORTH));
+            if (south) doors.add(new Door(x + width/2 - doorSize/2, y, doorSize, thickness, Direction.SOUTH));
+            if (west)  doors.add(new Door(x, y + height/2 - doorSize/2, thickness, doorSize, Direction.WEST));
+            if (east)  doors.add(new Door(x + width - thickness, y + height/2 - doorSize/2, thickness, doorSize, Direction.EAST));
+        }
+    }
+
+
+    @Override
+    public void create() {
+        shapeRenderer = new ShapeRenderer();
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(1.5f);
+
+        // This is a placeholder. You should replace "libgdx.png" with your own player asset.
+        playerTexture = new Texture(Gdx.files.internal("libgdx.png"));
+
+        uiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        uiCamera.setToOrtho(false);
+        gameCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        gameCamera.setToOrtho(false);
+
+        playerMaxHp = 10;
+        playerHp = playerMaxHp;
+        inventory = new Array<>();
+        inventory.add(ItemType.HEALING_POTION);
+        inventory.add(ItemType.SPEED_BOOST);
+        currentItemIndex = 0;
+
+        generateRooms();
+        currentRoomX = 1;
+        currentRoomY = 1;
+
+        float roomWidth = Gdx.graphics.getWidth();
+        float roomHeight = Gdx.graphics.getHeight();
+        player = new Rectangle(
+            (currentRoomX * roomWidth) + (roomWidth / 2f) - (PLAYER_SIZE / 2f),
+            (currentRoomY * roomHeight) + (roomHeight / 2f) - (PLAYER_SIZE / 2f),
+            PLAYER_SIZE,
+            PLAYER_SIZE
+        );
+
+        currentState = GameState.PLAYING;
+        Gdx.input.setCursorCatched(true);
+
+        Gdx.app.log(TAG, "Game created. Player and 3x3 world initialized.");
+    }
+
+    private void generateRooms() {
+        rooms = new Room[WORLD_WIDTH][WORLD_HEIGHT];
+        float roomWidth = Gdx.graphics.getWidth();
+        float roomHeight = Gdx.graphics.getHeight();
+        float wallThickness = 20f;
+
+        for (int x = 0; x < WORLD_WIDTH; x++) {
+            for (int y = 0; y < WORLD_HEIGHT; y++) {
+                boolean north = (y < WORLD_HEIGHT - 1);
+                boolean south = (y > 0);
+                boolean west = (x > 0);
+                boolean east = (x < WORLD_WIDTH - 1);
+                rooms[x][y] = new Room(x * roomWidth, y * roomHeight, roomWidth, roomHeight, wallThickness, north, south, east, west);
+            }
+        }
+    }
+
+    @Override
+    public void render() {
+        switch (currentState) {
+            case PLAYING:
+                handleInput();
+                updatePlayerPosition();
+                checkCollisions();
+                break;
+            case CONFIRM_TRANSITION:
+                handleConfirmationInput();
+                break;
+        }
+
+        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1);
+        drawWorld();
+        drawUI();
+
+        if (currentState == GameState.CONFIRM_TRANSITION) {
+            drawConfirmationDialog();
+        }
+    }
+
+    private void handleInput() {
+        if (Gdx.input.isKeyJustPressed(Keys.C)) useCurrentItem();
+        if (Gdx.input.isKeyJustPressed(Keys.E)) cycleItem();
+    }
+
+    // --- MODIFIED: Handles highlighting and Enter key confirmation ---
+    private void handleConfirmationInput() {
+        // A/D or Left/Right toggles the selection between Yes and No
+        if (Gdx.input.isKeyJustPressed(Keys.A) || Gdx.input.isKeyJustPressed(Keys.LEFT)) {
+            isYesSelected = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.D) || Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
+            isYesSelected = false;
+        }
+
+        // Enter key confirms the currently highlighted selection
+        if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
+            confirmTransition(isYesSelected);
+            return;
+        }
+
+        // Mouse click logic
+        if (Gdx.input.justTouched()) {
+            float dialogWidth = 400;
+            float screenCenterX = Gdx.graphics.getWidth() / 2f;
+            float screenCenterY = Gdx.graphics.getHeight() / 2f;
+            float buttonWidth = 100;
+            float buttonHeight = 50;
+            float dialogY = screenCenterY - 150 / 2f;
+            float buttonY = dialogY + 20;
+
+            Rectangle yesBounds = new Rectangle(screenCenterX - buttonWidth - 20, buttonY, buttonWidth, buttonHeight);
+            Rectangle noBounds = new Rectangle(screenCenterX + 20, buttonY, buttonWidth, buttonHeight);
+
+            Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            uiCamera.unproject(touchPos);
+
+            if (yesBounds.contains(touchPos.x, touchPos.y)) {
+                confirmTransition(true);
+            } else if (noBounds.contains(touchPos.x, touchPos.y)) {
+                confirmTransition(false);
+            }
+        }
+    }
+
+    private void confirmTransition(boolean accepted) {
+        if (accepted) {
+            changeRoom(pendingDoor);
+        } else {
+            // Push player back slightly if they say no, to prevent re-triggering
+            switch (pendingDoor.dir) {
+                case NORTH: player.y -= 10; break;
+                case SOUTH: player.y += 10; break;
+                case EAST:  player.x -= 10; break;
+                case WEST:  player.x += 10; break;
+            }
+        }
+
+        currentState = GameState.PLAYING;
+        pendingDoor = null;
+        isYesSelected = true; // Reset highlight to default ("Yes")
+        Gdx.input.setCursorCatched(true);
+    }
+
+    private void useCurrentItem() {
+        if (inventory.isEmpty()) return;
+        ItemType item = inventory.get(currentItemIndex);
+        Gdx.app.log(TAG, "Used item: " + item.name());
+        if (item == ItemType.HEALING_POTION) {
+            if (playerHp < playerMaxHp) playerHp++;
+        }
+        inventory.removeIndex(currentItemIndex);
+        if (currentItemIndex >= inventory.size && !inventory.isEmpty()) {
+            currentItemIndex = 0;
+        }
+    }
+
+    private void cycleItem() {
+        if (inventory.isEmpty()) return;
+        currentItemIndex = (currentItemIndex + 1) % inventory.size;
+        Gdx.app.log(TAG, "Cycled to item: " + inventory.get(currentItemIndex).name());
+    }
+
+    private void updatePlayerPosition() {
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        if (Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.LEFT))  player.x -= PLAYER_SPEED * deltaTime;
+        if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)) player.x += PLAYER_SPEED * deltaTime;
+        if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.UP))    player.y += PLAYER_SPEED * deltaTime;
+        if (Gdx.input.isKeyPressed(Keys.S) || Gdx.input.isKeyPressed(Keys.DOWN))  player.y -= PLAYER_SPEED * deltaTime;
+    }
+
+    private void checkCollisions() {
+        Room currentRoom = rooms[currentRoomX][currentRoomY];
+
+        float oldX = player.x;
+        // Simplified movement application to avoid duplicating code in updatePlayerPosition
+        for(Rectangle wall : currentRoom.walls) {
+            if (player.overlaps(wall)) {
+                player.x = oldX;
+                break;
+            }
+        }
+
+        float oldY = player.y;
+        for(Rectangle wall : currentRoom.walls) {
+            if (player.overlaps(wall)) {
+                player.y = oldY;
+                break;
+            }
+        }
+
+        for (Door door : currentRoom.doors) {
+            if (player.overlaps(door.rect)) {
+                Gdx.app.log(TAG, "Player entered a " + door.dir.name() + " door.");
+                currentState = GameState.CONFIRM_TRANSITION;
+                pendingDoor = door;
+                Gdx.input.setCursorCatched(false);
+                return;
+            }
+        }
+    }
+
+    // --- MODIFIED: Implements smart teleportation logic ---
+    private void changeRoom(Door door) {
+        float roomWidth = Gdx.graphics.getWidth();
+        float roomHeight = Gdx.graphics.getHeight();
+        float offset = PLAYER_SIZE * 0.5f; // A small buffer distance
+
+        switch (door.dir) {
+            case NORTH:
+                currentRoomY++;
+                // Player appears just above the bottom door of the new room
+                player.y = (currentRoomY * roomHeight) + door.rect.height + offset;
+                break;
+            case SOUTH:
+                currentRoomY--;
+                // Player appears just below the top door of the new room
+                player.y = ((currentRoomY + 1) * roomHeight) - door.rect.height - PLAYER_SIZE - offset;
+                break;
+            case EAST:
+                currentRoomX++;
+                // Player appears just to the right of the left door of the new room
+                player.x = (currentRoomX * roomWidth) + door.rect.width + offset;
+                break;
+            case WEST:
+                currentRoomX--;
+                // Player appears just to the left of the right door of the new room
+                player.x = ((currentRoomX + 1) * roomWidth) - door.rect.width - PLAYER_SIZE - offset;
+                break;
+        }
+    }
+
+    private void drawWorld() {
+        Room currentRoom = rooms[currentRoomX][currentRoomY];
+        gameCamera.position.set(player.x + player.width / 2, player.y + player.height / 2, 0);
+        gameCamera.update();
+
+        shapeRenderer.setProjectionMatrix(gameCamera.combined);
+        shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(Color.GRAY);
+        for (Rectangle wall : currentRoom.walls) {
+            shapeRenderer.rect(wall.x, wall.y, wall.width, wall.height);
+        }
+        shapeRenderer.setColor(Color.GREEN);
+        for (Door door : currentRoom.doors) {
+            shapeRenderer.rect(door.rect.x, door.rect.y, door.rect.width, door.rect.height);
+        }
+        shapeRenderer.end();
+
+        batch.setProjectionMatrix(gameCamera.combined);
+        batch.begin();
+        batch.draw(playerTexture, player.x, player.y, player.width, player.height);
+        batch.end();
+    }
+
+    private void drawUI() {
+        batch.setProjectionMatrix(uiCamera.combined);
+        batch.begin();
+        font.draw(batch, "HP: " + playerHp + " / " + playerMaxHp, 20, Gdx.graphics.getHeight() - 20);
+        String currentItemText = "Item: " + (inventory.isEmpty() ? "NONE" : inventory.get(currentItemIndex).name());
+        font.draw(batch, currentItemText, 20, Gdx.graphics.getHeight() - 40);
+        font.draw(batch, "Room: " + roomNames[currentRoomX][currentRoomY], 20, Gdx.graphics.getHeight() - 60);
+        batch.end();
+    }
+
+    // --- MODIFIED: Draws a highlight based on selection ---
+    private void drawConfirmationDialog() {
+        float dialogWidth = 450; // Made wider for help text
+        float dialogHeight = 150;
+        float screenCenterX = Gdx.graphics.getWidth() / 2f;
+        float screenCenterY = Gdx.graphics.getHeight() / 2f;
+        float dialogX = screenCenterX - dialogWidth / 2;
+        float dialogY = screenCenterY - dialogHeight / 2;
+
+        float buttonWidth = 100;
+        float buttonHeight = 50;
+        float buttonY = dialogY + 45;
+
+        Rectangle yesButtonRect = new Rectangle(screenCenterX - buttonWidth - 20, buttonY, buttonWidth, buttonHeight);
+        Rectangle noButtonRect = new Rectangle(screenCenterX + 20, buttonY, buttonWidth, buttonHeight);
+
+        Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
+        Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.setProjectionMatrix(uiCamera.combined);
+        shapeRenderer.begin(ShapeType.Filled);
+
+        shapeRenderer.setColor(0, 0, 0, 0.7f);
+        shapeRenderer.rect(dialogX, dialogY, dialogWidth, dialogHeight);
+
+        // --- HIGHLIGHT LOGIC ---
+        shapeRenderer.setColor(Color.GOLD);
+        if (isYesSelected) {
+            shapeRenderer.rect(yesButtonRect.x - 2, yesButtonRect.y - 2, yesButtonRect.width + 4, yesButtonRect.height + 4);
+        } else {
+            shapeRenderer.rect(noButtonRect.x - 2, noButtonRect.y - 2, noButtonRect.width + 4, noButtonRect.height + 4);
+        }
+
+        shapeRenderer.end();
+        Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
+
+        batch.setProjectionMatrix(uiCamera.combined);
+        batch.begin();
+
+        int destX = currentRoomX;
+        int destY = currentRoomY;
+        switch (pendingDoor.dir) {
+            case NORTH: destY++; break;
+            case SOUTH: destY--; break;
+            case EAST:  destX++; break;
+            case WEST:  destX--; break;
+        }
+        char destRoomName = roomNames[destX][destY];
+
+        String question = "Move to Room " + destRoomName + "?";
+        layout.setText(font, question);
+        font.draw(batch, layout, screenCenterX - layout.width / 2, dialogY + dialogHeight - 20);
+
+        font.setColor(Color.BLACK);
+        layout.setText(font, "Yes");
+        font.draw(batch, layout, yesButtonRect.x + (yesButtonRect.width / 2 - layout.width / 2), yesButtonRect.y + (yesButtonRect.height / 2 + layout.height / 2));
+
+        layout.setText(font, "No");
+        font.draw(batch, layout, noButtonRect.x + (noButtonRect.width / 2 - layout.width / 2), noButtonRect.y + (noButtonRect.height / 2 + layout.height / 2));
+        font.setColor(Color.WHITE);
+
+        String helpText = "[A/D] or [Left/Right] to select. [Enter] to confirm.";
+        layout.setText(font, helpText);
+        font.draw(batch, layout, screenCenterX - layout.width / 2, dialogY + 30);
+
+        batch.end();
+    }
+
+    @Override
+    public void dispose() {
+        shapeRenderer.dispose();
+        batch.dispose();
+        font.dispose();
+        playerTexture.dispose();
+    }
+}
+
+================================================================================
+// File: TheDimmingEcho.java
+================================================================================
+
+package com.dimmingEchoes;
+
+import com.badlogic.gdx.Game;
+import com.dimmingEchoes.screens.DungeonScreen;
+import com.dimmingEchoes.save.SaveData;
+import com.dimmingEchoes.save.SaveManager;
+
+public class TheDimmingEcho extends Game {
+
+    private CrystalInventory crystalInventory;
+    private UsageLog usageLog;
+
+    @Override
+    public void create() {
+        crystalInventory = new CrystalInventory(5);
+        usageLog = new UsageLog();
+
+        loadGame();
+        setScreen(new DungeonScreen(this));
+    }
+
+    public CrystalInventory getCrystalInventory() {
+        return crystalInventory;
+    }
+
+    public UsageLog getUsageLog() {
+        return usageLog;
+    }
+
+    public void saveGame() {
+        SaveData data = new SaveData();
+        data.crystalCount = crystalInventory.getCrystals();
+        data.crystalRecipients = usageLog.getAllRecipients();
+        SaveManager.save(data);
+    }
+
+    public void loadGame() {
+        SaveData data = SaveManager.load();
+        if (data != null) {
+            crystalInventory.reset(data.crystalCount);
+            for (String npc : data.crystalRecipients) {
+                usageLog.logCrystalGiven(npc);
+            }
+        }
+    }
+}
+
+================================================================================
+// File: dialogue\DialogueChoice.java
+================================================================================
+
+package com.dimmingEchoes.dialogue;
+
+public class DialogueChoice {
+    public final String choiceText;
+    public final DialogueNode next;
+
+    public DialogueChoice(String choiceText, DialogueNode next) {
+        this.choiceText = choiceText;
+        this.next = next;
+    }
+}
+
+================================================================================
+// File: dialogue\DialogueNode.java
+================================================================================
+
+package com.dimmingEchoes.dialogue;
+
+public class DialogueNode {
+    public final String text;
+    public final DialogueChoice[] choices;
+    public final boolean requiresCrystal;
+    public final boolean consumesCrystal;
+    public final boolean endDialogue;
+
+    public DialogueNode(String text, DialogueChoice[] choices, boolean requiresCrystal, boolean consumesCrystal, boolean endDialogue) {
+        this.text = text;
+        this.choices = choices;
+        this.requiresCrystal = requiresCrystal;
+        this.consumesCrystal = consumesCrystal;
+        this.endDialogue = endDialogue;
+    }
+}
+
+================================================================================
+// File: dungeon\DoorZone.java
+================================================================================
+
+package com.dimmingEchoes.dungeon;
+
+import com.badlogic.gdx.math.Rectangle;
+
+/**
+ * Represents an area in a room that, when entered, transports the player to another room.
+ */
+public class DoorZone {
+    public final Rectangle bounds;
+    public final Room leadsTo;
+    public final Direction entryDirection; // The side of the room this door is on
+
+    public enum Direction {
+        LEFT, RIGHT, TOP, BOTTOM
+    }
+
+    public DoorZone(Rectangle bounds, Room leadsTo, Direction entryDirection) {
+        this.bounds = bounds;
+        this.leadsTo = leadsTo;
+        this.entryDirection = entryDirection;
+    }
+}
+
+================================================================================
+// File: dungeon\GridBuilder.java
+================================================================================
+
+package com.dimmingEchoes.dungeon;
+
+public class GridBuilder {
+
+    public static int[][] build(int width, int height, boolean outerWalls, boolean doors) {
+        int[][] grid = new int[width][height];
+
+        if (outerWalls) {
+            for (int x = 0; x < width; x++) {
+                grid[x][0] = 1;
+                grid[x][height - 1] = 1;
+            }
+            for (int y = 0; y < height; y++) {
+                grid[0][y] = 1;
+                grid[width - 1][y] = 1;
+            }
+        }
+
+        if (doors) {
+            if (width >= 5 && height >= 5) {
+                grid[1][height / 2] = 2;
+                grid[width - 2][height / 2] = 2;
+                grid[width / 2][1] = 2;
+                grid[width / 2][height - 2] = 2;
+            }
+        }
+
+        return grid;
+    }
+}
+
+================================================================================
+// File: dungeon\Room.java
+================================================================================
+
+package com.dimmingEchoes.dungeon;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
+import com.dimmingEchoes.entities.NPC;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Room {
+
+    private final RoomType type;
+    private final Color backgroundColor; // <-- ADDED
+    private final List<NPC> npcs = new ArrayList<>();
+    private final List<Rectangle> obstacles = new ArrayList<>();
+    private final List<DoorZone> doorZones = new ArrayList<>();
+
+    // Constructor is now updated
+    public Room(RoomType type, Color backgroundColor) {
+        this.type = type;
+        this.backgroundColor = backgroundColor;
+    }
+
+    public RoomType getRoomType() { return type; }
+    public Color getBackgroundColor() { return backgroundColor; } // <-- ADDED
+
+    public List<NPC> getNpcs() { return npcs; }
+    public void addNPC(NPC npc) { npcs.add(npc); }
+
+    public List<Rectangle> getObstacles() { return obstacles; }
+    public void addObstacle(Rectangle obstacle) { obstacles.add(obstacle); }
+
+    public List<DoorZone> getDoorZones() { return doorZones; }
+    public void addDoorZone(DoorZone doorZone) { doorZones.add(doorZone); }
+}
+
+================================================================================
+// File: dungeon\RoomGraph.java
+================================================================================
+
+package com.dimmingEchoes.dungeon;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
+import com.dimmingEchoes.entities.NPC;
+
+public class RoomGraph {
+
+    private Room startingRoom;
+
+    // --- Define the world dimensions ---
+    private static final float WORLD_WIDTH = 1280;
+    private static final float WORLD_HEIGHT = 720;
+    private static final float WALL_THICKNESS = 32;
+    private static final float DOOR_WIDTH = 120;
+    private static final float DOOR_THICKNESS = 32;
+
+    public RoomGraph() {
+        generateRooms();
+    }
+
+    public Room getStartingRoom() {
+        return startingRoom;
+    }
+
+    private void generateRooms() {
+        // Build all the room objects first, now with colors
+        Room start = new Room(RoomType.START, new Color(0.2f, 0.2f, 0.2f, 1));
+        Room memory = new Room(RoomType.MEMORY, new Color(0.1f, 0.2f, 0.3f, 1)); // A muted blue
+        Room battle = new Room(RoomType.BATTLE, new Color(0.3f, 0.1f, 0.1f, 1)); // A dim red
+        Room finalRoom = new Room(RoomType.FINAL, new Color(0.1f, 0.1f, 0.1f, 1)); // Near black
+
+        // --- Define START Room Layout ---
+        setupRoomBoundaries(start);
+        start.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), memory, DoorZone.Direction.LEFT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), battle, DoorZone.Direction.RIGHT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, WORLD_HEIGHT - DOOR_THICKNESS, DOOR_WIDTH, DOOR_THICKNESS), finalRoom, DoorZone.Direction.TOP));
+        start.addNPC(new NPC("The Keeper", RoomType.START, 300, 500));
+        start.addNPC(new NPC("The Whisper", RoomType.START, 800, 400));
+
+        // --- Define MEMORY Room Layout ---
+        setupRoomBoundaries(memory);
+        memory.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.RIGHT));
+        memory.addNPC(new NPC("The Laughing Girl", RoomType.MEMORY, WORLD_WIDTH / 2, WORLD_HEIGHT / 2));
+        memory.addObstacle(new Rectangle(200, 200, 50, 50));
+        memory.addObstacle(new Rectangle(900, 450, 80, 80));
+
+        // --- Define BATTLE Room Layout ---
+        setupRoomBoundaries(battle);
+        battle.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.LEFT));
+        battle.addNPC(new NPC("The Stranger", RoomType.BATTLE, WORLD_WIDTH / 2, 400));
+
+        // --- Define FINAL Room Layout ---
+        setupRoomBoundaries(finalRoom);
+        finalRoom.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, 0, DOOR_WIDTH, DOOR_THICKNESS), start, DoorZone.Direction.BOTTOM));
+
+        this.startingRoom = start;
+    }
+
+    private void setupRoomBoundaries(Room room) {
+        room.addObstacle(new Rectangle(0, 0, WORLD_WIDTH, WALL_THICKNESS));
+        room.addObstacle(new Rectangle(0, WORLD_HEIGHT - WALL_THICKNESS, WORLD_WIDTH, WALL_THICKNESS));
+        room.addObstacle(new Rectangle(0, 0, WALL_THICKNESS, WORLD_HEIGHT));
+        room.addObstacle(new Rectangle(WORLD_WIDTH - WALL_THICKNESS, 0, WALL_THICKNESS, WORLD_HEIGHT));
+    }
+}
+
+================================================================================
+// File: dungeon\RoomType.java
+================================================================================
+
+package com.dimmingEchoes.dungeon;
+
+public enum RoomType {
+    START,
+    MEMORY,
+    BATTLE,
+    FINAL
+}
+
+
+================================================================================
+// File: entities\Enemy.java
+================================================================================
+
+package com.dimmingEchoes.entities;
+
+public class Enemy {
+}
+
+================================================================================
+// File: entities\NPC.java
+================================================================================
+
+package com.dimmingEchoes.entities;
+
+import com.badlogic.gdx.math.Rectangle;
+import com.dimmingEchoes.TheDimmingEcho;
+import com.dimmingEchoes.dialogue.DialogueChoice;
+import com.dimmingEchoes.dialogue.DialogueNode;
+import com.dimmingEchoes.dungeon.RoomType;
+
+public class NPC {
+    private final String name;
+    private final float x, y;
+    private final Rectangle bounds;
+    private boolean receivedCrystal = false;
+    private final DialogueNode rootDialogue;
+    private DialogueNode lastDialogueNode = null;
+
+    private static final float NPC_SIZE = 48f;
+
+    public NPC(String name, RoomType room, float x, float y) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.bounds = new Rectangle(x - NPC_SIZE / 2, y - NPC_SIZE / 2, NPC_SIZE, NPC_SIZE);
+        this.rootDialogue = buildDialogue(name, room);
+    }
+
+    public String getName() { return name; }
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public Rectangle getBounds() { return bounds; }
+
+    public boolean hasReceivedCrystal() { return receivedCrystal; }
+    public DialogueNode getRootDialogue() { return rootDialogue; }
+
+    public DialogueNode getLastDialogue() {
+        return lastDialogueNode;
+    }
+
+    public void setLastDialogue(DialogueNode node) {
+        lastDialogueNode = node;
+    }
+
+    public String giveCrystal(TheDimmingEcho game) {
+        if (receivedCrystal) return name + " has already received a crystal.";
+        if (game.getCrystalInventory().getCrystals() > 0) {
+            game.getCrystalInventory().useCrystal();
+            receivedCrystal = true;
+            game.getUsageLog().logCrystalGiven(this.name);
+            return "You gave a crystal to " + name + ". A memory stirs...";
+        } else {
+            return "You have no more crystals.";
+        }
+    }
+
+    private DialogueNode buildDialogue(String name, RoomType roomType) {
+        // We can now create unique dialogue for each NPC
+        switch (name) {
+            case "The Keeper":
+                return buildKeeperDialogue();
+            case "The Whisper":
+                return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
+            case "The Laughing Girl":
+                return new DialogueNode("Hee hee... did you forget something?", new DialogueChoice[0], false, false, true);
+            case "The Stranger":
+                return new DialogueNode("You again. What do you want?", new DialogueChoice[0], false, false, true);
+            default:
+                return new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        }
+    }
+
+    private DialogueNode buildKeeperDialogue() {
+        // Create the node that we will return to.
+        DialogueNode node1_start = new DialogueNode(
+            "You have returned to the place of echoes. What will you do?",
+            new DialogueChoice[3], // Create an empty array of 3 choices
+            false, false, false
+        );
+
+        // Create the "ask" node. It will re-use the choices from the start node.
+        DialogueNode node2_askQuestion = new DialogueNode(
+            "This place is a reflection of what was lost. To remember, you must give a part of yourself. An echo for an echo.",
+            node1_start.choices, // Point back to the same choices array
+            false, false, false
+        );
+
+        // Create the final two nodes.
+        DialogueNode node4_end = new DialogueNode("Farewell, for now.", new DialogueChoice[0], false, false, true);
+        DialogueNode node3_giveCrystal = new DialogueNode("You feel a fragment of memory return... cold, but familiar. The echo quiets.",
+            new DialogueChoice[] { new DialogueChoice("Leave.", node4_end) },
+            true, true, false);
+
+        // Now, fill in the choices for the starting node.
+        // Because node2 re-uses this array, it gets the choices automatically.
+        node1_start.choices[0] = new DialogueChoice("Ask about this place.", node2_askQuestion);
+        node1_start.choices[1] = new DialogueChoice("[Give a Crystal] Restore an echo.", node3_giveCrystal);
+        node1_start.choices[2] = new DialogueChoice("Say nothing.", node4_end);
+
+        // Return the root of the tree
+        return node1_start;
+    }
+}
+
+================================================================================
+// File: entities\Player.java
+================================================================================
+
+package com.dimmingEchoes.entities;
+
+public class Player {
+}
+
+================================================================================
+// File: logic\CrystalInventory.java
+================================================================================
+
+package com.dimmingEchoes;
+
+public class CrystalInventory {
+    private int crystals;
+
+    public CrystalInventory(int startingAmount) {
+        this.crystals = startingAmount;
+    }
+
+    public int getCrystals() {
+        return crystals;
+    }
+
+    public boolean useCrystal() {
+        if (crystals > 0) {
+            crystals--;
+            return true;
+        }
+        return false;
+    }
+
+    public void addCrystal() {
+        crystals++;
+    }
+
+    public void reset(int value) {
+        crystals = value;
+    }
+}
+
+================================================================================
+// File: logic\DialogueManager.java
+================================================================================
+
+package com.dimmingEchoes.logic;
+
+public class DialogueManager {
+}
+
+================================================================================
+// File: logic\UsageLog.java
+================================================================================
+
+package com.dimmingEchoes;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class UsageLog {
+    private final Set<String> npcsGivenCrystal = new HashSet<>();
+
+    public void logCrystalGiven(String npcName) {
+        npcsGivenCrystal.add(npcName);
+    }
+
+    public boolean hasGivenCrystal(String npcName) {
+        return npcsGivenCrystal.contains(npcName);
+    }
+
+    public int totalGiven() {
+        return npcsGivenCrystal.size();
+    }
+
+    public Set<String> getAllRecipients() {
+        return new HashSet<>(npcsGivenCrystal);
+    }
+
+    public void clear() {
+        npcsGivenCrystal.clear();
+    }
+}
+
+================================================================================
+// File: save\SaveData.java
+================================================================================
+
+package com.dimmingEchoes.save;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class SaveData {
+    public int crystalCount;
+    public Set<String> crystalRecipients = new HashSet<>();
+}
+
+================================================================================
+// File: save\SaveManager.java
+================================================================================
+
+package com.dimmingEchoes.save;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Json;
+
+public class SaveManager {
+    private static final String SAVE_FILE = "savegame.json";
+
+    public static void save(SaveData data) {
+        FileHandle file = Gdx.files.local(SAVE_FILE);
+        Json json = new Json();
+        file.writeString(json.prettyPrint(data), false);
+    }
+
+    public static SaveData load() {
+        FileHandle file = Gdx.files.local(SAVE_FILE);
+        if (!file.exists()) return null;
+        Json json = new Json();
+        return json.fromJson(SaveData.class, file.readString());
+    }
+
+    public static void delete() {
+        FileHandle file = Gdx.files.local(SAVE_FILE);
+        if (file.exists()) file.delete();
+    }
+}
+
+================================================================================
+// File: screens\BattleScreen.java
+================================================================================
+
+package com.dimmingEchoes.screens;
+
+public class BattleScreen {
+}
+
+================================================================================
+// File: screens\DungeonScreen.java
+================================================================================
+
+package com.dimmingEchoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.dimmingEchoes.TheDimmingEcho;
+import com.dimmingEchoes.dialogue.DialogueChoice;
+import com.dimmingEchoes.dialogue.DialogueNode;
+import com.dimmingEchoes.dungeon.DoorZone;
+import com.dimmingEchoes.dungeon.Room;
+import com.dimmingEchoes.dungeon.RoomGraph;
+import com.dimmingEchoes.dungeon.RoomType;
+import com.dimmingEchoes.entities.NPC;
+
+public class DungeonScreen extends InputAdapter implements Screen {
+
+    private final TheDimmingEcho game;
+    private final ShapeRenderer shapeRenderer;
+    private final SpriteBatch spriteBatch;
+
+    private final Stage uiStage;
+    private final Skin skin;
+    private final Table dialogueTable;
+    private final Label dialogueTextLabel;
+    private final Table choicesTable;
+
+    private OrthographicCamera gameCamera;
+    private Viewport gameViewport;
+
+    private Room currentRoom;
+    private final RoomGraph roomGraph;
+
+    private Rectangle player;
+    private static final float PLAYER_SIZE = 40f;
+    private static final float PLAYER_SPEED = 250f;
+    private static final float INTERACTION_RADIUS = 64f;
+
+    private boolean moveUp, moveDown, moveLeft, moveRight;
+
+    private DialogueNode currentDialogueNode = null;
+    private NPC dialogueNPC = null;
+    private boolean endingShown = false;
+
+    private int selectedChoiceIndex = 0;
+
+    private String fullDialogueText = "";
+    private float charTimer = 0;
+    private int charIndex = 0;
+    private final float CHAR_DELAY = 0.03f;
+
+    public DungeonScreen(TheDimmingEcho game) {
+        this.game = game;
+        this.shapeRenderer = new ShapeRenderer();
+        this.spriteBatch = new SpriteBatch();
+
+        gameCamera = new OrthographicCamera();
+        gameViewport = new FitViewport(1280, 720, gameCamera);
+
+        skin = new Skin();
+        BitmapFont font = new BitmapFont();
+        skin.add("default-font", font, BitmapFont.class);
+        skin.load(Gdx.files.internal("uiskin.json"));
+
+        uiStage = new Stage(new ScreenViewport());
+        dialogueTable = new Table(skin);
+        dialogueTable.setFillParent(true);
+        dialogueTable.bottom().padBottom(50);
+        uiStage.addActor(dialogueTable);
+
+        dialogueTextLabel = new Label("", skin);
+        dialogueTextLabel.setWrap(true);
+        choicesTable = new Table();
+
+        dialogueTable.add(dialogueTextLabel).width(Gdx.graphics.getWidth() - 100).left();
+        dialogueTable.row();
+        dialogueTable.add(choicesTable).padTop(20).left();
+        dialogueTable.setVisible(false);
+
+        // --- FIX 2 & 1: Rewritten keyboard listener for dialogue ---
+        uiStage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (currentDialogueNode == null) return false;
+
+                // --- ENTER KEY LOGIC ---
+                if (keycode == Input.Keys.ENTER) {
+                    // If text is still typing, finish it instantly
+                    if (charIndex < fullDialogueText.length()) {
+                        charIndex = fullDialogueText.length();
+                        dialogueTextLabel.setText(fullDialogueText);
+                        populateChoices();
+                        return true;
+                    }
+
+                    // If choices are available, process the selected one
+                    if (choicesTable.getChildren().size > 0) {
+                        DialogueChoice selectedChoice = currentDialogueNode.choices[selectedChoiceIndex];
+                        processDialogueChoice(selectedChoice);
+                        return true;
+                    }
+
+                    // If there are no choices (it's a final line), end the dialogue
+                    endDialogue();
+                    return true;
+                }
+
+                // --- UP/DOWN/W/S KEY LOGIC FOR CHOOSING ---
+                if (choicesTable.getChildren().size > 0) {
+                    if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+                        selectedChoiceIndex = (selectedChoiceIndex - 1 + choicesTable.getChildren().size) % choicesTable.getChildren().size;
+                        updateChoiceHighlight();
+                        return true;
+                    }
+                    if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
+                        selectedChoiceIndex = (selectedChoiceIndex + 1) % choicesTable.getChildren().size;
+                        updateChoiceHighlight();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        this.roomGraph = new RoomGraph();
+        this.currentRoom = roomGraph.getStartingRoom();
+        this.player = new Rectangle(
+            gameViewport.getWorldWidth() / 2f - PLAYER_SIZE / 2f,
+            gameViewport.getWorldHeight() / 2f - PLAYER_SIZE / 2f,
+            PLAYER_SIZE, PLAYER_SIZE
+        );
+
+        Gdx.input.setInputProcessor(this);
+    }
+
+    private void updateChoiceHighlight() {
+        for (int i = 0; i < choicesTable.getChildren().size; i++) {
+            TextButton button = (TextButton) choicesTable.getChildren().get(i);
+            button.setColor(i == selectedChoiceIndex ? Color.GOLD : Color.WHITE);
+        }
+    }
+
+    private void populateChoices() {
+        choicesTable.clear();
+        // Don't end dialogue here, let the input handler do it.
+        if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) {
+            for (final DialogueChoice choice : currentDialogueNode.choices) {
+                TextButton choiceButton = new TextButton(choice.choiceText, skin);
+                choiceButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        processDialogueChoice(choice);
+                    }
+                });
+                choicesTable.add(choiceButton).left().row();
+            }
+            selectedChoiceIndex = 0;
+            updateChoiceHighlight();
+        }
+    }
+
+    private void processDialogueChoice(DialogueChoice choice) {
+        currentDialogueNode = choice.next;
+        if(dialogueNPC != null) dialogueNPC.setLastDialogue(currentDialogueNode);
+
+        if (currentDialogueNode.requiresCrystal && dialogueNPC != null && !dialogueNPC.hasReceivedCrystal()) {
+            if (!game.getCrystalInventory().useCrystal()) {
+                endDialogue();
+                return;
+            }
+            game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+        }
+
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear();
+    }
+
+    @Override
+    public void render(float delta) {
+        if (currentDialogueNode == null) {
+            handleMovement(delta);
+        } else {
+            updateTypingEffect(delta);
+        }
+
+        Color bgColor = currentRoom.getBackgroundColor();
+        Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        gameViewport.apply();
+        gameCamera.update();
+        shapeRenderer.setProjectionMatrix(gameCamera.combined);
+        renderGame();
+
+        spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        renderStaticUI();
+
+        uiStage.act(delta);
+        uiStage.draw();
+    }
+
+    private void updateTypingEffect(float delta) {
+        charTimer += delta;
+        if (charIndex < fullDialogueText.length()) {
+            if (charTimer >= CHAR_DELAY) {
+                charIndex++;
+                dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+                charTimer = 0;
+                if (charIndex == fullDialogueText.length()) {
+                    populateChoices();
+                }
+            }
+        }
+    }
+
+    private void renderGame() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Color wallColor = currentRoom.getBackgroundColor().cpy().mul(0.8f);
+        shapeRenderer.setColor(wallColor);
+        for (Rectangle obstacle : currentRoom.getObstacles()) {
+            shapeRenderer.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        }
+        shapeRenderer.setColor(Color.GOLD);
+        for (DoorZone door : currentRoom.getDoorZones()) {
+            shapeRenderer.rect(door.bounds.x, door.bounds.y, door.bounds.width, door.bounds.height);
+        }
+        for (NPC npc : currentRoom.getNpcs()) {
+            shapeRenderer.setColor(npc.hasReceivedCrystal() ? Color.GREEN : Color.MAGENTA);
+            Rectangle npcBounds = npc.getBounds();
+            shapeRenderer.rect(npcBounds.x, npcBounds.y, npcBounds.width, npcBounds.height);
+        }
+        shapeRenderer.setColor(Color.CYAN);
+        shapeRenderer.rect(player.x, player.y, player.width, player.height);
+        shapeRenderer.end();
+    }
+
+    private void renderStaticUI() {
+        spriteBatch.begin();
+        BitmapFont font = skin.getFont("default-font");
+        font.setColor(Color.WHITE);
+        font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10);
+        font.draw(spriteBatch, "Press [F5] to Save", 10, Gdx.graphics.getHeight() - 35);
+        font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 60);
+        spriteBatch.end();
+    }
+
+    private void startDialogue(NPC npc) {
+        // --- FIX 3: Reset movement flags to prevent ghost movement ---
+        moveUp = moveDown = moveLeft = moveRight = false;
+
+        dialogueNPC = npc;
+        currentDialogueNode = npc.getLastDialogue() != null ? npc.getLastDialogue() : npc.getRootDialogue();
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear();
+        dialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(uiStage);
+        if (charIndex < fullDialogueText.length()) {
+            dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+        } else {
+            populateChoices();
+        }
+    }
+
+    private void endDialogue() {
+        dialogueTable.setVisible(false);
+        currentDialogueNode = null;
+        dialogueNPC = null;
+        Gdx.input.setInputProcessor(this);
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        switch (keycode) {
+            case Input.Keys.W: moveUp = true; break;
+            case Input.Keys.S: moveDown = true; break;
+            case Input.Keys.A: moveLeft = true; break;
+            case Input.Keys.D: moveRight = true; break;
+            case Input.Keys.F5: game.saveGame(); return true;
+            case Input.Keys.SPACE:
+                for (NPC npc : currentRoom.getNpcs()) {
+                    if (isNear(npc)) {
+                        startDialogue(npc);
+                        break;
+                    }
+                }
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        switch (keycode) {
+            case Input.Keys.W: moveUp = false; break;
+            case Input.Keys.S: moveDown = false; break;
+            case Input.Keys.A: moveLeft = false; break;
+            case Input.Keys.D: moveRight = false; break;
+        }
+        return false;
+    }
+
+    private void handleMovement(float delta) {
+        float moveAmount = PLAYER_SPEED * delta;
+        float oldX = player.x;
+        float oldY = player.y;
+
+        if (moveUp) player.y += moveAmount;
+        if (moveDown) player.y -= moveAmount;
+        if (moveLeft) player.x -= moveAmount;
+        if (moveRight) player.x += moveAmount;
+
+        for (DoorZone door : currentRoom.getDoorZones()) {
+            if (player.overlaps(door.bounds)) {
+                changeRoom(door);
+                return;
+            }
+        }
+
+        if (player.x != oldX) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.x = oldX;
+                    break;
+                }
+            }
+        }
+
+        if (player.y != oldY) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.y = oldY;
+                    break;
+                }
+            }
+        }
+    }
+
+    private void changeRoom(DoorZone door) {
+        currentRoom = door.leadsTo;
+        if (dialogueTable.isVisible()) endDialogue();
+        switch (door.entryDirection) {
+            case LEFT: player.x = gameViewport.getWorldWidth() - player.width - 48f; player.y = gameViewport.getWorldHeight() / 2f; break;
+            case RIGHT: player.x = 48f; player.y = gameViewport.getWorldHeight() / 2f; break;
+            case TOP: player.x = gameViewport.getWorldWidth() / 2f; player.y = 48f; break;
+            case BOTTOM: player.x = gameViewport.getWorldWidth() / 2f; player.y = gameViewport.getWorldHeight() - player.height - 48f; break;
+        }
+        if (currentRoom.getRoomType() == RoomType.FINAL && !endingShown) {
+            triggerEnding();
+        }
+    }
+
+    private void triggerEnding() {
+        int used = game.getUsageLog().totalGiven();
+        String ending;
+        if (used == 0) {
+            ending = "Ending: A Place That No Longer Exists\nYou remembered, but never acted.";
+        } else if (used == 5) {
+            ending = "Ending: Petals in the Void\nYou gave all. And something beautiful bloomed.";
+        } else {
+            ending = "Ending: The Keeper Becomes Stone\nSome memories returned, others stayed buried.";
+        }
+        game.setScreen(new EndingScreen(ending));
+        endingShown = true;
+    }
+
+    private boolean isNear(NPC npc) {
+        Vector2 playerCenter = player.getCenter(new Vector2());
+        Vector2 npcCenter = npc.getBounds().getCenter(new Vector2());
+        return playerCenter.dst(npcCenter) < INTERACTION_RADIUS;
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        gameViewport.update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
+        dialogueTable.invalidateHierarchy();
+    }
+
+    @Override public void dispose() { shapeRenderer.dispose(); spriteBatch.dispose(); skin.dispose(); uiStage.dispose(); }
+    @Override public void show() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
+}
+
+================================================================================
+// File: screens\EndingScreen.java
+================================================================================
+
+package com.dimmingEchoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class EndingScreen implements Screen {
+    private final String endingMessage;
+    private final SpriteBatch batch = new SpriteBatch();
+    private final BitmapFont font = new BitmapFont();
+
+    public EndingScreen(String endingMessage) {
+        this.endingMessage = endingMessage;
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        font.draw(batch, endingMessage, 50, Gdx.graphics.getHeight() - 50);
+        font.draw(batch, "Press ESC to exit.", 50, 100);
+        batch.end();
+
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+        }
+    }
+
+    @Override public void resize(int width, int height) {}
+    @Override public void show() {}
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void dispose() { batch.dispose(); font.dispose(); }
+}
