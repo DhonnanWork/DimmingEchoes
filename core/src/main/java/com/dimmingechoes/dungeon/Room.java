@@ -1,8 +1,8 @@
-package com.dimmingEchoes.dungeon;
+package com.dimmingechoes.dungeon;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-import com.dimmingEchoes.entities.NPC;
+import com.dimmingechoes.entities.NPC;
 
 import java.util.ArrayList;
 import java.util.List;

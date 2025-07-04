@@ -1,4 +1,4 @@
-package com.dimmingEchoes.dungeon;
+package com.dimmingechoes.dungeon;
 
 public enum RoomType {
     START,

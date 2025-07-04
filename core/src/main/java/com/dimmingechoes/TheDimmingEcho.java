@@ -1,11 +1,11 @@
-package com.dimmingEchoes;
+package com.dimmingechoes;
 
 import com.badlogic.gdx.Game;
-import com.dimmingEchoes.screens.DungeonScreen;
-import com.dimmingEchoes.save.SaveData;
-import com.dimmingEchoes.save.SaveManager;
-import com.dimmingEchoes.logic.CrystalInventory ;
-import com.dimmingEchoes.logic.UsageLog;
+import com.dimmingechoes.screens.DungeonScreen;
+import com.dimmingechoes.save.SaveData;
+import com.dimmingechoes.save.SaveManager;
+import com.dimmingechoes.logic.CrystalInventory;
+import com.dimmingechoes.logic.UsageLog;
 
 public class TheDimmingEcho extends Game {
 

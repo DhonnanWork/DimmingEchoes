@@ -1,11 +1,9 @@
-// CHANGE THIS LINE
 package com.dimmingechoes.lwjgl3;
 
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-// AND CHANGE THIS LINE
-import com.dimmingEchoes.TheDimmingEcho;
+import com.dimmingechoes.TheDimmingEcho;
 
 
 public class Lwjgl3Launcher {

@@ -1,10 +1,10 @@
-package com.dimmingEchoes.entities;
+package com.dimmingechoes.entities;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.dimmingEchoes.TheDimmingEcho;
-import com.dimmingEchoes.dialogue.DialogueChoice;
-import com.dimmingEchoes.dialogue.DialogueNode;
-import com.dimmingEchoes.dungeon.RoomType;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.dialogue.DialogueChoice;
+import com.dimmingechoes.dialogue.DialogueNode;
+import com.dimmingechoes.dungeon.RoomType;
 
 public class NPC {
     private final String name;

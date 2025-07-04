@@ -1,4 +1,4 @@
-package com.dimmingEchoes.logic;
+package com.dimmingechoes.logic;
 
 public class DialogueManager {
 }

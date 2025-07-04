@@ -1,4 +1,4 @@
-package com.dimmingEchoes.screens;
+package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;

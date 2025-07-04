@@ -1,4 +1,4 @@
-package com.dimmingEchoes.save;
+package com.dimmingechoes.save;
 
 import java.util.HashSet;
 import java.util.Set;

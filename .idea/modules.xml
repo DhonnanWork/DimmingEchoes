@@ -2,6 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DimmingEchoes.iml" filepath="$PROJECT_DIR$/.idea/modules/DimmingEchoes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lwjgl3/DimmingEchoes.lwjgl3.iml" filepath="$PROJECT_DIR$/.idea/modules/lwjgl3/DimmingEchoes.lwjgl3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lwjgl3/DimmingEchoes.lwjgl3.main.iml" filepath="$PROJECT_DIR$/.idea/modules/lwjgl3/DimmingEchoes.lwjgl3.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lwjgl3/DimmingEchoes.lwjgl3.test.iml" filepath="$PROJECT_DIR$/.idea/modules/lwjgl3/DimmingEchoes.lwjgl3.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/StrukdatGame.iml" filepath="$PROJECT_DIR$/.idea/modules/StrukdatGame.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/StrukdatGame.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/StrukdatGame.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/StrukdatGame.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/StrukdatGame.core.main.iml" />

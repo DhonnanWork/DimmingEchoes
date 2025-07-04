@@ -1,4 +1,4 @@
-package com.dimmingEchoes;
+package com.dimmingechoes.logic;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package com.dimmingEchoes;
+package com.dimmingechoes.logic;
 
 public class CrystalInventory {
     private int crystals;

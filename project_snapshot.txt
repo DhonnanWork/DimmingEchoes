@@ -271,6 +271,30 @@ subprojects {
 
 eclipse.project.name = 'Dimming Echoes' + '-parent'
 
+project(":core") {
+  apply plugin: "java-library"
+
+  dependencies {
+    // This line is for the base LibGDX library
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+    // This is the new line we are adding for better fonts
+    api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+  }
+}
+project(":lwjgl3") {
+  apply plugin: "java-library"
+
+  dependencies {
+    implementation project(":core")
+    api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+    // THIS LINE IS NEW AND VERY IMPORTANT
+    api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+  }
+}
+
 ================================================================================
 
 --- File: .\gradle.properties ---
@@ -293,6 +317,7 @@ graalHelperVersion=2.0.1
 enableGraalNative=false
 gdxVersion=1.13.1
 projectVersion=1.0.0
+
 
 ================================================================================
 
@@ -699,25 +724,45 @@ include 'lwjgl3', 'core'
 ================================================================================
 
 --- File: .\assets\assets.txt ---
+LibertinusMono-Regular.ttf
 libgdx.png
+savegame.json
+uiskin.atlas
+uiskin.json
+uiskin.png
+
+================================================================================
+
+--- File: .\assets\LibertinusMono-Regular.ttf ---
+*** Non-text file (.ttf extension). Content not displayed. ***
 
 ================================================================================
 
 --- File: .\assets\libgdx.png ---
-PNG
-
-   
-IHDR  z   ?   ٜ  PLTE   KDKFMMKF33KKIIJEJEJEJEGGJEJFLCNCMFJEJEJEIBIEIFJDKEJEKEFFHHJFJEFFJDJEKEKDJEJ@IEJEKEJFKEJEIFIIJEIE  JEJEJEIDKFU9IEKEJEIELBIEJEJBJEJEJEIFJEJEIEJEJEJEJEJFJEJEJEJEIFIIKFIDLEJEKEGGJEJEKEJDKFJEJEJELGKFJELGJF@@IEIEIEIDJEJEJEJFJDQCGGUUKDKFJEJEKEJEJFJEKFIFKGJEJEJDIFHDJEJFJEKDJEJEKFKEJEJEJFJDJEHCIDIDIDJDIEKDJEHHJEIFDDJDJDIIJELDJEJEJEJFJEJEJEIEJEJEJEa   tRNS "3
-f̀9!#v wt3ûs^,	;}
-4IjlQ+r\c]/:6L>i?ro-#D_	UȷXBAhgSdVJdv<gEzXʝ0~>]p5p8aF6'b͕AE8n@bY@/aδ5R  QIDATxgtUB01&F6pBbMDJB JHG{{^%xo;{g޻90;eyBL+$]njÍ!jw0e}N65*ΝQ
-4;G#_xσѹۂҶB}zI601YrG#
-Г2y9f=]AG{Z>ϿG{Z^ffOw;4-h{#/H?E Pǡ'|{$eGE.7yIi	Þd,@:toiz6;K7@hJS7a!	z2>5d;;jaOcA٨V{B^>jsA4
-4TRR@G66ElHɞ@ϥ/OOovGnVz\$7z8Ffnl1I^eZ=F<;^:9zϐ7@Ow>"@ϰcK5{Z^>	z	+Yz9t{J^>vbǐ_x	z|I#
-;=.tz7<a/O|#z]fy^~;y
-Y;;ܘ{S_V~*ʬ"~AOzj-M9  _M"nEkn5=\M̓$A+|_!m<N}MCOCr~V6uzЈJEjuzgs8i(*Šg!	{wk{>n)}Tj]й5I!%/U	G 7M?o.j=ҾjAd==Œ(%?ݚ}.<{
-_lBW2꽒~rw5!O{uiV	C~]*|}؝|es%2wǂVnsy^~n="CY {[+LO?F
-/5D?+Oۦif3J0Ca9[K_}8,fkO?SײTeׁyd{أoԾ3_UB[ѹ"BE7W7
-=-/do詟T,O@/\!d-ʐgDd|iLg`oG3&fLWeN__^ \b?y;    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\savegame.json ---
+*** Non-text file (.json extension). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\uiskin.atlas ---
+uiskin.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+================================================================================
+
+--- File: .\assets\uiskin.json ---
+*** Non-text file (.json extension). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\uiskin.png ---
+*** Non-text file (.png extension). Content not displayed. ***
+
 ================================================================================
 
 --- File: .\core\build.gradle ---
@@ -733,6 +778,11 @@ dependencies {
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+}
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_14
+  targetCompatibility = JavaVersion.VERSION_14
 }
 
 ================================================================================
@@ -774,11 +824,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
@@ -788,11 +841,22 @@ public class Main extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
     private BitmapFont font;
-    private OrthographicCamera uiCamera; // A separate camera for the UI that doesn't move
-    private OrthographicCamera gameCamera; // <-- NEW: A camera for the game world that will move
+    private OrthographicCamera uiCamera;
+    private OrthographicCamera gameCamera;
+    private GlyphLayout layout = new GlyphLayout();
+
+    // --- Game State Management ---
+    enum GameState {
+        PLAYING,
+        CONFIRM_TRANSITION
+    }
+    private GameState currentState;
+    private Door pendingDoor;
+    private boolean isYesSelected = true; // --- NEW: Tracks which option is highlighted
 
     // --- Player State ---
     private Rectangle player;
+    private Texture playerTexture;
     private final float PLAYER_SIZE = 50f;
     private final float PLAYER_SPEED = 300f;
     private int playerHp;
@@ -808,11 +872,14 @@ public class Main extends ApplicationAdapter {
     private int currentRoomY;
     private final int WORLD_WIDTH = 3;
     private final int WORLD_HEIGHT = 3;
+    private final char[][] roomNames = {
+        {'A', 'B', 'C'},
+        {'D', 'E', 'F'},
+        {'G', 'H', 'I'}
+    };
 
-    // --- Logging Tag ---
     private static final String TAG = "GameLog";
 
-    // --- Helper Enums for Readability ---
     enum ItemType {
         HEALING_POTION, SPEED_BOOST, TELEPORT_BOMB, SHIELD, DECOY
     }
@@ -821,7 +888,6 @@ public class Main extends ApplicationAdapter {
         NORTH, SOUTH, EAST, WEST
     }
 
-    // --- Helper Class for Doors ---
     static class Door {
         Rectangle rect;
         Direction dir;
@@ -832,17 +898,16 @@ public class Main extends ApplicationAdapter {
         }
     }
 
-    // --- Helper Class for Rooms ---
     static class Room {
         Array<Rectangle> walls = new Array<>();
         Array<Door> doors = new Array<>();
 
         public Room(float x, float y, float width, float height, float thickness, boolean north, boolean south, boolean east, boolean west) {
             float doorSize = 100f;
-            walls.add(new Rectangle(x, y, thickness, height)); // Left
-            walls.add(new Rectangle(x + width - thickness, y, thickness, height)); // Right
-            walls.add(new Rectangle(x, y, width, thickness)); // Bottom
-            walls.add(new Rectangle(x, y + height - thickness, width, thickness)); // Top
+            walls.add(new Rectangle(x, y, thickness, height));
+            walls.add(new Rectangle(x + width - thickness, y, thickness, height));
+            walls.add(new Rectangle(x, y, width, thickness));
+            walls.add(new Rectangle(x, y + height - thickness, width, thickness));
             if (north) doors.add(new Door(x + width/2 - doorSize/2, y + height - thickness, doorSize, thickness, Direction.NORTH));
             if (south) doors.add(new Door(x + width/2 - doorSize/2, y, doorSize, thickness, Direction.SOUTH));
             if (west)  doors.add(new Door(x, y + height/2 - doorSize/2, thickness, doorSize, Direction.WEST));
@@ -853,35 +918,31 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
-        // --- Initialize Rendering Tools ---
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
+        font.getData().setScale(1.5f);
 
-        // --- NEW: Initialize both cameras ---
+        // This is a placeholder. You should replace "libgdx.png" with your own player asset.
+        playerTexture = new Texture(Gdx.files.internal("libgdx.png"));
+
         uiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         uiCamera.setToOrtho(false);
         gameCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         gameCamera.setToOrtho(false);
 
-        // --- Initialize Player Stats & Items ---
         playerMaxHp = 10;
         playerHp = playerMaxHp;
         inventory = new Array<>();
         inventory.add(ItemType.HEALING_POTION);
         inventory.add(ItemType.SPEED_BOOST);
-        inventory.add(ItemType.TELEPORT_BOMB);
-        inventory.add(ItemType.SHIELD);
-        inventory.add(ItemType.DECOY);
         currentItemIndex = 0;
 
-        // --- Generate the World ---
         generateRooms();
         currentRoomX = 1;
         currentRoomY = 1;
 
-        // --- Initialize Player ---
         float roomWidth = Gdx.graphics.getWidth();
         float roomHeight = Gdx.graphics.getHeight();
         player = new Rectangle(
@@ -890,6 +951,9 @@ public class Main extends ApplicationAdapter {
             PLAYER_SIZE,
             PLAYER_SIZE
         );
+
+        currentState = GameState.PLAYING;
+        Gdx.input.setCursorCatched(true);
 
         Gdx.app.log(TAG, "Game created. Player and 3x3 world initialized.");
     }
@@ -913,45 +977,96 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        handleInput();
-        updatePlayerPosition();
-        checkCollisions();
+        switch (currentState) {
+            case PLAYING:
+                handleInput();
+                updatePlayerPosition();
+                checkCollisions();
+                break;
+            case CONFIRM_TRANSITION:
+                handleConfirmationInput();
+                break;
+        }
+
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1);
         drawWorld();
         drawUI();
+
+        if (currentState == GameState.CONFIRM_TRANSITION) {
+            drawConfirmationDialog();
+        }
     }
 
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Keys.C)) useCurrentItem();
         if (Gdx.input.isKeyJustPressed(Keys.E)) cycleItem();
-        if (Gdx.input.isKeyJustPressed(Keys.W) || Gdx.input.isKeyJustPressed(Keys.UP))    Gdx.app.log(TAG, "Input: UP");
-        if (Gdx.input.isKeyJustPressed(Keys.S) || Gdx.input.isKeyJustPressed(Keys.DOWN))  Gdx.app.log(TAG, "Input: DOWN");
-        if (Gdx.input.isKeyJustPressed(Keys.A) || Gdx.input.isKeyJustPressed(Keys.LEFT))  Gdx.app.log(TAG, "Input: LEFT");
-        if (Gdx.input.isKeyJustPressed(Keys.D) || Gdx.input.isKeyJustPressed(Keys.RIGHT)) Gdx.app.log(TAG, "Input: RIGHT");
+    }
+
+    // --- MODIFIED: Handles highlighting and Enter key confirmation ---
+    private void handleConfirmationInput() {
+        // A/D or Left/Right toggles the selection between Yes and No
+        if (Gdx.input.isKeyJustPressed(Keys.A) || Gdx.input.isKeyJustPressed(Keys.LEFT)) {
+            isYesSelected = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.D) || Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
+            isYesSelected = false;
+        }
+
+        // Enter key confirms the currently highlighted selection
+        if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
+            confirmTransition(isYesSelected);
+            return;
+        }
+
+        // Mouse click logic
+        if (Gdx.input.justTouched()) {
+            float dialogWidth = 400;
+            float screenCenterX = Gdx.graphics.getWidth() / 2f;
+            float screenCenterY = Gdx.graphics.getHeight() / 2f;
+            float buttonWidth = 100;
+            float buttonHeight = 50;
+            float dialogY = screenCenterY - 150 / 2f;
+            float buttonY = dialogY + 20;
+
+            Rectangle yesBounds = new Rectangle(screenCenterX - buttonWidth - 20, buttonY, buttonWidth, buttonHeight);
+            Rectangle noBounds = new Rectangle(screenCenterX + 20, buttonY, buttonWidth, buttonHeight);
+
+            Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            uiCamera.unproject(touchPos);
+
+            if (yesBounds.contains(touchPos.x, touchPos.y)) {
+                confirmTransition(true);
+            } else if (noBounds.contains(touchPos.x, touchPos.y)) {
+                confirmTransition(false);
+            }
+        }
+    }
+
+    private void confirmTransition(boolean accepted) {
+        if (accepted) {
+            changeRoom(pendingDoor);
+        } else {
+            // Push player back slightly if they say no, to prevent re-triggering
+            switch (pendingDoor.dir) {
+                case NORTH: player.y -= 10; break;
+                case SOUTH: player.y += 10; break;
+                case EAST:  player.x -= 10; break;
+                case WEST:  player.x += 10; break;
+            }
+        }
+
+        currentState = GameState.PLAYING;
+        pendingDoor = null;
+        isYesSelected = true; // Reset highlight to default ("Yes")
+        Gdx.input.setCursorCatched(true);
     }
 
     private void useCurrentItem() {
-        if (inventory.isEmpty()) {
-            Gdx.app.log(TAG, "Inventory is empty. Cannot use item.");
-            return;
-        }
+        if (inventory.isEmpty()) return;
         ItemType item = inventory.get(currentItemIndex);
         Gdx.app.log(TAG, "Used item: " + item.name());
-        switch (item) {
-            case HEALING_POTION:
-                if (playerHp < playerMaxHp) {
-                    playerHp++;
-                    Gdx.app.log(TAG, "Healed 1 HP. Current HP: " + playerHp);
-                } else {
-                    Gdx.app.log(TAG, "HP is already full.");
-                }
-                break;
-            case SPEED_BOOST:
-            case TELEPORT_BOMB:
-            case SHIELD:
-            case DECOY:
-                Gdx.app.log(TAG, item.name() + " is not implemented yet.");
-                break;
+        if (item == ItemType.HEALING_POTION) {
+            if (playerHp < playerMaxHp) playerHp++;
         }
         inventory.removeIndex(currentItemIndex);
         if (currentItemIndex >= inventory.size && !inventory.isEmpty()) {
@@ -975,58 +1090,73 @@ public class Main extends ApplicationAdapter {
 
     private void checkCollisions() {
         Room currentRoom = rooms[currentRoomX][currentRoomY];
+
         float oldX = player.x;
-        float oldY = player.y;
-        Rectangle potentialPosition = new Rectangle(player);
-        potentialPosition.y = oldY;
-        for (Rectangle wall : currentRoom.walls) {
-            if (potentialPosition.overlaps(wall)) {
-                Gdx.app.log(TAG, "Collision on X-axis with wall.");
+        // Simplified movement application to avoid duplicating code in updatePlayerPosition
+        for(Rectangle wall : currentRoom.walls) {
+            if (player.overlaps(wall)) {
                 player.x = oldX;
                 break;
             }
         }
-        potentialPosition.x = player.x;
-        potentialPosition.y = player.y;
-        for (Rectangle wall : currentRoom.walls) {
-            if (potentialPosition.overlaps(wall)) {
-                Gdx.app.log(TAG, "Collision on Y-axis with wall.");
+
+        float oldY = player.y;
+        for(Rectangle wall : currentRoom.walls) {
+            if (player.overlaps(wall)) {
                 player.y = oldY;
                 break;
             }
         }
+
         for (Door door : currentRoom.doors) {
             if (player.overlaps(door.rect)) {
                 Gdx.app.log(TAG, "Player entered a " + door.dir.name() + " door.");
-                changeRoom(door.dir);
+                currentState = GameState.CONFIRM_TRANSITION;
+                pendingDoor = door;
+                Gdx.input.setCursorCatched(false);
                 return;
             }
         }
     }
 
-    private void changeRoom(Direction direction) {
-        switch (direction) {
-            case NORTH: currentRoomY++; player.y += 50; break;
-            case SOUTH: currentRoomY--; player.y -= 50; break;
-            case EAST:  currentRoomX++; player.x += 50; break;
-            case WEST:  currentRoomX--; player.x -= 50; break;
+    // --- MODIFIED: Implements smart teleportation logic ---
+    private void changeRoom(Door door) {
+        float roomWidth = Gdx.graphics.getWidth();
+        float roomHeight = Gdx.graphics.getHeight();
+        float offset = PLAYER_SIZE * 0.5f; // A small buffer distance
+
+        switch (door.dir) {
+            case NORTH:
+                currentRoomY++;
+                // Player appears just above the bottom door of the new room
+                player.y = (currentRoomY * roomHeight) + door.rect.height + offset;
+                break;
+            case SOUTH:
+                currentRoomY--;
+                // Player appears just below the top door of the new room
+                player.y = ((currentRoomY + 1) * roomHeight) - door.rect.height - PLAYER_SIZE - offset;
+                break;
+            case EAST:
+                currentRoomX++;
+                // Player appears just to the right of the left door of the new room
+                player.x = (currentRoomX * roomWidth) + door.rect.width + offset;
+                break;
+            case WEST:
+                currentRoomX--;
+                // Player appears just to the left of the right door of the new room
+                player.x = ((currentRoomX + 1) * roomWidth) - door.rect.width - PLAYER_SIZE - offset;
+                break;
         }
     }
 
     private void drawWorld() {
         Room currentRoom = rooms[currentRoomX][currentRoomY];
-
-        // --- THIS IS THE CORRECTED CAMERA LOGIC ---
-        // 1. Update our game camera's position to center on the player
         gameCamera.position.set(player.x + player.width / 2, player.y + player.height / 2, 0);
         gameCamera.update();
 
-        // 2. Tell the ShapeRenderer to use our updated game camera
         shapeRenderer.setProjectionMatrix(gameCamera.combined);
-        // --- END CORRECTION ---
-
         shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.setColor(Color.GRAY);
         for (Rectangle wall : currentRoom.walls) {
             shapeRenderer.rect(wall.x, wall.y, wall.width, wall.height);
         }
@@ -1034,9 +1164,12 @@ public class Main extends ApplicationAdapter {
         for (Door door : currentRoom.doors) {
             shapeRenderer.rect(door.rect.x, door.rect.y, door.rect.width, door.rect.height);
         }
-        shapeRenderer.setColor(Color.CYAN);
-        shapeRenderer.rect(player.x, player.y, player.width, player.height);
         shapeRenderer.end();
+
+        batch.setProjectionMatrix(gameCamera.combined);
+        batch.begin();
+        batch.draw(playerTexture, player.x, player.y, player.width, player.height);
+        batch.end();
     }
 
     private void drawUI() {
@@ -1045,6 +1178,75 @@ public class Main extends ApplicationAdapter {
         font.draw(batch, "HP: " + playerHp + " / " + playerMaxHp, 20, Gdx.graphics.getHeight() - 20);
         String currentItemText = "Item: " + (inventory.isEmpty() ? "NONE" : inventory.get(currentItemIndex).name());
         font.draw(batch, currentItemText, 20, Gdx.graphics.getHeight() - 40);
+        font.draw(batch, "Room: " + roomNames[currentRoomX][currentRoomY], 20, Gdx.graphics.getHeight() - 60);
+        batch.end();
+    }
+
+    // --- MODIFIED: Draws a highlight based on selection ---
+    private void drawConfirmationDialog() {
+        float dialogWidth = 450; // Made wider for help text
+        float dialogHeight = 150;
+        float screenCenterX = Gdx.graphics.getWidth() / 2f;
+        float screenCenterY = Gdx.graphics.getHeight() / 2f;
+        float dialogX = screenCenterX - dialogWidth / 2;
+        float dialogY = screenCenterY - dialogHeight / 2;
+
+        float buttonWidth = 100;
+        float buttonHeight = 50;
+        float buttonY = dialogY + 45;
+
+        Rectangle yesButtonRect = new Rectangle(screenCenterX - buttonWidth - 20, buttonY, buttonWidth, buttonHeight);
+        Rectangle noButtonRect = new Rectangle(screenCenterX + 20, buttonY, buttonWidth, buttonHeight);
+
+        Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
+        Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.setProjectionMatrix(uiCamera.combined);
+        shapeRenderer.begin(ShapeType.Filled);
+
+        shapeRenderer.setColor(0, 0, 0, 0.7f);
+        shapeRenderer.rect(dialogX, dialogY, dialogWidth, dialogHeight);
+
+        // --- HIGHLIGHT LOGIC ---
+        shapeRenderer.setColor(Color.GOLD);
+        if (isYesSelected) {
+            shapeRenderer.rect(yesButtonRect.x - 2, yesButtonRect.y - 2, yesButtonRect.width + 4, yesButtonRect.height + 4);
+        } else {
+            shapeRenderer.rect(noButtonRect.x - 2, noButtonRect.y - 2, noButtonRect.width + 4, noButtonRect.height + 4);
+        }
+
+        shapeRenderer.end();
+        Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
+
+        batch.setProjectionMatrix(uiCamera.combined);
+        batch.begin();
+
+        int destX = currentRoomX;
+        int destY = currentRoomY;
+        switch (pendingDoor.dir) {
+            case NORTH: destY++; break;
+            case SOUTH: destY--; break;
+            case EAST:  destX++; break;
+            case WEST:  destX--; break;
+        }
+        char destRoomName = roomNames[destX][destY];
+
+        String question = "Move to Room " + destRoomName + "?";
+        layout.setText(font, question);
+        font.draw(batch, layout, screenCenterX - layout.width / 2, dialogY + dialogHeight - 20);
+
+        font.setColor(Color.BLACK);
+        layout.setText(font, "Yes");
+        font.draw(batch, layout, yesButtonRect.x + (yesButtonRect.width / 2 - layout.width / 2), yesButtonRect.y + (yesButtonRect.height / 2 + layout.height / 2));
+
+        layout.setText(font, "No");
+        font.draw(batch, layout, noButtonRect.x + (noButtonRect.width / 2 - layout.width / 2), noButtonRect.y + (noButtonRect.height / 2 + layout.height / 2));
+        font.setColor(Color.WHITE);
+
+        String helpText = "[A/D] or [Left/Right] to select. [Enter] to confirm.";
+        layout.setText(font, helpText);
+        font.draw(batch, layout, screenCenterX - layout.width / 2, dialogY + 30);
+
         batch.end();
     }
 
@@ -1053,7 +1255,1033 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.dispose();
         batch.dispose();
         font.dispose();
+        playerTexture.dispose();
     }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\TheDimmingEcho.java ---
+package com.dimmingechoes;
+
+import com.badlogic.gdx.Game;
+import com.dimmingechoes.screens.DungeonScreen;
+import com.dimmingechoes.save.SaveData;
+import com.dimmingechoes.save.SaveManager;
+import com.dimmingechoes.logic.CrystalInventory;
+import com.dimmingechoes.logic.UsageLog;
+
+public class TheDimmingEcho extends Game {
+
+    private CrystalInventory crystalInventory;
+    private UsageLog usageLog;
+
+    @Override
+    public void create() {
+        crystalInventory = new CrystalInventory(5);
+        usageLog = new UsageLog();
+
+        loadGame();
+        setScreen(new DungeonScreen(this));
+    }
+
+    public CrystalInventory getCrystalInventory() {
+        return crystalInventory;
+    }
+
+    public UsageLog getUsageLog() {
+        return usageLog;
+    }
+
+    public void saveGame() {
+        SaveData data = new SaveData();
+        data.crystalCount = crystalInventory.getCrystals();
+        data.crystalRecipients = usageLog.getAllRecipients();
+        SaveManager.save(data);
+    }
+
+    public void loadGame() {
+        SaveData data = SaveManager.load();
+        if (data != null) {
+            crystalInventory.reset(data.crystalCount);
+            for (String npc : data.crystalRecipients) {
+                usageLog.logCrystalGiven(npc);
+            }
+        }
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\dialogue\DialogueChoice.java ---
+package com.dimmingechoes.dialogue;
+
+public class DialogueChoice {
+    public final String choiceText;
+    public final DialogueNode next;
+
+    public DialogueChoice(String choiceText, DialogueNode next) {
+        this.choiceText = choiceText;
+        this.next = next;
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\dialogue\DialogueNode.java ---
+package com.dimmingechoes.dialogue;
+
+public class DialogueNode {
+    public final String text;
+    public final DialogueChoice[] choices;
+    public final boolean requiresCrystal;
+    public final boolean consumesCrystal;
+    public final boolean endDialogue;
+
+    public DialogueNode(String text, DialogueChoice[] choices, boolean requiresCrystal, boolean consumesCrystal, boolean endDialogue) {
+        this.text = text;
+        this.choices = choices;
+        this.requiresCrystal = requiresCrystal;
+        this.consumesCrystal = consumesCrystal;
+        this.endDialogue = endDialogue;
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\dungeon\DoorZone.java ---
+package com.dimmingechoes.dungeon;
+
+import com.badlogic.gdx.math.Rectangle;
+
+/**
+ * Represents an area in a room that, when entered, transports the player to another room.
+ */
+public class DoorZone {
+    public final Rectangle bounds;
+    public final Room leadsTo;
+    public final Direction entryDirection; // The side of the room this door is on
+
+    public enum Direction {
+        LEFT, RIGHT, TOP, BOTTOM
+    }
+
+    public DoorZone(Rectangle bounds, Room leadsTo, Direction entryDirection) {
+        this.bounds = bounds;
+        this.leadsTo = leadsTo;
+        this.entryDirection = entryDirection;
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\dungeon\GridBuilder.java ---
+package com.dimmingechoes.dungeon;
+
+public class GridBuilder {
+
+    public static int[][] build(int width, int height, boolean outerWalls, boolean doors) {
+        int[][] grid = new int[width][height];
+
+        if (outerWalls) {
+            for (int x = 0; x < width; x++) {
+                grid[x][0] = 1;
+                grid[x][height - 1] = 1;
+            }
+            for (int y = 0; y < height; y++) {
+                grid[0][y] = 1;
+                grid[width - 1][y] = 1;
+            }
+        }
+
+        if (doors) {
+            if (width >= 5 && height >= 5) {
+                grid[1][height / 2] = 2;
+                grid[width - 2][height / 2] = 2;
+                grid[width / 2][1] = 2;
+                grid[width / 2][height - 2] = 2;
+            }
+        }
+
+        return grid;
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\dungeon\Room.java ---
+package com.dimmingechoes.dungeon;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
+import com.dimmingechoes.entities.NPC;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Room {
+
+    private final RoomType type;
+    private final Color backgroundColor; // <-- ADDED
+    private final List<NPC> npcs = new ArrayList<>();
+    private final List<Rectangle> obstacles = new ArrayList<>();
+    private final List<DoorZone> doorZones = new ArrayList<>();
+
+    // Constructor is now updated
+    public Room(RoomType type, Color backgroundColor) {
+        this.type = type;
+        this.backgroundColor = backgroundColor;
+    }
+
+    public RoomType getRoomType() { return type; }
+    public Color getBackgroundColor() { return backgroundColor; } // <-- ADDED
+
+    public List<NPC> getNpcs() { return npcs; }
+    public void addNPC(NPC npc) { npcs.add(npc); }
+
+    public List<Rectangle> getObstacles() { return obstacles; }
+    public void addObstacle(Rectangle obstacle) { obstacles.add(obstacle); }
+
+    public List<DoorZone> getDoorZones() { return doorZones; }
+    public void addDoorZone(DoorZone doorZone) { doorZones.add(doorZone); }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\dungeon\RoomGraph.java ---
+package com.dimmingechoes.dungeon;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
+import com.dimmingechoes.entities.NPC;
+
+public class RoomGraph {
+
+    private Room startingRoom;
+
+    // --- Define the world dimensions ---
+    private static final float WORLD_WIDTH = 1280;
+    private static final float WORLD_HEIGHT = 720;
+    private static final float WALL_THICKNESS = 32;
+    private static final float DOOR_WIDTH = 120;
+    private static final float DOOR_THICKNESS = 32;
+
+    public RoomGraph() {
+        generateRooms();
+    }
+
+    public Room getStartingRoom() {
+        return startingRoom;
+    }
+
+    private void generateRooms() {
+        // Build all the room objects first, now with colors
+        Room start = new Room(RoomType.START, new Color(0.2f, 0.2f, 0.2f, 1));
+        Room memory = new Room(RoomType.MEMORY, new Color(0.1f, 0.2f, 0.3f, 1)); // A muted blue
+        Room battle = new Room(RoomType.BATTLE, new Color(0.3f, 0.1f, 0.1f, 1)); // A dim red
+        Room finalRoom = new Room(RoomType.FINAL, new Color(0.1f, 0.1f, 0.1f, 1)); // Near black
+
+        // --- Define START Room Layout ---
+        setupRoomBoundaries(start);
+        start.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), memory, DoorZone.Direction.LEFT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), battle, DoorZone.Direction.RIGHT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, WORLD_HEIGHT - DOOR_THICKNESS, DOOR_WIDTH, DOOR_THICKNESS), finalRoom, DoorZone.Direction.TOP));
+        start.addNPC(new NPC("The Keeper", RoomType.START, 300, 500));
+        start.addNPC(new NPC("The Whisper", RoomType.START, 800, 400));
+
+        // --- Define MEMORY Room Layout ---
+        setupRoomBoundaries(memory);
+        memory.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.RIGHT));
+        memory.addNPC(new NPC("The Laughing Girl", RoomType.MEMORY, WORLD_WIDTH / 2, WORLD_HEIGHT / 2));
+        memory.addObstacle(new Rectangle(200, 200, 50, 50));
+        memory.addObstacle(new Rectangle(900, 450, 80, 80));
+
+        // --- Define BATTLE Room Layout ---
+        setupRoomBoundaries(battle);
+        battle.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.LEFT));
+        battle.addNPC(new NPC("The Stranger", RoomType.BATTLE, WORLD_WIDTH / 2, 400));
+
+        // --- Define FINAL Room Layout ---
+        setupRoomBoundaries(finalRoom);
+        finalRoom.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, 0, DOOR_WIDTH, DOOR_THICKNESS), start, DoorZone.Direction.BOTTOM));
+
+        this.startingRoom = start;
+    }
+
+    private void setupRoomBoundaries(Room room) {
+        room.addObstacle(new Rectangle(0, 0, WORLD_WIDTH, WALL_THICKNESS));
+        room.addObstacle(new Rectangle(0, WORLD_HEIGHT - WALL_THICKNESS, WORLD_WIDTH, WALL_THICKNESS));
+        room.addObstacle(new Rectangle(0, 0, WALL_THICKNESS, WORLD_HEIGHT));
+        room.addObstacle(new Rectangle(WORLD_WIDTH - WALL_THICKNESS, 0, WALL_THICKNESS, WORLD_HEIGHT));
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\dungeon\RoomType.java ---
+package com.dimmingechoes.dungeon;
+
+public enum RoomType {
+    START,
+    MEMORY,
+    BATTLE,
+    FINAL
+}
+
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\entities\Enemy.java ---
+package com.dimmingechoes.entities;
+
+public class Enemy {
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\entities\NPC.java ---
+package com.dimmingechoes.entities;
+
+import com.badlogic.gdx.math.Rectangle;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.dialogue.DialogueChoice;
+import com.dimmingechoes.dialogue.DialogueNode;
+import com.dimmingechoes.dungeon.RoomType;
+
+public class NPC {
+    private final String name;
+    private final float x, y;
+    private final Rectangle bounds;
+
+    // This flag tracks if the NPC has had their first, main conversation.
+    private boolean hasHadInitialConversation = false;
+
+    private static final float NPC_SIZE = 48f;
+
+    public NPC(String name, RoomType room, float x, float y) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.bounds = new Rectangle(x - NPC_SIZE / 2, y - NPC_SIZE / 2, NPC_SIZE, NPC_SIZE);
+    }
+
+    public String getName() { return name; }
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public Rectangle getBounds() { return bounds; }
+
+    public boolean hasReceivedCrystal(TheDimmingEcho game) {
+        return game.getUsageLog().hasGivenCrystal(this.name);
+    }
+
+    /**
+     * This method is a state machine that returns a dialogue tree based on game state.
+     */
+    public DialogueNode getDialogue(TheDimmingEcho game) {
+        // The most important state is whether they have received a crystal. This is their "final" state.
+        if (hasReceivedCrystal(game)) {
+            return getFinalDialogue(game);
+        }
+
+        // Check for special, one-time reactive dialogue before the initial conversation.
+        if (!hasHadInitialConversation) {
+            if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
+                hasHadInitialConversation = true;
+                return new DialogueNode("That angry man... he seems less stormy now. Is he... sad?", new DialogueChoice[0], false, false, true);
+            }
+            if (name.equals("The Stranger") && game.getUsageLog().hasGivenCrystal("The Laughing Girl")) {
+                hasHadInitialConversation = true;
+                return new DialogueNode("I hear laughter on the wind. It's... faint. But it's there. What have you done?", new DialogueChoice[0], false, false, true);
+            }
+        }
+
+        // If it's the first time talking to them, give the full initial dialogue.
+        if (!hasHadInitialConversation) {
+            hasHadInitialConversation = true; // Set the flag so this dialogue only appears once.
+            return getInitialDialogue(game);
+        }
+
+        // If we reach here, it means we've talked before but haven't given a crystal. Give the looping dialogue.
+        return getLoopingDialogue(game);
+    }
+
+    /**
+     * The dialogue for the first time you speak to an NPC.
+     */
+    private DialogueNode getInitialDialogue(TheDimmingEcho game) {
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+
+        switch (name) {
+            case "The Keeper":
+                DialogueNode askAboutPlace = new DialogueNode("This place is a reflection of what was lost. To remember, you must give a part of yourself.", new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
+                return new DialogueNode("You have returned to the place of echoes. What will you do?",
+                    new DialogueChoice[]{
+                        new DialogueChoice("Ask about this place.", askAboutPlace),
+                        new DialogueChoice("[Give a Crystal] Restore an echo.", giveCrystal),
+                        new DialogueChoice("Say nothing.", end) }, false, false, false);
+            case "The Laughing Girl":
+                DialogueNode askForget = new DialogueNode("I don't know... It felt warm. Like the sun on my face. But now it's cold.", new DialogueChoice[]{new DialogueChoice("I'm sorry.", end)}, false, false, false);
+                return new DialogueNode("Hee hee... did you forget something?",
+                    new DialogueChoice[]{
+                        new DialogueChoice("Forget what?", askForget),
+                        new DialogueChoice("[Give a Crystal] Help her remember.", giveCrystal),
+                        new DialogueChoice("Leave her be.", end) }, false, false, false);
+            case "The Stranger":
+                DialogueNode askAngry = new DialogueNode("You weren't there. You didn't see. Some things are better left buried.", new DialogueChoice[]{new DialogueChoice("I will find out.", end)}, false, false, false);
+                return new DialogueNode("You again. What do you want?",
+                    new DialogueChoice[]{
+                        new DialogueChoice("Why are you so angry?", askAngry),
+                        new DialogueChoice("[Give a Crystal] Quell his anger.", giveCrystal),
+                        new DialogueChoice("Leave.", end) }, false, false, false);
+            case "The Whisper":
+                return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
+        }
+        return end; // Default case
+    }
+
+    /**
+     * The shorter dialogue for subsequent conversations before giving a crystal.
+     */
+    private DialogueNode getLoopingDialogue(TheDimmingEcho game) {
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+
+        switch (name) {
+            case "The Keeper":
+                return new DialogueNode("Still you linger in the dust of what was.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leave.", end) }, false, false, false);
+            case "The Laughing Girl":
+                return new DialogueNode("Hee hee... still can't remember?", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
+            case "The Stranger":
+                return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leaving.", end) }, false, false, false);
+            case "The Whisper":
+                // --- FIX: Use the 'game' parameter passed into this method ---
+                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
+                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
+                if (girlHelped && strangerHelped) {
+                    return new DialogueNode("You have pieced together the joy and the sorrow... Are you ready for the truth?",
+                        new DialogueChoice[]{ new DialogueChoice("[Give the Final Crystal] Learn the truth.", giveCrystal), new DialogueChoice("I'm not ready.", end) }, false, false, false);
+                }
+                return new DialogueNode("...the echoes are not yet settled...", new DialogueChoice[0], false, false, true);
+        }
+        return end;
+    }
+
+    /**
+     * The final, permanent dialogue after a crystal has been given.
+     */
+    private DialogueNode getFinalDialogue(TheDimmingEcho game) {
+        switch (name) {
+            case "The Keeper":
+                return new DialogueNode("The echo you restored in me is quiet. It is at peace. Thank you.", new DialogueChoice[0], false, false, true);
+            case "The Laughing Girl":
+                return new DialogueNode("...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.", new DialogueChoice[0], false, false, true);
+            case "The Stranger":
+                return new DialogueNode("It was my fault. I... I couldn't protect her. The laughter stopped because of me.", new DialogueChoice[0], false, false, true);
+            case "The Whisper":
+                return new DialogueNode("This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.", new DialogueChoice[0], false, false, true);
+        }
+        return new DialogueNode("...", new DialogueChoice[0], false, false, true);
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\entities\Player.java ---
+package com.dimmingechoes.entities;
+
+public class Player {
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\logic\CrystalInventory.java ---
+package com.dimmingechoes.logic;
+
+public class CrystalInventory {
+    private int crystals;
+
+    public CrystalInventory(int startingAmount) {
+        this.crystals = startingAmount;
+    }
+
+    public int getCrystals() {
+        return crystals;
+    }
+
+    public boolean useCrystal() {
+        if (crystals > 0) {
+            crystals--;
+            return true;
+        }
+        return false;
+    }
+
+    public void addCrystal() {
+        crystals++;
+    }
+
+    public void reset(int value) {
+        crystals = value;
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\logic\DialogueManager.java ---
+package com.dimmingechoes.logic;
+
+public class DialogueManager {
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\logic\UsageLog.java ---
+package com.dimmingechoes.logic;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class UsageLog {
+    private final Set<String> npcsGivenCrystal = new HashSet<>();
+
+    public void logCrystalGiven(String npcName) {
+        npcsGivenCrystal.add(npcName);
+    }
+
+    public boolean hasGivenCrystal(String npcName) {
+        return npcsGivenCrystal.contains(npcName);
+    }
+
+    public int totalGiven() {
+        return npcsGivenCrystal.size();
+    }
+
+    public Set<String> getAllRecipients() {
+        return new HashSet<>(npcsGivenCrystal);
+    }
+
+    public void clear() {
+        npcsGivenCrystal.clear();
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\save\SaveData.java ---
+package com.dimmingechoes.save;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class SaveData {
+    public int crystalCount;
+    public Set<String> crystalRecipients = new HashSet<>();
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\save\SaveManager.java ---
+package com.dimmingechoes.save;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Json;
+
+public class SaveManager {
+    private static final String SAVE_FILE = "savegame.json";
+
+    public static void save(SaveData data) {
+        FileHandle file = Gdx.files.local(SAVE_FILE);
+        Json json = new Json();
+        file.writeString(json.prettyPrint(data), false);
+    }
+
+    public static SaveData load() {
+        FileHandle file = Gdx.files.local(SAVE_FILE);
+        if (!file.exists()) return null;
+        Json json = new Json();
+        return json.fromJson(SaveData.class, file.readString());
+    }
+
+    public static void delete() {
+        FileHandle file = Gdx.files.local(SAVE_FILE);
+        if (file.exists()) file.delete();
+    }
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\BattleScreen.java ---
+package com.dimmingechoes.screens;
+
+public class BattleScreen {
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\DungeonScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas; 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.dialogue.DialogueChoice;
+import com.dimmingechoes.dialogue.DialogueNode;
+import com.dimmingechoes.dungeon.DoorZone;
+import com.dimmingechoes.dungeon.Room;
+import com.dimmingechoes.dungeon.RoomGraph;
+import com.dimmingechoes.dungeon.RoomType;
+import com.dimmingechoes.entities.NPC;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+
+
+public class DungeonScreen extends InputAdapter implements Screen {
+
+    private final TheDimmingEcho game;
+    private final ShapeRenderer shapeRenderer;
+    private final SpriteBatch spriteBatch;
+
+    private final Stage uiStage;
+    private final Skin skin;
+    private final Table dialogueTable;
+    private final Label dialogueTextLabel;
+    private final Table choicesTable;
+
+    private OrthographicCamera gameCamera;
+    private Viewport gameViewport;
+
+
+    private Room currentRoom;
+    private final RoomGraph roomGraph;
+
+    private Rectangle player;
+    private static final float PLAYER_SIZE = 40f;
+    private static final float PLAYER_SPEED = 250f;
+    private static final float INTERACTION_RADIUS = 64f;
+
+    private boolean moveUp, moveDown, moveLeft, moveRight;
+
+    private DialogueNode currentDialogueNode = null;
+    private NPC dialogueNPC = null;
+    private boolean endingShown = false;
+
+    private int selectedChoiceIndex = 0;
+
+    private String fullDialogueText = "";
+    private float charTimer = 0;
+    private int charIndex = 0;
+    private final float CHAR_DELAY = 0.03f;
+
+    public DungeonScreen(TheDimmingEcho game) {
+        this.game = game;
+        this.shapeRenderer = new ShapeRenderer();
+        this.spriteBatch = new SpriteBatch();
+
+        gameCamera = new OrthographicCamera();
+        gameViewport = new FitViewport(1280, 720, gameCamera);
+
+        // --- ADD THIS NEW BLOCK ---
+
+        // 1. Create a new skin
+        skin = new Skin();
+
+        // 2. Manually create the font from the TTF file
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParameter.size = 20; // Set your desired font size
+        fontParameter.color = Color.WHITE;
+        BitmapFont defaultFont = generator.generateFont(fontParameter);
+        generator.dispose(); // IMPORTANT: dispose the generator after use
+
+        // 3. Add the generated font and the placeholder atlas to the skin
+        skin.add("default-font", defaultFont); // The name "default-font" should match what's in your JSON
+        skin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
+
+        // 4. Now, load the rest of the skin definitions from the JSON file
+        skin.load(Gdx.files.internal("uiskin.json"));
+        uiStage = new Stage(new ScreenViewport());
+        dialogueTable = new Table(skin);
+        dialogueTable.setFillParent(true);
+        dialogueTable.bottom().padBottom(50);
+        uiStage.addActor(dialogueTable);
+
+        dialogueTextLabel = new Label("", skin);
+        dialogueTextLabel.setWrap(true);
+        dialogueTextLabel.setAlignment(Align.left);
+
+        choicesTable = new Table(skin);
+        choicesTable.left();
+
+        dialogueTable.add(dialogueTextLabel).expandX().fillX().left().padLeft(20).padRight(20);
+        dialogueTable.row();
+        dialogueTable.add(choicesTable).left().padTop(20).padLeft(20);
+        dialogueTable.setVisible(false);
+
+        uiStage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (currentDialogueNode == null) return false;
+
+                if (keycode == Input.Keys.ENTER) {
+                    if (charIndex < fullDialogueText.length()) {
+                        charIndex = fullDialogueText.length();
+                        dialogueTextLabel.setText(fullDialogueText);
+                        populateChoices();
+                        return true;
+                    }
+                    if (choicesTable.getChildren().size > 0) {
+                        DialogueChoice selectedChoice = currentDialogueNode.choices[selectedChoiceIndex];
+                        processDialogueChoice(selectedChoice);
+                        return true;
+                    }
+                    endDialogue();
+                    return true;
+                }
+
+                if (choicesTable.getChildren().size > 0) {
+                    if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+                        selectedChoiceIndex = (selectedChoiceIndex - 1 + choicesTable.getChildren().size) % choicesTable.getChildren().size;
+                        updateChoiceHighlight();
+                        return true;
+                    }
+                    if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
+                        selectedChoiceIndex = (selectedChoiceIndex + 1) % choicesTable.getChildren().size;
+                        updateChoiceHighlight();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        this.roomGraph = new RoomGraph();
+        this.currentRoom = roomGraph.getStartingRoom();
+        this.player = new Rectangle(
+            gameViewport.getWorldWidth() / 2f - PLAYER_SIZE / 2f,
+            gameViewport.getWorldHeight() / 2f - PLAYER_SIZE / 2f,
+            PLAYER_SIZE, PLAYER_SIZE
+        );
+
+        Gdx.input.setInputProcessor(this);
+    }
+
+    private void updateChoiceHighlight() {
+        for (int i = 0; i < choicesTable.getChildren().size; i++) {
+            TextButton button = (TextButton) choicesTable.getChildren().get(i);
+            button.setColor(i == selectedChoiceIndex ? Color.GOLD : Color.WHITE);
+        }
+    }
+
+    private void populateChoices() {
+        choicesTable.clear();
+        if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) {
+            for (final DialogueChoice choice : currentDialogueNode.choices) {
+                TextButton choiceButton = new TextButton(choice.choiceText, skin);
+                choiceButton.getLabel().setAlignment(Align.left);
+                choiceButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        processDialogueChoice(choice);
+                    }
+                });
+                choicesTable.add(choiceButton).left().row();
+            }
+            selectedChoiceIndex = 0;
+            updateChoiceHighlight();
+            // --- FIX: Force keyboard focus to the choices table ---
+            uiStage.setKeyboardFocus(choicesTable);
+        } else {
+            // If there are no choices, there's nothing to focus on.
+            uiStage.setKeyboardFocus(null);
+        }
+    }
+
+    private void processDialogueChoice(DialogueChoice choice) {
+        choicesTable.clear();
+        // --- FIX: Release keyboard focus when choices are gone ---
+        uiStage.setKeyboardFocus(null);
+
+        currentDialogueNode = choice.next;
+
+        if (currentDialogueNode.requiresCrystal) {
+            if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
+                if (!game.getCrystalInventory().useCrystal()) {
+                    endDialogue();
+                    return;
+                }
+                game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+            }
+        }
+
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+    }
+
+    private void startDialogue(NPC npc) {
+        moveUp = moveDown = moveLeft = moveRight = false;
+
+        dialogueNPC = npc;
+        // --- FIX: Call the new stateful dialogue method, no more lastDialogue ---
+        currentDialogueNode = npc.getDialogue(game);
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear();
+        dialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(uiStage);
+
+        if (charIndex < fullDialogueText.length()) {
+            dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+        } else {
+            populateChoices();
+        }
+    }
+
+    private void endDialogue() {
+        dialogueTable.setVisible(false);
+        // --- FIX: Ensure focus is released when dialogue ends ---
+        uiStage.setKeyboardFocus(null);
+        currentDialogueNode = null;
+        dialogueNPC = null;
+        Gdx.input.setInputProcessor(this);
+    }
+
+    // Unchanged methods from here...
+    @Override
+    public void render(float delta) {
+        if (currentDialogueNode == null) {
+            handleMovement(delta);
+        } else {
+            updateTypingEffect(delta);
+        }
+        Color bgColor = currentRoom.getBackgroundColor();
+        Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        gameViewport.apply();
+        gameCamera.update();
+        shapeRenderer.setProjectionMatrix(gameCamera.combined);
+        renderGame();
+        spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        renderStaticUI();
+        uiStage.act(delta);
+        uiStage.draw();
+    }
+    private void updateTypingEffect(float delta) {
+        charTimer += delta;
+        if (charIndex < fullDialogueText.length()) {
+            if (charTimer >= CHAR_DELAY) {
+                charIndex++;
+                dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+                charTimer = 0;
+                if (charIndex == fullDialogueText.length()) {
+                    populateChoices();
+                }
+            }
+        }
+    }
+    private void renderGame() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Color wallColor = currentRoom.getBackgroundColor().cpy().mul(0.8f);
+        shapeRenderer.setColor(wallColor);
+        for (Rectangle obstacle : currentRoom.getObstacles()) {
+            shapeRenderer.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        }
+        shapeRenderer.setColor(Color.GOLD);
+        for (DoorZone door : currentRoom.getDoorZones()) {
+            shapeRenderer.rect(door.bounds.x, door.bounds.y, door.bounds.width, door.bounds.height);
+        }
+        for (NPC npc : currentRoom.getNpcs()) {
+            shapeRenderer.setColor(npc.hasReceivedCrystal(game) ? Color.GREEN : Color.MAGENTA);
+            Rectangle npcBounds = npc.getBounds();
+            shapeRenderer.rect(npcBounds.x, npcBounds.y, npcBounds.width, npcBounds.height);
+        }
+        shapeRenderer.setColor(Color.CYAN);
+        shapeRenderer.rect(player.x, player.y, player.width, player.height);
+        shapeRenderer.end();
+    }
+    private void renderStaticUI() {
+        spriteBatch.begin();
+        BitmapFont font = skin.getFont("default-font");
+        font.setColor(Color.WHITE);
+        font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10);
+        font.draw(spriteBatch, "Press [F5] to Save", 10, Gdx.graphics.getHeight() - 35);
+        font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 60);
+        spriteBatch.end();
+    }
+    @Override
+    public boolean keyDown(int keycode) {
+        switch (keycode) {
+            case Input.Keys.W: moveUp = true; break;
+            case Input.Keys.S: moveDown = true; break;
+            case Input.Keys.A: moveLeft = true; break;
+            case Input.Keys.D: moveRight = true; break;
+            case Input.Keys.F5: game.saveGame(); return true;
+            case Input.Keys.SPACE:
+                for (NPC npc : currentRoom.getNpcs()) {
+                    if (isNear(npc)) {
+                        startDialogue(npc);
+                        break;
+                    }
+                }
+                return true;
+        }
+        return false;
+    }
+    @Override
+    public boolean keyUp(int keycode) {
+        switch (keycode) {
+            case Input.Keys.W: moveUp = false; break;
+            case Input.Keys.S: moveDown = false; break;
+            case Input.Keys.A: moveLeft = false; break;
+            case Input.Keys.D: moveRight = false; break;
+        }
+        return false;
+    }
+    private void handleMovement(float delta) {
+        float moveAmount = PLAYER_SPEED * delta;
+        float oldX = player.x;
+        float oldY = player.y;
+        if (moveUp) player.y += moveAmount;
+        if (moveDown) player.y -= moveAmount;
+        if (moveLeft) player.x -= moveAmount;
+        if (moveRight) player.x += moveAmount;
+        for (DoorZone door : currentRoom.getDoorZones()) {
+            if (player.overlaps(door.bounds)) {
+                changeRoom(door);
+                return;
+            }
+        }
+        if (player.x != oldX) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.x = oldX;
+                    break;
+                }
+            }
+        }
+        if (player.y != oldY) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.y = oldY;
+                    break;
+                }
+            }
+        }
+    }
+    private void changeRoom(DoorZone door) {
+        currentRoom = door.leadsTo;
+        if (dialogueTable.isVisible()) endDialogue();
+        switch (door.entryDirection) {
+            case LEFT: player.x = gameViewport.getWorldWidth() - player.width - 48f; player.y = gameViewport.getWorldHeight() / 2f; break;
+            case RIGHT: player.x = 48f; player.y = gameViewport.getWorldHeight() / 2f; break;
+            case TOP: player.x = gameViewport.getWorldWidth() / 2f; player.y = 48f; break;
+            case BOTTOM: player.x = gameViewport.getWorldWidth() / 2f; player.y = gameViewport.getWorldHeight() - player.height - 48f; break;
+        }
+        if (currentRoom.getRoomType() == RoomType.FINAL && !endingShown) {
+            triggerEnding();
+        }
+    }
+    private void triggerEnding() {
+        int used = game.getUsageLog().totalGiven();
+        String ending;
+        if (used == 0) {
+            ending = "Ending: A Place That No Longer Exists\nYou remembered, but never acted.";
+        } else if (used >= 3) { // Changed to check if at least the 3 main story NPCs are helped
+            ending = "Ending: Petals in the Void\nYou gave all you could. And something beautiful bloomed.";
+        } else {
+            ending = "Ending: The Keeper Becomes Stone\nSome memories returned, others stayed buried.";
+        }
+        game.setScreen(new EndingScreen(ending));
+        endingShown = true;
+    }
+    private boolean isNear(NPC npc) {
+        Vector2 playerCenter = player.getCenter(new Vector2());
+        Vector2 npcCenter = npc.getBounds().getCenter(new Vector2());
+        return playerCenter.dst(npcCenter) < INTERACTION_RADIUS;
+    }
+    @Override
+    public void resize(int width, int height) {
+        gameViewport.update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
+        dialogueTable.invalidateHierarchy();
+    }
+    @Override public void dispose() { shapeRenderer.dispose(); spriteBatch.dispose(); skin.dispose(); uiStage.dispose();  }
+    @Override public void show() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
+}
+
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\EndingScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class EndingScreen implements Screen {
+    private final String endingMessage;
+    private final SpriteBatch batch = new SpriteBatch();
+    private final BitmapFont font = new BitmapFont();
+
+    public EndingScreen(String endingMessage) {
+        this.endingMessage = endingMessage;
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        font.draw(batch, endingMessage, 50, Gdx.graphics.getHeight() - 50);
+        font.draw(batch, "Press ESC to exit.", 50, 100);
+        batch.end();
+
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+        }
+    }
+
+    @Override public void resize(int width, int height) {}
+    @Override public void show() {}
+    @Override public void hide() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void dispose() { batch.dispose(); font.dispose(); }
 }
 
 ================================================================================
@@ -1432,10 +2660,10 @@ sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = 'com.dimmingechoes.lwjgl3.Lwjgl3Launcher'
 application.setMainClass(mainClassName)
 eclipse.project.name = appName + '-lwjgl3'
-java.sourceCompatibility = 8
-java.targetCompatibility = 8
+java.sourceCompatibility = 14
+java.targetCompatibility = 14
 if (JavaVersion.current().isJava9Compatible()) {
-  compileJava.options.release.set(8)
+  compileJava.options.release.set(14)
 }
 
 dependencies {
@@ -1650,178 +2878,28 @@ libgdx.png
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx.png ---
-PNG
-
-   
-IHDR  z   ?   ٜ  PLTE   KDKFMMKF33KKIIJEJEJEJEGGJEJFLCNCMFJEJEJEIBIEIFJDKEJEKEFFHHJFJEFFJDJEKEKDJEJ@IEJEKEJFKEJEIFIIJEIE  JEJEJEIDKFU9IEKEJEIELBIEJEJBJEJEJEIFJEJEIEJEJEJEJEJFJEJEJEJEIFIIKFIDLEJEKEGGJEJEKEJDKFJEJEJELGKFJELGJF@@IEIEIEIDJEJEJEJFJDQCGGUUKDKFJEJEKEJEJFJEKFIFKGJEJEJDIFHDJEJFJEKDJEJEKFKEJEJEJFJDJEHCIDIDIDJDIEKDJEHHJEIFDDJDJDIIJELDJEJEJEJFJEJEJEIEJEJEJEa   tRNS "3
-f̀9!#v wt3ûs^,	;}
-4IjlQ+r\c]/:6L>i?ro-#D_	UȷXBAhgSdVJdv<gEzXʝ0~>]p5p8aF6'b͕AE8n@bY@/aδ5R  QIDATxgtUB01&F6pBbMDJB JHG{{^%xo;{g޻90;eyBL+$]njÍ!jw0e}N65*ΝQ
-4;G#_xσѹۂҶB}zI601YrG#
-Г2y9f=]AG{Z>ϿG{Z^ffOw;4-h{#/H?E Pǡ'|{$eGE.7yIi	Þd,@:toiz6;K7@hJS7a!	z2>5d;;jaOcA٨V{B^>jsA4
-4TRR@G66ElHɞ@ϥ/OOovGnVz\$7z8Ffnl1I^eZ=F<;^:9zϐ7@Ow>"@ϰcK5{Z^>	z	+Yz9t{J^>vbǐ_x	z|I#
-;=.tz7<a/O|#z]fy^~;y
-Y;;ܘ{S_V~*ʬ"~AOzj-M9  _M"nEkn5=\M̓$A+|_!m<N}MCOCr~V6uzЈJEjuzgs8i(*Šg!	{wk{>n)}Tj]й5I!%/U	G 7M?o.j=ҾjAd==Œ(%?ݚ}.<{
-_lBW2꽒~rw5!O{uiV	C~]*|}؝|es%2wǂVnsy^~n="CY {[+LO?F
-/5D?+Oۦif3J0Ca9[K_}8,fkO?SײTeׁyd{أoԾ3_UB[ѹ"BE7W7
-=-/do詟T,O@/\!d-ʐgDd|iLg`oG3&fLWeN__^ \b?y;    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx128.png ---
-PNG
-
-   
-IHDR         >a  %IDATx}tTwIJz$$3$P!RT'> <P0xғPBI!s\sk)osxdx_/\JÍGM>^嫊euEչ^<M?o뻹ɅYWHD j [+ˣ5(x~9YI𧮐3O~=}^Lߛ<[1'jl7	架9^&򮿏=uLYyEiSrl'V4eK'^J/b,\M:Ns:xL
-Ӻ&JI`GJL${tZ:n!@?=
-٘|';kK\R)ϗ%Jt4-'3RqTE߽~~/ _ӃM$.f.^SΏ=	ȰS]]a]l*rd_"vvwt`+8@H>bf$![I*^s==A6HDqjse݂汐cJ'!Z2d[9R	
-ut7!Q̀H73$P#\ϲҍ[-uEDȜW7 "tKN@Hd 
-J¾gk~cNh9i"2BQ+$d;ÜR&	@8Z>w&*S#6AZgIW]/eH/AW[M:Zt9&.W.4>yg:4|IX֟$;BNaAxLaEH1ҳ7 8>`unKsM.#ƕ0?/x$`8_BPc
-q>vT!
-۔86?L96-L!&w9__<N(/p}'&z
-5%ơ*G&4>' \KhXu,T]4 mv-.7##<"xz7xf|቉:
-x_290{
-d]/!4*ji`,7ԯFj/T|u^ϥ=1	<mILGeBL.xZRiŤ
-BynfKCZȅcdFWz 7ZL#,-42X$7H_Rj/:*D_-DKjP Inp04ij
-dS%8#ݠ54[B
-}MYN|rz9	21cB=QޘkurPC>_ _m7D{%4>'#%wWd-SM|* ~CiTX;Vڒ":Vʴ
-vvX>f)m0gl'Mm@e ~L  旔eQ=ˣJNXJ[y<*ۭLG=ӃV"{:iH_&:,Dpх>OxHpp"a@()e?{ƶ4\-굿N@?_+յa=lhF%`5! Cd4w._gڸ*:Bk&3	L]<H50c~s@Zw;y^gЈ TϨ!(X1f"$o	
-T>ݺQF͖cJ6{G ѡXH0e\QP ?_`
-F3)^ו@ȋޞ?&U"\A~~P6v'' Ɂdcey< k?<[??c{ΐEw\&6+F`:ELĸ$4*A<-\f?񄷩	5cs,QCl,*?^^&ؕ܇+
-e
--[9
-HsI.6*/I&uߕeg
-D(Keci%ƉF&̶QJ
-:|ڤ> c=qZ`|@"&erj:&25+I/;@>H"ʎ6A'̜ KVmE3+J%fQ9Sp|@)%9m!y mmnMV7	ϹĸS>an ۅxupXV;ԵpOjșb6hW H5ן&?-I AO3m|v>w'ho!5nc؛YK@*oo lljNuaDT.O^jw 8`txvڸb4b@Yg w&
-i J$`qV7)\IW,-{D N-OJ!ow)tgVo	 +xu6UL;pdع~\&9d@^<Cw~0tcwf_&V {8>vףdZn6H
-]  td'{3 	~xUj?>qW
- L1`V %gyʿAn  {cP)
-tUb|gn
-*  'Ɋбy3)HQko}1^4i $|j
-5iN @   C-@纻wo˶ t$呙̈́Kԭ5l !&H=XKbСU.lYf b5co|@iT8Y4 r1sFPxWO~Rl fKH$8y$(--ȑ#j́V< &pʞp?DPc>MC<5i޾&PG;=0UO"44ŐxPZ]'v7\r'u63k\E
- :	/73jM5cvF `⭣3f|(3"
-x7  ,W #Ǭk VT (<XhjܹsÇWY
-J P32F]õc4 H~F iS# Ͼ@WgSMCsc_R|6>Шkz  $.@{[la:֍+iodc"4Oq5 = GU${7ǎFxNIo`<g؉v]_	l Gv+gp񯿐?a<>Jz
-E1w7YƸ7I	R kEEXPoeQ"雄ڢB[H3
- z& (K/q~^_֬VҁUcVWT`֜9PJEK4  xy^z_`;E~MWU. /OZ3>HLry4	s!9j 4Zn/.YڛeN7)_+};t? 5 ܾ}-
-*>8+> ߝ5^lJE ]2N o4ܘeYrbLcCu f$06.(PHG.k桤4(O
- |OO'	 `=
-! ?c({- 42˂7
-  !5sfx6EA/3GF1̍s?PhMZ ང6K ]j9^i 4%/,TN
-iWC6!֐6eSnJjM<n`i~m/
-\<0  x#Z 
-$l֤]^Z6Ҏ+ QIXS DVfτ 4&
-hWr  y
- LDC5  6Će
-(/~9{4  d|uL;O4 V 0}3 @[ 5    H kkk  D 2m ZW^ '`0aB[ -[Y
- z pi{mO<C!''@_K}4 h /6x㍶ ݻXhe
- q681 %G H۳TƆ_ƨQl̙3T϶|=t mXT#9df< Wn;JW_|ׯ_o7 ܼyl̞=[d#Cb> ￗy)˳uV h/ (TPPg쮡f-o`GR_ G Uw
-̍Tm3!+ nܸ,//VVN#/( v6m ^ߠS@+@Qǽ۾t k)?gw5*pԡ %8
-> p12B/K]xΆt ~شi t$ 8uBBBߡ{AћY>
- %P7LL'{yر ? !̬] +e'#IO  ~-ZQGpxyHP3D@6 "D0g#-Rnn+E ;)Ajgպ4m4hj,Y	n,{s+4:b-0LDw7s w# JPCaS>@E;c`.b@Fx>[n*âMz̛7O
-V=aJD+LꂭqrCS}s\= *uҬ}ohiiѣG+~Scܹj;shi,\Kuwҗ_nb~IOOVv	!fX7_L܊OdR*I  )Qi0,,7oƯ'NqY\p{AppAAAؽ{7S	X`\xܹs<{
-r_OjA^8)8Ҕ{6 8O1f`Ql{ɉ5}qd2淹E"
+*** Non-text file (.png extension). Content not displayed. ***
 
-YG?*ꪺJ
-?8?>6ΰ#7Ъ!̫0Җ}˃jwSrr2j@5
-4i>=zP
-qu輬uxf!O3 '&&]FFp!r%b(2Nt`$52j~{Ÿ[M=ӏΧ<'˻yqrih7vbqC
- NhZ&X[N<*+#GiX0޽#izb͔V\ǁſC=:Jsw?/~1Do9g>/NFi7ެKlO pZ?g[b0(WsTEQ???C-_o5߽sVҥK8pXsqB 9{ny|*|x,%#¼B~${']
-4	7&r#uy}|NdPR8PIOĹ{t?Y4h (T$&fໜ4vn>i$G) '܀68-
-p^탚(}*kP$iZ]	M'{h+K8: D9Ef_7&+"G"Z;0 ӦMS{z '>=< wY-g{$XHòpVkI빥%w7$lb*2 DrA?	2$(j w	4Zu0JZ
- uy-Dű07mA:?__\T'vγ9
-R$lb|5 jj`ߺ~°aX C$/Vlljw$d\%_(&K3<;MO&LWd8z D`Sx2đH
-7SP9Mx5-Jgj PcHpjoPocy9{!	al>JkCIl.{k=i
-%`Vܯڰ40KK<SjpM.YY-@kq4Q>4bmToX=X`Jm~ O..*N[D(PP^Tw`` ?~W\Qرcѣڵkk׮R/d[ǓGn8~sDlwOh>*:Ot%6GWno''|/Ê}09'<aۣ(	NwR.6]i|O)iKރr]oberweٙB@vQ[3(VQՇp|]8# P+Oo5_a~ML0uTV
-#F׷k6my&Br9YTfkgEx"?? +QqgV\|29uN51nh<0!E d$$8Ƌ5^pantmO$k cLaG"~X;H^sSkTGed_LD	s-k<$\VgIs	 %r!I	ur0k iAL;f86PO>t"lFXA77)&Ȕz<eC 1Gb]1j(:.ϯK2i&CVWAl"T)l)jsX1zfrʍU Q`O.EAd 0^z<(W^Fޯ3S2[|@ښg6sl9݈g79=oVj}|?EiU
-2I*ku&KGBMPH|p''JY !f0iZK?ኊ_c3iXλj{<+rup{.7]nR,q.?a?yf=og".>epoF"v<Q82WwF7[¥
- >埐f~^k0~w˱":\kOrl4+VMRV:v>[Hcf=|¯OfbJ	r+i؀*S4ĿQ8*[T/Evp3׳I PR
-bġ$T ??4
-<R⯅VOˣ	f_(KZrrE|5)˞9?+Әɧ\s]LY7w$ނ@ߒ*]`"\!
-Gg䶐pxu(2u0u[<6um}ԯҒRYF>3V'Qa1|ZH\2i&&g RLcǙdvT@4*ܽ\>[q#{GW1mo:0|H|07b`&zVAMʳeQaZ=z|?%)2--LP -
-j$tR8=jAd0f[!n	,Xkȱ[>
-`f`: ӺSP7$A&>YJ|{ZЁT$^
-c(ߗw9]!<MO$]>C	-vڪGߢ]xиi?/-Z̏Å1+/Vq4EF*K/Eğ''y,u<D[/H8c99?0F]XOo@58!@O$b'9t18uƬ1pӂ紟uqT%fܠh+%EQ"Bi_ P6WA+U{#?Xϳ	22AJw*olk'ΌdJ&;ԢGr,:ɋYSB 8dmT/W|I)co޸p2T:_=Yʥb=,A澆{
-BK3[OOr13,cPt& .`w!wյS/]|O/[Gk/P'p_KJʥy^_ԛ}XX'(>HpATMQt	?¡]{:^U֦f3ov,֢i=	;NfIX֟3 HRxqT֍F)՝1Mzbq5/S{:Ȍ A_C)	(/,*Z)ZF2i'0F
-@	 %alB)ӘGsv6Tk>#>~f3)(M
-4B,ZFmsBI$1
-eY,;;kZy#FD[`}L4n3Q*
-ܤVFFz8fz2o2ר¦XYK	^Go[9'Ӽ*	h?^2V#32轌B	)Ŝ `n;˸Hx@r@W|.ҼsƿdcD$P.WlN&+#v#N@m+o<|L4R1=LR%,m@ꭓ{TWffX(jY
-$Y59]wdgm!T22<F؛#q3;´.U若I4i]KT_?Bh
-TϨ'N
-p)zt"kpIo8tAW\B,*ipjTu8n1'M0A9Ea0֮\HU5{7ykxۚn2}Xs/
-1˳v|	TH諑_/}B6`ѿh    IENDB`
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx16.png ---
-PNG
-
-   
-IHDR         a  IDATxڍkHSqƟiֺV:SKl֪em2`W$/!ST_
-Q(VXB!xm9M͝5dHB<ϋ8z÷}s*+˓gm|yEo^"d鸛v'?m
-HyF͈$GWjշgds->H(_`ҋ˖&Щ]"}/\1`Ȥ)?W,+\}͊m.ǹGz4Rѫ1lpyH#7i
- hqmxeE˖#ޔffh$ԽuG 0`nbr<OGz52L> 
-c&J{G`1T=V/Ĺz$Q[Rwwdq?~N	.($"xC㤛fh?Dؗ5ݿ1'-)u`h+1_Ft3E?@F
-@ɚcP
-m<SBu瑒8/6U!".djqAz+Q]}W<G_kr's`
-
-cU Y̈́qWPw/YPiP=Гo1(4j[} &)J3sRus?/$"zw}å+[i('aUTed,%y֋?'!_    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx32.png ---
-PNG
-
-   
-IHDR           szz  IDATxڽylǿ{^{`k{CBAR4MUR6i@8iPr
- R4	L0߾[J4ڙyfHosf%qudSd̼Khoc&(4
--CWy|?#B[lBh'b1]f:[f
-)NM`ڗJ(8ӛ	)3KdㆱPvR<5o$Ć|ny:<y"k.KBV(_.gv'JZnjm/1ٙO\A_pAucN2ôJ\T5Fsd/PZPj-~ {D{S
-'ΊR#7D0OMO \KqYIC|ԦÚ9i.8@r3VHKƸNI(ὑJN`f?5*0wq0NXοaLL8)M??-'%RTQʓ9ep|d-WetlϢthgqSXx8=">;JӒAZnqQcz@jKmt,3UZGVDG$}Ս˽}kP
-8U?nġB!ÈdGy0
-wW2]gMAMJ^rF{2QSp]$>aJ㼐	#.'edqbVM|@hU45P߮T`j
-6	^cGzX+7OT[V%t;8Q߰~J߸<n}Cc=^׃X{ȧBxZ6vA4	C?o9:Drx)sB#jPOl\?mF$DcJ au`AF_/$UawGpCJ	B6
-9XD<8GX	2BDEIǤ	Mv	'FqFhnªe IǢʥ:|q*dYLeЧiPmbJWNz14)9Jchh"R	8w"OQ"z'-ZYpа
-LwbZ'nrf`K
-a
-ZL<6knWt
-:]扚al봻` zXRNMR"$(^g/rxE&!0Df&|:L& ښK䧱J&]hȣGp`Cռ4^5gsGj0#NM4Rǳh})-&HKqF</l_􁞅њJZ*XS;^{gΜͿFK:-
-+Bykm!E|W֭#)0⹔'^,u&Skz$iƽ[fr|>.d~LVϋdIVȶZ^P?}hl+5~t$=!*3ٕw͆sy}_fv,/H$yXn]?G6dź$Q2y1
-;$V٦7߳]q=ŞDjsfb*sg>/dc.n]2/%x>sY;&y[MNRMFCWY'ϣt:ֳ<9\H3Ɠ'ر_Qj:8Ls+Zn>%&e:,}ZUY:7cp.^ZKN->AY%6h.5Ǉ(A.o7	2|&&>dL!mwl	DݎӤ    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx64.png ---
-PNG
-
-   
-IHDR   @   @   iq  IDATx[	XTafaa؆mXgXfA咥eVfKYn\KSSS3ҫRsý\q\7_"vρs~yh<VaΘb:$W(Bƫl((6d+ɪ:NUw6mLU-Lu g)|olRܱZ!Antά*j%
-Y82*t& su׫
-_LUuhŧB֞#L;NV"m*B vipΛ,q9bߡ/<w6['[aRZ9:
-ff!!_|qΐ	݂" N־8S+?=<$r~\URD][Uq1ܜS.$@v"̎lUO?2]\r2Kftɉ]Pʂ/!N @#Q'FTMق-h9ἃiw~2;vץcn0Pҙ7eE78w
-ѭŋ%l-ԓ4QJCQ|~/=9|v{eϳqwÃ!qse gDVwkAx, d]aiJ'^S(Ky+Q_U89N/%2X'6K9p1HQz)>:.z6.[	SӨj;as:.ܙӭdOGFtuĄN衱CT;tW0<;	,O͂R[4PY=%iUן8	Q K|dgZF(5yFȇAnm`G3Ә lM:(wبSY'Sp%O_a,WS^F->"'~'vhLV'yI
-ci3cC W`nc\[MECyUT8g19:B{ՙ#fL&^*u
-W7sgc-Y[x,[P|0MK);[ncѠCeEr	/HmJ%OƊ \cGf@assYYcnl":v,aa sMEq׫c*d)7y='fQtb6=Gis'IbJ/ȧ9)ޘ͚`kpc?6h>>(M2w¬  Bj{Ү]] ,@-)  g l ɱ}Ѕ\`6oǎ[ad/tK	@C9t83JڕF `qHۃ0 υ;O;C`N( `_m
-pNKN_ tLH*mV> < XQyL'O@%!pS᠗^C0a;0B[`C0çC݁o3
-Fa9l-El%"(
-v?֛Mf>.UUuuxwx]&!g}M  ;Gh s.bWYcP}$~q;.;١jS
-QBIɓm! `E[PZ# 3
-Ŋ^156K솥& 4!}́uF |876 lv/Uӧ17?f@Z3@Ta[0 VDB@L[qqmRG<= ,p֭
-P`GaC "<i\쩘[,)VAВR6H6SsAGzr&$ XlE s3>2mMO`HDۇTTTDyNx@dILcr; r+|F~J{Fy"T	})NhDX`7')@!yI
-9RV]Z%l0,<Ķ@|4.xJ_!*19"7Fq@3P:; 	$
-&Y rOEH?KVMp dְ!'%%
-Fa͉mXx, 7/W7D"ŵyWWWAǣ ҆g
-@hh(
-1~xv?U" >6˗/ǀ Z@.cزeBk[#v*H |-|ƃ\r6`A6>b̒' B3MCi} \% &) +{1Szai&ĴGG@@=ӧ8tjH047?1  J@')RGr@z@6Mm
-x@"A
-%%_~mʕ8xH('|U 03缀_Spcqr#RP!ŮeJ%,+]xOƱGAtR)vލw^zJK 98Afݺ[EvOd9aXoO~Iz0 JuY&'q|C4|ݝ |:(P̙3,׫T*<y-DHH9z444 =5*#cLMw`xB1(I#a)$4 \I	oܝᅮn
->NQ0ndvsssL4	UWWjmpժU,oosn={&=e;5ֹ' c[ @BqDepshuQ" J=Ty5]Ç͛ѷo_lڴ	UVVGMh<#F"fne0IwlIX JCN` ػ\	_ [4	8#Yi8@	MN/\!O=,yϟDٳgD#Ff372rLm
-'cGp;Кߗ} | Be?-hłc ig8yFEa]\,6&cbt7^Gcc#8Zh`haN)x6(
-2\]NEo h8řbqkתquT:h#z;̚!=5צvSe@,Ab#|OlfOG+4%K퍅D/0ʱƱLbka}|,%*E(ެ6P9	5SPօ֟cTN3hf+_\_$K(I֡w&?IoTzBen(Oa9^\p!J0k,xxx`ڴi(++Cc{`Lbgx&ׅc/	PV-Gîd$b:W,浕 -VsfJZ=<\8
-Of9·*D2pTÙ&KK
-[^"6.	kD/O􄏷'l'𫆓]]?e"T)?Rptϛ2t@'(	D*B3[kyyDv6l08jڝ	H*^	BښH{䥊·~|Ƚy#G#/tkpx_Vc
-%<osuԸ6)4ū<"8~%VtKubh?dq+}<QEYس,cH$;9!@q*PB1eG|[TsӰcI
-8"[nQ<RItgu-%ik3iILdgf&	j'X9G;bhήQ]H*i|ao+.с{Cجb%X4&\~IRsC	d};S՟PwϿa2e9:@A2K/gs2I@bݱCj`oU+?ws272Rw;Sfh2[ڠ,>\*N2O\͔6:\~
-pB_F82gS̻`^jYG1so֪QZ+lѬ8{?B8&Кfື/6w"eޚd4󣬎0>3k El2[\">Sa{nR%Wͽ?MNaGޣ@-}̰+ˍl%z\|Nɸ5=VWSbqxY0"syW*֏	[Aef?2\"
-ޣHԖAFZhU0C6ţo;䶈 *Vۙ=TؘBk6wwZ*5FᑦEr"L9zA2ƚ 7WsQl)<ߏu(T-hF%H=9ؗ;Ը>h6wP6
-.	#Ӥ b)tk`;Ki+87=7үG18.O
-֙mtLkS*x%#_hH_Q3t<}2_A#<)_NǏRJ>?euT    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\com\dimmingechoes\lwjgl3\Lwjgl3Launcher.class ---
@@ -3526,99 +4604,18 @@ EJUFJFMCg<)k5;)!w)7=BeEJEIEJREJ	EJ FH                             EJ EJEJ9EJFJ
 ================================================================================
 
 --- File: .\lwjgl3\icons\logo.png ---
-PNG
-
-   
-IHDR         >a  %IDATx}tTwIJz$$3$P!RT'> <P0xғPBI!s\sk)osxdx_/\JÍGM>^嫊euEչ^<M?o뻹ɅYWHD j [+ˣ5(x~9YI𧮐3O~=}^Lߛ<[1'jl7	架9^&򮿏=uLYyEiSrl'V4eK'^J/b,\M:Ns:xL
-Ӻ&JI`GJL${tZ:n!@?=
-٘|';kK\R)ϗ%Jt4-'3RqTE߽~~/ _ӃM$.f.^SΏ=	ȰS]]a]l*rd_"vvwt`+8@H>bf$![I*^s==A6HDqjse݂汐cJ'!Z2d[9R	
-ut7!Q̀H73$P#\ϲҍ[-uEDȜW7 "tKN@Hd 
-J¾gk~cNh9i"2BQ+$d;ÜR&	@8Z>w&*S#6AZgIW]/eH/AW[M:Zt9&.W.4>yg:4|IX֟$;BNaAxLaEH1ҳ7 8>`unKsM.#ƕ0?/x$`8_BPc
-q>vT!
-۔86?L96-L!&w9__<N(/p}'&z
-5%ơ*G&4>' \KhXu,T]4 mv-.7##<"xz7xf|቉:
-x_290{
-d]/!4*ji`,7ԯFj/T|u^ϥ=1	<mILGeBL.xZRiŤ
-BynfKCZȅcdFWz 7ZL#,-42X$7H_Rj/:*D_-DKjP Inp04ij
-dS%8#ݠ54[B
-}MYN|rz9	21cB=QޘkurPC>_ _m7D{%4>'#%wWd-SM|* ~CiTX;Vڒ":Vʴ
-vvX>f)m0gl'Mm@e ~L  旔eQ=ˣJNXJ[y<*ۭLG=ӃV"{:iH_&:,Dpх>OxHpp"a@()e?{ƶ4\-굿N@?_+յa=lhF%`5! Cd4w._gڸ*:Bk&3	L]<H50c~s@Zw;y^gЈ TϨ!(X1f"$o	
-T>ݺQF͖cJ6{G ѡXH0e\QP ?_`
-F3)^ו@ȋޞ?&U"\A~~P6v'' Ɂdcey< k?<[??c{ΐEw\&6+F`:ELĸ$4*A<-\f?񄷩	5cs,QCl,*?^^&ؕ܇+
-e
--[9
-HsI.6*/I&uߕeg
-D(Keci%ƉF&̶QJ
-:|ڤ> c=qZ`|@"&erj:&25+I/;@>H"ʎ6A'̜ KVmE3+J%fQ9Sp|@)%9m!y mmnMV7	ϹĸS>an ۅxupXV;ԵpOjșb6hW H5ן&?-I AO3m|v>w'ho!5nc؛YK@*oo lljNuaDT.O^jw 8`txvڸb4b@Yg w&
-i J$`qV7)\IW,-{D N-OJ!ow)tgVo	 +xu6UL;pdع~\&9d@^<Cw~0tcwf_&V {8>vףdZn6H
-]  td'{3 	~xUj?>qW
- L1`V %gyʿAn  {cP)
-tUb|gn
-*  'Ɋбy3)HQko}1^4i $|j
-5iN @   C-@纻wo˶ t$呙̈́Kԭ5l !&H=XKbСU.lYf b5co|@iT8Y4 r1sFPxWO~Rl fKH$8y$(--ȑ#j́V< &pʞp?DPc>MC<5i޾&PG;=0UO"44ŐxPZ]'v7\r'u63k\E
- :	/73jM5cvF `⭣3f|(3"
-x7  ,W #Ǭk VT (<XhjܹsÇWY
-J P32F]õc4 H~F iS# Ͼ@WgSMCsc_R|6>Шkz  $.@{[la:֍+iodc"4Oq5 = GU${7ǎFxNIo`<g؉v]_	l Gv+gp񯿐?a<>Jz
-E1w7YƸ7I	R kEEXPoeQ"雄ڢB[H3
- z& (K/q~^_֬VҁUcVWT`֜9PJEK4  xy^z_`;E~MWU. /OZ3>HLry4	s!9j 4Zn/.YڛeN7)_+};t? 5 ܾ}-
-*>8+> ߝ5^lJE ]2N o4ܘeYrbLcCu f$06.(PHG.k桤4(O
- |OO'	 `=
-! ?c({- 42˂7
-  !5sfx6EA/3GF1̍s?PhMZ ང6K ]j9^i 4%/,TN
-iWC6!֐6eSnJjM<n`i~m/
-\<0  x#Z 
-$l֤]^Z6Ҏ+ QIXS DVfτ 4&
-hWr  y
- LDC5  6Će
-(/~9{4  d|uL;O4 V 0}3 @[ 5    H kkk  D 2m ZW^ '`0aB[ -[Y
- z pi{mO<C!''@_K}4 h /6x㍶ ݻXhe
- q681 %G H۳TƆ_ƨQl̙3T϶|=t mXT#9df< Wn;JW_|ׯ_o7 ܼyl̞=[d#Cb> ￗy)˳uV h/ (TPPg쮡f-o`GR_ G Uw
-̍Tm3!+ nܸ,//VVN#/( v6m ^ߠS@+@Qǽ۾t k)?gw5*pԡ %8
-> p12B/K]xΆt ~شi t$ 8uBBBߡ{AћY>
- %P7LL'{yر ? !̬] +e'#IO  ~-ZQGpxyHP3D@6 "D0g#-Rnn+E ;)Ajgպ4m4hj,Y	n,{s+4:b-0LDw7s w# JPCaS>@E;c`.b@Fx>[n*âMz̛7O
-V=aJD+LꂭqrCS}s\= *uҬ}ohiiѣG+~Scܹj;shi,\Kuwҗ_nb~IOOVv	!fX7_L܊OdR*I  )Qi0,,7oƯ'NqY\p{AppAAAؽ{7S	X`\xܹs<{
-r_OjA^8)8Ҕ{6 8O1f`Ql{ɉ5}qd2淹E"
+*** Non-text file (.png extension). Content not displayed. ***
 
-YG?*ꪺJ
-?8?>6ΰ#7Ъ!̫0Җ}˃jwSrr2j@5
-4i>=zP
-qu輬uxf!O3 '&&]FFp!r%b(2Nt`$52j~{Ÿ[M=ӏΧ<'˻yqrih7vbqC
- NhZ&X[N<*+#GiX0޽#izb͔V\ǁſC=:Jsw?/~1Do9g>/NFi7ެKlO pZ?g[b0(WsTEQ???C-_o5߽sVҥK8pXsqB 9{ny|*|x,%#¼B~${']
-4	7&r#uy}|NdPR8PIOĹ{t?Y4h (T$&fໜ4vn>i$G) '܀68-
-p^탚(}*kP$iZ]	M'{h+K8: D9Ef_7&+"G"Z;0 ӦMS{z '>=< wY-g{$XHòpVkI빥%w7$lb*2 DrA?	2$(j w	4Zu0JZ
- uy-Dű07mA:?__\T'vγ9
-R$lb|5 jj`ߺ~°aX C$/Vlljw$d\%_(&K3<;MO&LWd8z D`Sx2đH
-7SP9Mx5-Jgj PcHpjoPocy9{!	al>JkCIl.{k=i
-%`Vܯڰ40KK<SjpM.YY-@kq4Q>4bmToX=X`Jm~ O..*N[D(PP^Tw`` ?~W\Qرcѣڵkk׮R/d[ǓGn8~sDlwOh>*:Ot%6GWno''|/Ê}09'<aۣ(	NwR.6]i|O)iKރr]oberweٙB@vQ[3(VQՇp|]8# P+Oo5_a~ML0uTV
-#F׷k6my&Br9YTfkgEx"?? +QqgV\|29uN51nh<0!E d$$8Ƌ5^pantmO$k cLaG"~X;H^sSkTGed_LD	s-k<$\VgIs	 %r!I	ur0k iAL;f86PO>t"lFXA77)&Ȕz<eC 1Gb]1j(:.ϯK2i&CVWAl"T)l)jsX1zfrʍU Q`O.EAd 0^z<(W^Fޯ3S2[|@ښg6sl9݈g79=oVj}|?EiU
-2I*ku&KGBMPH|p''JY !f0iZK?ኊ_c3iXλj{<+rup{.7]nR,q.?a?yf=og".>epoF"v<Q82WwF7[¥
- >埐f~^k0~w˱":\kOrl4+VMRV:v>[Hcf=|¯OfbJ	r+i؀*S4ĿQ8*[T/Evp3׳I PR
-bġ$T ??4
-<R⯅VOˣ	f_(KZrrE|5)˞9?+Әɧ\s]LY7w$ނ@ߒ*]`"\!
-Gg䶐pxu(2u0u[<6um}ԯҒRYF>3V'Qa1|ZH\2i&&g RLcǙdvT@4*ܽ\>[q#{GW1mo:0|H|07b`&zVAMʳeQaZ=z|?%)2--LP -
-j$tR8=jAd0f[!n	,Xkȱ[>
-`f`: ӺSP7$A&>YJ|{ZЁT$^
-c(ߗw9]!<MO$]>C	-vڪGߢ]xиi?/-Z̏Å1+/Vq4EF*K/Eğ''y,u<D[/H8c99?0F]XOo@58!@O$b'9t18uƬ1pӂ紟uqT%fܠh+%EQ"Bi_ P6WA+U{#?Xϳ	22AJw*olk'ΌdJ&;ԢGr,:ɋYSB 8dmT/W|I)co޸p2T:_=Yʥb=,A澆{
-BK3[OOr13,cPt& .`w!wյS/]|O/[Gk/P'p_KJʥy^_ԛ}XX'(>HpATMQt	?¡]{:^U֦f3ov,֢i=	;NfIX֟3 HRxqT֍F)՝1Mzbq5/S{:Ȍ A_C)	(/,*Z)ZF2i'0F
-@	 %alB)ӘGsv6Tk>#>~f3)(M
-4B,ZFmsBI$1
-eY,;;kZy#FD[`}L4n3Q*
-ܤVFFz8fz2o2ר¦XYK	^Go[9'Ӽ*	h?^2V#32轌B	)Ŝ `n;˸Hx@r@W|.ҼsƿdcD$P.WlN&+#v#N@m+o<|L4R1=LR%,m@ꭓ{TWffX(jY
-$Y59]wdgm!T22<F؛#q3;´.U若I4i]KT_?Bh
-TϨ'N
-p)zt"kpIo8tAW\B,*ipjTu8n1'M0A9Ea0֮\HU5{7ykxۚn2}Xs/
-1˳v|	TH諑_/}B6`ѿh    IENDB`
 ================================================================================
 
 --- File: .\lwjgl3\src\main\java\com\dimmingechoes\lwjgl3\Lwjgl3Launcher.java ---
-// CHANGE THIS LINE
 package com.dimmingechoes.lwjgl3;
 
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-// AND CHANGE THIS LINE
-import com.dimmingechoes.Main;
+import com.dimmingechoes.TheDimmingEcho;
+
 
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
@@ -3626,8 +4623,9 @@ public class Lwjgl3Launcher {
         createApplication();
     }
 
+
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+        return new Lwjgl3Application(new TheDimmingEcho(), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
@@ -3638,9 +4636,9 @@ public class Lwjgl3Launcher {
         // This single line creates a normal window and maximizes it.
         configuration.setMaximized(true);
         // We no longer need setDecorated() or setWindowedMode().
-
         configuration.useVsync(true);
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+
         return configuration;
     }
 }
@@ -3773,160 +4771,60 @@ public class StartupHelper {
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx128.png ---
-PNG
-
-   
-IHDR         >a  %IDATx}tTwIJz$$3$P!RT'> <P0xғPBI!s\sk)osxdx_/\JÍGM>^嫊euEչ^<M?o뻹ɅYWHD j [+ˣ5(x~9YI𧮐3O~=}^Lߛ<[1'jl7	架9^&򮿏=uLYyEiSrl'V4eK'^J/b,\M:Ns:xL
-Ӻ&JI`GJL${tZ:n!@?=
-٘|';kK\R)ϗ%Jt4-'3RqTE߽~~/ _ӃM$.f.^SΏ=	ȰS]]a]l*rd_"vvwt`+8@H>bf$![I*^s==A6HDqjse݂汐cJ'!Z2d[9R	
-ut7!Q̀H73$P#\ϲҍ[-uEDȜW7 "tKN@Hd 
-J¾gk~cNh9i"2BQ+$d;ÜR&	@8Z>w&*S#6AZgIW]/eH/AW[M:Zt9&.W.4>yg:4|IX֟$;BNaAxLaEH1ҳ7 8>`unKsM.#ƕ0?/x$`8_BPc
-q>vT!
-۔86?L96-L!&w9__<N(/p}'&z
-5%ơ*G&4>' \KhXu,T]4 mv-.7##<"xz7xf|቉:
-x_290{
-d]/!4*ji`,7ԯFj/T|u^ϥ=1	<mILGeBL.xZRiŤ
-BynfKCZȅcdFWz 7ZL#,-42X$7H_Rj/:*D_-DKjP Inp04ij
-dS%8#ݠ54[B
-}MYN|rz9	21cB=QޘkurPC>_ _m7D{%4>'#%wWd-SM|* ~CiTX;Vڒ":Vʴ
-vvX>f)m0gl'Mm@e ~L  旔eQ=ˣJNXJ[y<*ۭLG=ӃV"{:iH_&:,Dpх>OxHpp"a@()e?{ƶ4\-굿N@?_+յa=lhF%`5! Cd4w._gڸ*:Bk&3	L]<H50c~s@Zw;y^gЈ TϨ!(X1f"$o	
-T>ݺQF͖cJ6{G ѡXH0e\QP ?_`
-F3)^ו@ȋޞ?&U"\A~~P6v'' Ɂdcey< k?<[??c{ΐEw\&6+F`:ELĸ$4*A<-\f?񄷩	5cs,QCl,*?^^&ؕ܇+
-e
--[9
-HsI.6*/I&uߕeg
-D(Keci%ƉF&̶QJ
-:|ڤ> c=qZ`|@"&erj:&25+I/;@>H"ʎ6A'̜ KVmE3+J%fQ9Sp|@)%9m!y mmnMV7	ϹĸS>an ۅxupXV;ԵpOjșb6hW H5ן&?-I AO3m|v>w'ho!5nc؛YK@*oo lljNuaDT.O^jw 8`txvڸb4b@Yg w&
-i J$`qV7)\IW,-{D N-OJ!ow)tgVo	 +xu6UL;pdع~\&9d@^<Cw~0tcwf_&V {8>vףdZn6H
-]  td'{3 	~xUj?>qW
- L1`V %gyʿAn  {cP)
-tUb|gn
-*  'Ɋбy3)HQko}1^4i $|j
-5iN @   C-@纻wo˶ t$呙̈́Kԭ5l !&H=XKbСU.lYf b5co|@iT8Y4 r1sFPxWO~Rl fKH$8y$(--ȑ#j́V< &pʞp?DPc>MC<5i޾&PG;=0UO"44ŐxPZ]'v7\r'u63k\E
- :	/73jM5cvF `⭣3f|(3"
-x7  ,W #Ǭk VT (<XhjܹsÇWY
-J P32F]õc4 H~F iS# Ͼ@WgSMCsc_R|6>Шkz  $.@{[la:֍+iodc"4Oq5 = GU${7ǎFxNIo`<g؉v]_	l Gv+gp񯿐?a<>Jz
-E1w7YƸ7I	R kEEXPoeQ"雄ڢB[H3
- z& (K/q~^_֬VҁUcVWT`֜9PJEK4  xy^z_`;E~MWU. /OZ3>HLry4	s!9j 4Zn/.YڛeN7)_+};t? 5 ܾ}-
-*>8+> ߝ5^lJE ]2N o4ܘeYrbLcCu f$06.(PHG.k桤4(O
- |OO'	 `=
-! ?c({- 42˂7
-  !5sfx6EA/3GF1̍s?PhMZ ང6K ]j9^i 4%/,TN
-iWC6!֐6eSnJjM<n`i~m/
-\<0  x#Z 
-$l֤]^Z6Ҏ+ QIXS DVfτ 4&
-hWr  y
- LDC5  6Će
-(/~9{4  d|uL;O4 V 0}3 @[ 5    H kkk  D 2m ZW^ '`0aB[ -[Y
- z pi{mO<C!''@_K}4 h /6x㍶ ݻXhe
- q681 %G H۳TƆ_ƨQl̙3T϶|=t mXT#9df< Wn;JW_|ׯ_o7 ܼyl̞=[d#Cb> ￗy)˳uV h/ (TPPg쮡f-o`GR_ G Uw
-̍Tm3!+ nܸ,//VVN#/( v6m ^ߠS@+@Qǽ۾t k)?gw5*pԡ %8
-> p12B/K]xΆt ~شi t$ 8uBBBߡ{AћY>
- %P7LL'{yر ? !̬] +e'#IO  ~-ZQGpxyHP3D@6 "D0g#-Rnn+E ;)Ajgպ4m4hj,Y	n,{s+4:b-0LDw7s w# JPCaS>@E;c`.b@Fx>[n*âMz̛7O
-V=aJD+LꂭqrCS}s\= *uҬ}ohiiѣG+~Scܹj;shi,\Kuwҗ_nb~IOOVv	!fX7_L܊OdR*I  )Qi0,,7oƯ'NqY\p{AppAAAؽ{7S	X`\xܹs<{
-r_OjA^8)8Ҕ{6 8O1f`Ql{ɉ5}qd2淹E"
+*** Non-text file (.png extension). Content not displayed. ***
 
-YG?*ꪺJ
-?8?>6ΰ#7Ъ!̫0Җ}˃jwSrr2j@5
-4i>=zP
-qu輬uxf!O3 '&&]FFp!r%b(2Nt`$52j~{Ÿ[M=ӏΧ<'˻yqrih7vbqC
- NhZ&X[N<*+#GiX0޽#izb͔V\ǁſC=:Jsw?/~1Do9g>/NFi7ެKlO pZ?g[b0(WsTEQ???C-_o5߽sVҥK8pXsqB 9{ny|*|x,%#¼B~${']
-4	7&r#uy}|NdPR8PIOĹ{t?Y4h (T$&fໜ4vn>i$G) '܀68-
-p^탚(}*kP$iZ]	M'{h+K8: D9Ef_7&+"G"Z;0 ӦMS{z '>=< wY-g{$XHòpVkI빥%w7$lb*2 DrA?	2$(j w	4Zu0JZ
- uy-Dű07mA:?__\T'vγ9
-R$lb|5 jj`ߺ~°aX C$/Vlljw$d\%_(&K3<;MO&LWd8z D`Sx2đH
-7SP9Mx5-Jgj PcHpjoPocy9{!	al>JkCIl.{k=i
-%`Vܯڰ40KK<SjpM.YY-@kq4Q>4bmToX=X`Jm~ O..*N[D(PP^Tw`` ?~W\Qرcѣڵkk׮R/d[ǓGn8~sDlwOh>*:Ot%6GWno''|/Ê}09'<aۣ(	NwR.6]i|O)iKރr]oberweٙB@vQ[3(VQՇp|]8# P+Oo5_a~ML0uTV
-#F׷k6my&Br9YTfkgEx"?? +QqgV\|29uN51nh<0!E d$$8Ƌ5^pantmO$k cLaG"~X;H^sSkTGed_LD	s-k<$\VgIs	 %r!I	ur0k iAL;f86PO>t"lFXA77)&Ȕz<eC 1Gb]1j(:.ϯK2i&CVWAl"T)l)jsX1zfrʍU Q`O.EAd 0^z<(W^Fޯ3S2[|@ښg6sl9݈g79=oVj}|?EiU
-2I*ku&KGBMPH|p''JY !f0iZK?ኊ_c3iXλj{<+rup{.7]nR,q.?a?yf=og".>epoF"v<Q82WwF7[¥
- >埐f~^k0~w˱":\kOrl4+VMRV:v>[Hcf=|¯OfbJ	r+i؀*S4ĿQ8*[T/Evp3׳I PR
-bġ$T ??4
-<R⯅VOˣ	f_(KZrrE|5)˞9?+Әɧ\s]LY7w$ނ@ߒ*]`"\!
-Gg䶐pxu(2u0u[<6um}ԯҒRYF>3V'Qa1|ZH\2i&&g RLcǙdvT@4*ܽ\>[q#{GW1mo:0|H|07b`&zVAMʳeQaZ=z|?%)2--LP -
-j$tR8=jAd0f[!n	,Xkȱ[>
-`f`: ӺSP7$A&>YJ|{ZЁT$^
-c(ߗw9]!<MO$]>C	-vڪGߢ]xиi?/-Z̏Å1+/Vq4EF*K/Eğ''y,u<D[/H8c99?0F]XOo@58!@O$b'9t18uƬ1pӂ紟uqT%fܠh+%EQ"Bi_ P6WA+U{#?Xϳ	22AJw*olk'ΌdJ&;ԢGr,:ɋYSB 8dmT/W|I)co޸p2T:_=Yʥb=,A澆{
-BK3[OOr13,cPt& .`w!wյS/]|O/[Gk/P'p_KJʥy^_ԛ}XX'(>HpATMQt	?¡]{:^U֦f3ov,֢i=	;NfIX֟3 HRxqT֍F)՝1Mzbq5/S{:Ȍ A_C)	(/,*Z)ZF2i'0F
-@	 %alB)ӘGsv6Tk>#>~f3)(M
-4B,ZFmsBI$1
-eY,;;kZy#FD[`}L4n3Q*
-ܤVFFz8fz2o2ר¦XYK	^Go[9'Ӽ*	h?^2V#32轌B	)Ŝ `n;˸Hx@r@W|.ҼsƿdcD$P.WlN&+#v#N@m+o<|L4R1=LR%,m@ꭓ{TWffX(jY
-$Y59]wdgm!T22<F؛#q3;´.U若I4i]KT_?Bh
-TϨ'N
-p)zt"kpIo8tAW\B,*ipjTu8n1'M0A9Ea0֮\HU5{7ykxۚn2}Xs/
-1˳v|	TH諑_/}B6`ѿh    IENDB`
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx16.png ---
-PNG
-
-   
-IHDR         a  IDATxڍkHSqƟiֺV:SKl֪em2`W$/!ST_
-Q(VXB!xm9M͝5dHB<ϋ8z÷}s*+˓gm|yEo^"d鸛v'?m
-HyF͈$GWjշgds->H(_`ҋ˖&Щ]"}/\1`Ȥ)?W,+\}͊m.ǹGz4Rѫ1lpyH#7i
- hqmxeE˖#ޔffh$ԽuG 0`nbr<OGz52L> 
-c&J{G`1T=V/Ĺz$Q[Rwwdq?~N	.($"xC㤛fh?Dؗ5ݿ1'-)u`h+1_Ft3E?@F
-@ɚcP
-m<SBu瑒8/6U!".djqAz+Q]}W<G_kr's`
-
-cU Y̈́qWPw/YPiP=Гo1(4j[} &)J3sRus?/$"zw}å+[i('aUTed,%y֋?'!_    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx32.png ---
-PNG
-
-   
-IHDR           szz  IDATxڽylǿ{^{`k{CBAR4MUR6i@8iPr
- R4	L0߾[J4ڙyfHosf%qudSd̼Khoc&(4
--CWy|?#B[lBh'b1]f:[f
-)NM`ڗJ(8ӛ	)3KdㆱPvR<5o$Ć|ny:<y"k.KBV(_.gv'JZnjm/1ٙO\A_pAucN2ôJ\T5Fsd/PZPj-~ {D{S
-'ΊR#7D0OMO \KqYIC|ԦÚ9i.8@r3VHKƸNI(ὑJN`f?5*0wq0NXοaLL8)M??-'%RTQʓ9ep|d-WetlϢthgqSXx8=">;JӒAZnqQcz@jKmt,3UZGVDG$}Ս˽}kP
-8U?nġB!ÈdGy0
-wW2]gMAMJ^rF{2QSp]$>aJ㼐	#.'edqbVM|@hU45P߮T`j
-6	^cGzX+7OT[V%t;8Q߰~J߸<n}Cc=^׃X{ȧBxZ6vA4	C?o9:Drx)sB#jPOl\?mF$DcJ au`AF_/$UawGpCJ	B6
-9XD<8GX	2BDEIǤ	Mv	'FqFhnªe IǢʥ:|q*dYLeЧiPmbJWNz14)9Jchh"R	8w"OQ"z'-ZYpа
-LwbZ'nrf`K
-a
-ZL<6knWt
-:]扚al봻` zXRNMR"$(^g/rxE&!0Df&|:L& ښK䧱J&]hȣGp`Cռ4^5gsGj0#NM4Rǳh})-&HKqF</l_􁞅њJZ*XS;^{gΜͿFK:-
-+Bykm!E|W֭#)0⹔'^,u&Skz$iƽ[fr|>.d~LVϋdIVȶZ^P?}hl+5~t$=!*3ٕw͆sy}_fv,/H$yXn]?G6dź$Q2y1
-;$V٦7߳]q=ŞDjsfb*sg>/dc.n]2/%x>sY;&y[MNRMFCWY'ϣt:ֳ<9\H3Ɠ'ر_Qj:8Ls+Zn>%&e:,}ZUY:7cp.^ZKN->AY%6h.5Ǉ(A.o7	2|&&>dL!mwl	DݎӤ    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx64.png ---
-PNG
-
-   
-IHDR   @   @   iq  IDATx[	XTafaa؆mXgXfA咥eVfKYn\KSSS3ҫRsý\q\7_"vρs~yh<VaΘb:$W(Bƫl((6d+ɪ:NUw6mLU-Lu g)|olRܱZ!Antά*j%
-Y82*t& su׫
-_LUuhŧB֞#L;NV"m*B vipΛ,q9bߡ/<w6['[aRZ9:
-ff!!_|qΐ	݂" N־8S+?=<$r~\URD][Uq1ܜS.$@v"̎lUO?2]\r2Kftɉ]Pʂ/!N @#Q'FTMق-h9ἃiw~2;vץcn0Pҙ7eE78w
-ѭŋ%l-ԓ4QJCQ|~/=9|v{eϳqwÃ!qse gDVwkAx, d]aiJ'^S(Ky+Q_U89N/%2X'6K9p1HQz)>:.z6.[	SӨj;as:.ܙӭdOGFtuĄN衱CT;tW0<;	,O͂R[4PY=%iUן8	Q K|dgZF(5yFȇAnm`G3Ә lM:(wبSY'Sp%O_a,WS^F->"'~'vhLV'yI
-ci3cC W`nc\[MECyUT8g19:B{ՙ#fL&^*u
-W7sgc-Y[x,[P|0MK);[ncѠCeEr	/HmJ%OƊ \cGf@assYYcnl":v,aa sMEq׫c*d)7y='fQtb6=Gis'IbJ/ȧ9)ޘ͚`kpc?6h>>(M2w¬  Bj{Ү]] ,@-)  g l ɱ}Ѕ\`6oǎ[ad/tK	@C9t83JڕF `qHۃ0 υ;O;C`N( `_m
-pNKN_ tLH*mV> < XQyL'O@%!pS᠗^C0a;0B[`C0çC݁o3
-Fa9l-El%"(
-v?֛Mf>.UUuuxwx]&!g}M  ;Gh s.bWYcP}$~q;.;١jS
-QBIɓm! `E[PZ# 3
-Ŋ^156K솥& 4!}́uF |876 lv/Uӧ17?f@Z3@Ta[0 VDB@L[qqmRG<= ,p֭
-P`GaC "<i\쩘[,)VAВR6H6SsAGzr&$ XlE s3>2mMO`HDۇTTTDyNx@dILcr; r+|F~J{Fy"T	})NhDX`7')@!yI
-9RV]Z%l0,<Ķ@|4.xJ_!*19"7Fq@3P:; 	$
-&Y rOEH?KVMp dְ!'%%
-Fa͉mXx, 7/W7D"ŵyWWWAǣ ҆g
-@hh(
-1~xv?U" >6˗/ǀ Z@.cزeBk[#v*H |-|ƃ\r6`A6>b̒' B3MCi} \% &) +{1Szai&ĴGG@@=ӧ8tjH047?1  J@')RGr@z@6Mm
-x@"A
-%%_~mʕ8xH('|U 03缀_Spcqr#RP!ŮeJ%,+]xOƱGAtR)vލw^zJK 98Afݺ[EvOd9aXoO~Iz0 JuY&'q|C4|ݝ |:(P̙3,׫T*<y-DHH9z444 =5*#cLMw`xB1(I#a)$4 \I	oܝᅮn
->NQ0ndvsssL4	UWWjmpժU,oosn={&=e;5ֹ' c[ @BqDepshuQ" J=Ty5]Ç͛ѷo_lڴ	UVVGMh<#F"fne0IwlIX JCN` ػ\	_ [4	8#Yi8@	MN/\!O=,yϟDٳgD#Ff372rLm
-'cGp;Кߗ} | Be?-hłc ig8yFEa]\,6&cbt7^Gcc#8Zh`haN)x6(
-2\]NEo h8řbqkתquT:h#z;̚!=5צvSe@,Ab#|OlfOG+4%K퍅D/0ʱƱLbka}|,%*E(ެ6P9	5SPօ֟cTN3hf+_\_$K(I֡w&?IoTzBen(Oa9^\p!J0k,xxx`ڴi(++Cc{`Lbgx&ׅc/	PV-Gîd$b:W,浕 -VsfJZ=<\8
-Of9·*D2pTÙ&KK
-[^"6.	kD/O􄏷'l'𫆓]]?e"T)?Rptϛ2t@'(	D*B3[kyyDv6l08jڝ	H*^	BښH{䥊·~|Ƚy#G#/tkpx_Vc
-%<osuԸ6)4ū<"8~%VtKubh?dq+}<QEYس,cH$;9!@q*PB1eG|[TsӰcI
-8"[nQ<RItgu-%ik3iILdgf&	j'X9G;bhήQ]H*i|ao+.с{Cجb%X4&\~IRsC	d};S՟PwϿa2e9:@A2K/gs2I@bݱCj`oU+?ws272Rw;Sfh2[ڠ,>\*N2O\͔6:\~
-pB_F82gS̻`^jYG1so֪QZ+lѬ8{?B8&Кfື/6w"eޚd4󣬎0>3k El2[\">Sa{nR%Wͽ?MNaGޣ@-}̰+ˍl%z\|Nɸ5=VWSbqxY0"syW*֏	[Aef?2\"
-ޣHԖAFZhU0C6ţo;䶈 *Vۙ=TؘBk6wwZ*5FᑦEr"L9zA2ƚ 7WsQl)<ߏu(T-hF%H=9ؗ;Ը>h6wP6
-.	#Ӥ b)tk`;Ki+87=7үG18.O
-֙mtLkS*x%#_hH_Q3t<}2_A#<)_NǏRJ>?euT    IENDB`
+*** Non-text file (.png extension). Content not displayed. ***
+
+================================================================================
+
+--- File: .\Map\Map-1.tiled-project ---
+{
+    "automappingRulesFile": "",
+    "commands": [
+    ],
+    "compatibilityVersion": 1100,
+    "extensionsPath": "extensions",
+    "folders": [
+        "."
+    ],
+    "properties": [
+    ],
+    "propertyTypes": [
+    ]
+}
+
+================================================================================
+
+--- File: .\Map\Map-1.tiled-session ---
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+    },
+    "openFiles": [
+    ],
+    "project": "Map-1.tiled-project",
+    "recentFiles": [
+    ]
+}
+
 ================================================================================
 

@@ -1,4 +1,4 @@
-package com.dimmingEchoes.save;
+package com.dimmingechoes.save;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

@@ -1,4 +1,4 @@
-package com.dimmingEchoes.screens;
+package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -24,15 +24,20 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.dimmingEchoes.TheDimmingEcho;
-import com.dimmingEchoes.dialogue.DialogueChoice;
-import com.dimmingEchoes.dialogue.DialogueNode;
-import com.dimmingEchoes.dungeon.DoorZone;
-import com.dimmingEchoes.dungeon.Room;
-import com.dimmingEchoes.dungeon.RoomGraph;
-import com.dimmingEchoes.dungeon.RoomType;
-import com.dimmingEchoes.entities.NPC;
-import com.dimmingEchoes.logic.CrystalInventory;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.dialogue.DialogueChoice;
+import com.dimmingechoes.dialogue.DialogueNode;
+import com.dimmingechoes.dungeon.DoorZone;
+import com.dimmingechoes.dungeon.Room;
+import com.dimmingechoes.dungeon.RoomGraph;
+import com.dimmingechoes.dungeon.RoomType;
+import com.dimmingechoes.entities.NPC;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.SerializationException;
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
@@ -48,6 +53,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private OrthographicCamera gameCamera;
     private Viewport gameViewport;
+
 
     private Room currentRoom;
     private final RoomGraph roomGraph;
@@ -79,10 +85,33 @@ public class DungeonScreen extends InputAdapter implements Screen {
         gameViewport = new FitViewport(1280, 720, gameCamera);
 
         skin = new Skin();
-        BitmapFont font = new BitmapFont();
-        skin.add("default-font", font, BitmapFont.class);
-        skin.load(Gdx.files.internal("uiskin.json"));
 
+        // 1. Load the texture atlas and add its regions to the skin
+        skin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
+
+        // 2. Generate the FreeType font
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 20;
+        parameter.color = Color.WHITE;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose(); // dispose of the generator to avoid memory leaks
+
+        // 3. Add the font to the skin
+        skin.add("default-font", font);
+
+        // 4. Create and add the Label style
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = skin.getFont("default-font");
+        skin.add("default", labelStyle);
+
+        // 5. Create and add the TextButton style
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("default-font");
+        textButtonStyle.fontColor = Color.WHITE;
+        textButtonStyle.downFontColor = Color.GRAY;
+        skin.add("default", textButtonStyle);
+        
         uiStage = new Stage(new ScreenViewport());
         dialogueTable = new Table(skin);
         dialogueTable.setFillParent(true);
@@ -390,7 +419,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         uiStage.getViewport().update(width, height, true);
         dialogueTable.invalidateHierarchy();
     }
-    @Override public void dispose() { shapeRenderer.dispose(); spriteBatch.dispose(); skin.dispose(); uiStage.dispose(); }
+    @Override public void dispose() { shapeRenderer.dispose(); spriteBatch.dispose(); skin.dispose(); uiStage.dispose();  }
     @Override public void show() {}
     @Override public void pause() {}
     @Override public void resume() {}

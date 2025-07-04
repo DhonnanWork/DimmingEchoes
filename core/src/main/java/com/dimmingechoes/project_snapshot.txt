@@ -1,10 +1,6 @@
---- Combined Code from folder: C:\Users\Pongo\IdeaProjects\StrukdatGame\core\src\main\java\com\dimmingEchoes ---
+--- Project Snapshot of directory: F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes\core\src\main\java\com\dimmingechoes ---
 
-
-================================================================================
-// File: Main.java
-================================================================================
-
+--- File: .\Main.java ---
 package com.dimmingechoes;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -448,15 +444,17 @@ public class Main extends ApplicationAdapter {
 }
 
 ================================================================================
-// File: TheDimmingEcho.java
-================================================================================
 
+--- File: .\TheDimmingEcho.java ---
 package com.dimmingEchoes;
+
 
 import com.badlogic.gdx.Game;
 import com.dimmingEchoes.screens.DungeonScreen;
 import com.dimmingEchoes.save.SaveData;
 import com.dimmingEchoes.save.SaveManager;
+import com.dimmingEchoes.logic.CrystalInventory ;
+import com.dimmingEchoes.logic.UsageLog;
 
 public class TheDimmingEcho extends Game {
 
@@ -499,10 +497,9 @@ public class TheDimmingEcho extends Game {
 }
 
 ================================================================================
-// File: dialogue\DialogueChoice.java
-================================================================================
 
-package com.dimmingEchoes.dialogue;
+--- File: .\dialogue\DialogueChoice.java ---
+package com.dimmingechoes.dialogue;
 
 public class DialogueChoice {
     public final String choiceText;
@@ -515,10 +512,9 @@ public class DialogueChoice {
 }
 
 ================================================================================
-// File: dialogue\DialogueNode.java
-================================================================================
 
-package com.dimmingEchoes.dialogue;
+--- File: .\dialogue\DialogueNode.java ---
+package com.dimmingechoes.dialogue;
 
 public class DialogueNode {
     public final String text;
@@ -537,10 +533,9 @@ public class DialogueNode {
 }
 
 ================================================================================
-// File: dungeon\DoorZone.java
-================================================================================
 
-package com.dimmingEchoes.dungeon;
+--- File: .\dungeon\DoorZone.java ---
+package com.dimmingechoes.dungeon;
 
 import com.badlogic.gdx.math.Rectangle;
 
@@ -564,10 +559,9 @@ public class DoorZone {
 }
 
 ================================================================================
-// File: dungeon\GridBuilder.java
-================================================================================
 
-package com.dimmingEchoes.dungeon;
+--- File: .\dungeon\GridBuilder.java ---
+package com.dimmingechoes.dungeon;
 
 public class GridBuilder {
 
@@ -599,14 +593,13 @@ public class GridBuilder {
 }
 
 ================================================================================
-// File: dungeon\Room.java
-================================================================================
 
-package com.dimmingEchoes.dungeon;
+--- File: .\dungeon\Room.java ---
+package com.dimmingechoes.dungeon;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-import com.dimmingEchoes.entities.NPC;
+import com.dimmingechoes.entities.NPC;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -639,14 +632,13 @@ public class Room {
 }
 
 ================================================================================
-// File: dungeon\RoomGraph.java
-================================================================================
 
-package com.dimmingEchoes.dungeon;
+--- File: .\dungeon\RoomGraph.java ---
+package com.dimmingechoes.dungeon;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-import com.dimmingEchoes.entities.NPC;
+import com.dimmingechoes.entities.NPC;
 
 public class RoomGraph {
 
@@ -710,10 +702,9 @@ public class RoomGraph {
 }
 
 ================================================================================
-// File: dungeon\RoomType.java
-================================================================================
 
-package com.dimmingEchoes.dungeon;
+--- File: .\dungeon\RoomType.java ---
+package com.dimmingechoes.dungeon;
 
 public enum RoomType {
     START,
@@ -724,33 +715,31 @@ public enum RoomType {
 
 
 ================================================================================
-// File: entities\Enemy.java
-================================================================================
 
-package com.dimmingEchoes.entities;
+--- File: .\entities\Enemy.java ---
+package com.dimmingechoes.entities;
 
 public class Enemy {
 }
 
 ================================================================================
-// File: entities\NPC.java
-================================================================================
 
-package com.dimmingEchoes.entities;
+--- File: .\entities\NPC.java ---
+package com.dimmingechoes.entities;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.dimmingEchoes.TheDimmingEcho;
-import com.dimmingEchoes.dialogue.DialogueChoice;
-import com.dimmingEchoes.dialogue.DialogueNode;
-import com.dimmingEchoes.dungeon.RoomType;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.dialogue.DialogueChoice;
+import com.dimmingechoes.dialogue.DialogueNode;
+import com.dimmingechoes.dungeon.RoomType;
 
 public class NPC {
     private final String name;
     private final float x, y;
     private final Rectangle bounds;
-    private boolean receivedCrystal = false;
-    private final DialogueNode rootDialogue;
-    private DialogueNode lastDialogueNode = null;
+
+    // This flag tracks if the NPC has had their first, main conversation.
+    private boolean hasHadInitialConversation = false;
 
     private static final float NPC_SIZE = 48f;
 
@@ -759,7 +748,6 @@ public class NPC {
         this.x = x;
         this.y = y;
         this.bounds = new Rectangle(x - NPC_SIZE / 2, y - NPC_SIZE / 2, NPC_SIZE, NPC_SIZE);
-        this.rootDialogue = buildDialogue(name, room);
     }
 
     public String getName() { return name; }
@@ -767,91 +755,133 @@ public class NPC {
     public float getY() { return y; }
     public Rectangle getBounds() { return bounds; }
 
-    public boolean hasReceivedCrystal() { return receivedCrystal; }
-    public DialogueNode getRootDialogue() { return rootDialogue; }
-
-    public DialogueNode getLastDialogue() {
-        return lastDialogueNode;
+    public boolean hasReceivedCrystal(TheDimmingEcho game) {
+        return game.getUsageLog().hasGivenCrystal(this.name);
     }
 
-    public void setLastDialogue(DialogueNode node) {
-        lastDialogueNode = node;
-    }
-
-    public String giveCrystal(TheDimmingEcho game) {
-        if (receivedCrystal) return name + " has already received a crystal.";
-        if (game.getCrystalInventory().getCrystals() > 0) {
-            game.getCrystalInventory().useCrystal();
-            receivedCrystal = true;
-            game.getUsageLog().logCrystalGiven(this.name);
-            return "You gave a crystal to " + name + ". A memory stirs...";
-        } else {
-            return "You have no more crystals.";
+    /**
+     * This method is a state machine that returns a dialogue tree based on game state.
+     */
+    public DialogueNode getDialogue(TheDimmingEcho game) {
+        // The most important state is whether they have received a crystal. This is their "final" state.
+        if (hasReceivedCrystal(game)) {
+            return getFinalDialogue(game);
         }
+
+        // Check for special, one-time reactive dialogue before the initial conversation.
+        if (!hasHadInitialConversation) {
+            if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
+                hasHadInitialConversation = true;
+                return new DialogueNode("That angry man... he seems less stormy now. Is he... sad?", new DialogueChoice[0], false, false, true);
+            }
+            if (name.equals("The Stranger") && game.getUsageLog().hasGivenCrystal("The Laughing Girl")) {
+                hasHadInitialConversation = true;
+                return new DialogueNode("I hear laughter on the wind. It's... faint. But it's there. What have you done?", new DialogueChoice[0], false, false, true);
+            }
+        }
+
+        // If it's the first time talking to them, give the full initial dialogue.
+        if (!hasHadInitialConversation) {
+            hasHadInitialConversation = true; // Set the flag so this dialogue only appears once.
+            return getInitialDialogue(game);
+        }
+
+        // If we reach here, it means we've talked before but haven't given a crystal. Give the looping dialogue.
+        return getLoopingDialogue(game);
     }
 
-    private DialogueNode buildDialogue(String name, RoomType roomType) {
-        // We can now create unique dialogue for each NPC
+    /**
+     * The dialogue for the first time you speak to an NPC.
+     */
+    private DialogueNode getInitialDialogue(TheDimmingEcho game) {
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+
         switch (name) {
             case "The Keeper":
-                return buildKeeperDialogue();
+                DialogueNode askAboutPlace = new DialogueNode("This place is a reflection of what was lost. To remember, you must give a part of yourself.", new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
+                return new DialogueNode("You have returned to the place of echoes. What will you do?",
+                    new DialogueChoice[]{
+                        new DialogueChoice("Ask about this place.", askAboutPlace),
+                        new DialogueChoice("[Give a Crystal] Restore an echo.", giveCrystal),
+                        new DialogueChoice("Say nothing.", end) }, false, false, false);
+            case "The Laughing Girl":
+                DialogueNode askForget = new DialogueNode("I don't know... It felt warm. Like the sun on my face. But now it's cold.", new DialogueChoice[]{new DialogueChoice("I'm sorry.", end)}, false, false, false);
+                return new DialogueNode("Hee hee... did you forget something?",
+                    new DialogueChoice[]{
+                        new DialogueChoice("Forget what?", askForget),
+                        new DialogueChoice("[Give a Crystal] Help her remember.", giveCrystal),
+                        new DialogueChoice("Leave her be.", end) }, false, false, false);
+            case "The Stranger":
+                DialogueNode askAngry = new DialogueNode("You weren't there. You didn't see. Some things are better left buried.", new DialogueChoice[]{new DialogueChoice("I will find out.", end)}, false, false, false);
+                return new DialogueNode("You again. What do you want?",
+                    new DialogueChoice[]{
+                        new DialogueChoice("Why are you so angry?", askAngry),
+                        new DialogueChoice("[Give a Crystal] Quell his anger.", giveCrystal),
+                        new DialogueChoice("Leave.", end) }, false, false, false);
             case "The Whisper":
                 return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
-            case "The Laughing Girl":
-                return new DialogueNode("Hee hee... did you forget something?", new DialogueChoice[0], false, false, true);
-            case "The Stranger":
-                return new DialogueNode("You again. What do you want?", new DialogueChoice[0], false, false, true);
-            default:
-                return new DialogueNode("...", new DialogueChoice[0], false, false, true);
         }
+        return end; // Default case
     }
 
-    private DialogueNode buildKeeperDialogue() {
-        // Create the node that we will return to.
-        DialogueNode node1_start = new DialogueNode(
-            "You have returned to the place of echoes. What will you do?",
-            new DialogueChoice[3], // Create an empty array of 3 choices
-            false, false, false
-        );
+    /**
+     * The shorter dialogue for subsequent conversations before giving a crystal.
+     */
+    private DialogueNode getLoopingDialogue(TheDimmingEcho game) {
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
 
-        // Create the "ask" node. It will re-use the choices from the start node.
-        DialogueNode node2_askQuestion = new DialogueNode(
-            "This place is a reflection of what was lost. To remember, you must give a part of yourself. An echo for an echo.",
-            node1_start.choices, // Point back to the same choices array
-            false, false, false
-        );
+        switch (name) {
+            case "The Keeper":
+                return new DialogueNode("Still you linger in the dust of what was.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leave.", end) }, false, false, false);
+            case "The Laughing Girl":
+                return new DialogueNode("Hee hee... still can't remember?", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
+            case "The Stranger":
+                return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leaving.", end) }, false, false, false);
+            case "The Whisper":
+                // --- FIX: Use the 'game' parameter passed into this method ---
+                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
+                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
+                if (girlHelped && strangerHelped) {
+                    return new DialogueNode("You have pieced together the joy and the sorrow... Are you ready for the truth?",
+                        new DialogueChoice[]{ new DialogueChoice("[Give the Final Crystal] Learn the truth.", giveCrystal), new DialogueChoice("I'm not ready.", end) }, false, false, false);
+                }
+                return new DialogueNode("...the echoes are not yet settled...", new DialogueChoice[0], false, false, true);
+        }
+        return end;
+    }
 
-        // Create the final two nodes.
-        DialogueNode node4_end = new DialogueNode("Farewell, for now.", new DialogueChoice[0], false, false, true);
-        DialogueNode node3_giveCrystal = new DialogueNode("You feel a fragment of memory return... cold, but familiar. The echo quiets.",
-            new DialogueChoice[] { new DialogueChoice("Leave.", node4_end) },
-            true, true, false);
-
-        // Now, fill in the choices for the starting node.
-        // Because node2 re-uses this array, it gets the choices automatically.
-        node1_start.choices[0] = new DialogueChoice("Ask about this place.", node2_askQuestion);
-        node1_start.choices[1] = new DialogueChoice("[Give a Crystal] Restore an echo.", node3_giveCrystal);
-        node1_start.choices[2] = new DialogueChoice("Say nothing.", node4_end);
-
-        // Return the root of the tree
-        return node1_start;
+    /**
+     * The final, permanent dialogue after a crystal has been given.
+     */
+    private DialogueNode getFinalDialogue(TheDimmingEcho game) {
+        switch (name) {
+            case "The Keeper":
+                return new DialogueNode("The echo you restored in me is quiet. It is at peace. Thank you.", new DialogueChoice[0], false, false, true);
+            case "The Laughing Girl":
+                return new DialogueNode("...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.", new DialogueChoice[0], false, false, true);
+            case "The Stranger":
+                return new DialogueNode("It was my fault. I... I couldn't protect her. The laughter stopped because of me.", new DialogueChoice[0], false, false, true);
+            case "The Whisper":
+                return new DialogueNode("This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.", new DialogueChoice[0], false, false, true);
+        }
+        return new DialogueNode("...", new DialogueChoice[0], false, false, true);
     }
 }
 
 ================================================================================
-// File: entities\Player.java
-================================================================================
 
-package com.dimmingEchoes.entities;
+--- File: .\entities\Player.java ---
+package com.dimmingechoes.entities;
 
 public class Player {
 }
 
 ================================================================================
-// File: logic\CrystalInventory.java
-================================================================================
 
-package com.dimmingEchoes;
+--- File: .\logic\CrystalInventory.java ---
+package com.dimmingechoes.logic;
 
 public class CrystalInventory {
     private int crystals;
@@ -882,19 +912,17 @@ public class CrystalInventory {
 }
 
 ================================================================================
-// File: logic\DialogueManager.java
-================================================================================
 
-package com.dimmingEchoes.logic;
+--- File: .\logic\DialogueManager.java ---
+package com.dimmingechoes.logic;
 
 public class DialogueManager {
 }
 
 ================================================================================
-// File: logic\UsageLog.java
-================================================================================
 
-package com.dimmingEchoes;
+--- File: .\logic\UsageLog.java ---
+package com.dimmingechoes.logic;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -924,10 +952,9 @@ public class UsageLog {
 }
 
 ================================================================================
-// File: save\SaveData.java
-================================================================================
 
-package com.dimmingEchoes.save;
+--- File: .\save\SaveData.java ---
+package com.dimmingechoes.save;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -938,10 +965,9 @@ public class SaveData {
 }
 
 ================================================================================
-// File: save\SaveManager.java
-================================================================================
 
-package com.dimmingEchoes.save;
+--- File: .\save\SaveManager.java ---
+package com.dimmingechoes.save;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -970,19 +996,17 @@ public class SaveManager {
 }
 
 ================================================================================
-// File: screens\BattleScreen.java
-================================================================================
 
-package com.dimmingEchoes.screens;
+--- File: .\screens\BattleScreen.java ---
+package com.dimmingechoes.screens;
 
 public class BattleScreen {
 }
 
 ================================================================================
-// File: screens\DungeonScreen.java
-================================================================================
 
-package com.dimmingEchoes.screens;
+--- File: .\screens\DungeonScreen.java ---
+package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -1004,17 +1028,25 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.dimmingEchoes.TheDimmingEcho;
-import com.dimmingEchoes.dialogue.DialogueChoice;
-import com.dimmingEchoes.dialogue.DialogueNode;
-import com.dimmingEchoes.dungeon.DoorZone;
-import com.dimmingEchoes.dungeon.Room;
-import com.dimmingEchoes.dungeon.RoomGraph;
-import com.dimmingEchoes.dungeon.RoomType;
-import com.dimmingEchoes.entities.NPC;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.dialogue.DialogueChoice;
+import com.dimmingechoes.dialogue.DialogueNode;
+import com.dimmingechoes.dungeon.DoorZone;
+import com.dimmingechoes.dungeon.Room;
+import com.dimmingechoes.dungeon.RoomGraph;
+import com.dimmingechoes.dungeon.RoomType;
+import com.dimmingechoes.entities.NPC;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
@@ -1030,6 +1062,8 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private OrthographicCamera gameCamera;
     private Viewport gameViewport;
+
+    private final AssetManager assetManager;
 
     private Room currentRoom;
     private final RoomGraph roomGraph;
@@ -1060,10 +1094,15 @@ public class DungeonScreen extends InputAdapter implements Screen {
         gameCamera = new OrthographicCamera();
         gameViewport = new FitViewport(1280, 720, gameCamera);
 
-        skin = new Skin();
-        BitmapFont font = new BitmapFont();
-        skin.add("default-font", font, BitmapFont.class);
-        skin.load(Gdx.files.internal("uiskin.json"));
+        assetManager = new AssetManager();
+        InternalFileHandleResolver resolver = new InternalFileHandleResolver();
+        assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+        assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+
+        assetManager.load("uiskin.json", Skin.class, new SkinLoader.SkinParameter());
+        assetManager.finishLoading(); // Waits until all assets are loaded
+
+        this.skin = assetManager.get("uiskin.json");
 
         uiStage = new Stage(new ScreenViewport());
         dialogueTable = new Table(skin);
@@ -1073,42 +1112,37 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
         dialogueTextLabel = new Label("", skin);
         dialogueTextLabel.setWrap(true);
-        choicesTable = new Table();
+        dialogueTextLabel.setAlignment(Align.left);
 
-        dialogueTable.add(dialogueTextLabel).width(Gdx.graphics.getWidth() - 100).left();
+        choicesTable = new Table(skin);
+        choicesTable.left();
+
+        dialogueTable.add(dialogueTextLabel).expandX().fillX().left().padLeft(20).padRight(20);
         dialogueTable.row();
-        dialogueTable.add(choicesTable).padTop(20).left();
+        dialogueTable.add(choicesTable).left().padTop(20).padLeft(20);
         dialogueTable.setVisible(false);
 
-        // --- FIX 2 & 1: Rewritten keyboard listener for dialogue ---
         uiStage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (currentDialogueNode == null) return false;
 
-                // --- ENTER KEY LOGIC ---
                 if (keycode == Input.Keys.ENTER) {
-                    // If text is still typing, finish it instantly
                     if (charIndex < fullDialogueText.length()) {
                         charIndex = fullDialogueText.length();
                         dialogueTextLabel.setText(fullDialogueText);
                         populateChoices();
                         return true;
                     }
-
-                    // If choices are available, process the selected one
                     if (choicesTable.getChildren().size > 0) {
                         DialogueChoice selectedChoice = currentDialogueNode.choices[selectedChoiceIndex];
                         processDialogueChoice(selectedChoice);
                         return true;
                     }
-
-                    // If there are no choices (it's a final line), end the dialogue
                     endDialogue();
                     return true;
                 }
 
-                // --- UP/DOWN/W/S KEY LOGIC FOR CHOOSING ---
                 if (choicesTable.getChildren().size > 0) {
                     if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
                         selectedChoiceIndex = (selectedChoiceIndex - 1 + choicesTable.getChildren().size) % choicesTable.getChildren().size;
@@ -1145,10 +1179,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void populateChoices() {
         choicesTable.clear();
-        // Don't end dialogue here, let the input handler do it.
         if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) {
             for (final DialogueChoice choice : currentDialogueNode.choices) {
                 TextButton choiceButton = new TextButton(choice.choiceText, skin);
+                choiceButton.getLabel().setAlignment(Align.left);
                 choiceButton.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -1159,27 +1193,66 @@ public class DungeonScreen extends InputAdapter implements Screen {
             }
             selectedChoiceIndex = 0;
             updateChoiceHighlight();
+            // --- FIX: Force keyboard focus to the choices table ---
+            uiStage.setKeyboardFocus(choicesTable);
+        } else {
+            // If there are no choices, there's nothing to focus on.
+            uiStage.setKeyboardFocus(null);
         }
     }
 
     private void processDialogueChoice(DialogueChoice choice) {
-        currentDialogueNode = choice.next;
-        if(dialogueNPC != null) dialogueNPC.setLastDialogue(currentDialogueNode);
+        choicesTable.clear();
+        // --- FIX: Release keyboard focus when choices are gone ---
+        uiStage.setKeyboardFocus(null);
 
-        if (currentDialogueNode.requiresCrystal && dialogueNPC != null && !dialogueNPC.hasReceivedCrystal()) {
-            if (!game.getCrystalInventory().useCrystal()) {
-                endDialogue();
-                return;
+        currentDialogueNode = choice.next;
+
+        if (currentDialogueNode.requiresCrystal) {
+            if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
+                if (!game.getCrystalInventory().useCrystal()) {
+                    endDialogue();
+                    return;
+                }
+                game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
             }
-            game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
         }
 
         fullDialogueText = currentDialogueNode.text;
         charIndex = 0;
         dialogueTextLabel.setText("");
-        choicesTable.clear();
     }
 
+    private void startDialogue(NPC npc) {
+        moveUp = moveDown = moveLeft = moveRight = false;
+
+        dialogueNPC = npc;
+        // --- FIX: Call the new stateful dialogue method, no more lastDialogue ---
+        currentDialogueNode = npc.getDialogue(game);
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear();
+        dialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(uiStage);
+
+        if (charIndex < fullDialogueText.length()) {
+            dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+        } else {
+            populateChoices();
+        }
+    }
+
+    private void endDialogue() {
+        dialogueTable.setVisible(false);
+        // --- FIX: Ensure focus is released when dialogue ends ---
+        uiStage.setKeyboardFocus(null);
+        currentDialogueNode = null;
+        dialogueNPC = null;
+        Gdx.input.setInputProcessor(this);
+    }
+
+    // Unchanged methods from here...
     @Override
     public void render(float delta) {
         if (currentDialogueNode == null) {
@@ -1187,23 +1260,18 @@ public class DungeonScreen extends InputAdapter implements Screen {
         } else {
             updateTypingEffect(delta);
         }
-
         Color bgColor = currentRoom.getBackgroundColor();
         Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         gameViewport.apply();
         gameCamera.update();
         shapeRenderer.setProjectionMatrix(gameCamera.combined);
         renderGame();
-
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         renderStaticUI();
-
         uiStage.act(delta);
         uiStage.draw();
     }
-
     private void updateTypingEffect(float delta) {
         charTimer += delta;
         if (charIndex < fullDialogueText.length()) {
@@ -1217,7 +1285,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
             }
         }
     }
-
     private void renderGame() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         Color wallColor = currentRoom.getBackgroundColor().cpy().mul(0.8f);
@@ -1230,7 +1297,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
             shapeRenderer.rect(door.bounds.x, door.bounds.y, door.bounds.width, door.bounds.height);
         }
         for (NPC npc : currentRoom.getNpcs()) {
-            shapeRenderer.setColor(npc.hasReceivedCrystal() ? Color.GREEN : Color.MAGENTA);
+            shapeRenderer.setColor(npc.hasReceivedCrystal(game) ? Color.GREEN : Color.MAGENTA);
             Rectangle npcBounds = npc.getBounds();
             shapeRenderer.rect(npcBounds.x, npcBounds.y, npcBounds.width, npcBounds.height);
         }
@@ -1238,7 +1305,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
         shapeRenderer.rect(player.x, player.y, player.width, player.height);
         shapeRenderer.end();
     }
-
     private void renderStaticUI() {
         spriteBatch.begin();
         BitmapFont font = skin.getFont("default-font");
@@ -1248,33 +1314,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
         font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 60);
         spriteBatch.end();
     }
-
-    private void startDialogue(NPC npc) {
-        // --- FIX 3: Reset movement flags to prevent ghost movement ---
-        moveUp = moveDown = moveLeft = moveRight = false;
-
-        dialogueNPC = npc;
-        currentDialogueNode = npc.getLastDialogue() != null ? npc.getLastDialogue() : npc.getRootDialogue();
-        fullDialogueText = currentDialogueNode.text;
-        charIndex = 0;
-        dialogueTextLabel.setText("");
-        choicesTable.clear();
-        dialogueTable.setVisible(true);
-        Gdx.input.setInputProcessor(uiStage);
-        if (charIndex < fullDialogueText.length()) {
-            dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
-        } else {
-            populateChoices();
-        }
-    }
-
-    private void endDialogue() {
-        dialogueTable.setVisible(false);
-        currentDialogueNode = null;
-        dialogueNPC = null;
-        Gdx.input.setInputProcessor(this);
-    }
-
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
@@ -1294,7 +1333,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
         }
         return false;
     }
-
     @Override
     public boolean keyUp(int keycode) {
         switch (keycode) {
@@ -1305,24 +1343,20 @@ public class DungeonScreen extends InputAdapter implements Screen {
         }
         return false;
     }
-
     private void handleMovement(float delta) {
         float moveAmount = PLAYER_SPEED * delta;
         float oldX = player.x;
         float oldY = player.y;
-
         if (moveUp) player.y += moveAmount;
         if (moveDown) player.y -= moveAmount;
         if (moveLeft) player.x -= moveAmount;
         if (moveRight) player.x += moveAmount;
-
         for (DoorZone door : currentRoom.getDoorZones()) {
             if (player.overlaps(door.bounds)) {
                 changeRoom(door);
                 return;
             }
         }
-
         if (player.x != oldX) {
             for (Rectangle obstacle : currentRoom.getObstacles()) {
                 if (player.overlaps(obstacle)) {
@@ -1331,7 +1365,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
                 }
             }
         }
-
         if (player.y != oldY) {
             for (Rectangle obstacle : currentRoom.getObstacles()) {
                 if (player.overlaps(obstacle)) {
@@ -1341,7 +1374,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
             }
         }
     }
-
     private void changeRoom(DoorZone door) {
         currentRoom = door.leadsTo;
         if (dialogueTable.isVisible()) endDialogue();
@@ -1355,35 +1387,31 @@ public class DungeonScreen extends InputAdapter implements Screen {
             triggerEnding();
         }
     }
-
     private void triggerEnding() {
         int used = game.getUsageLog().totalGiven();
         String ending;
         if (used == 0) {
             ending = "Ending: A Place That No Longer Exists\nYou remembered, but never acted.";
-        } else if (used == 5) {
-            ending = "Ending: Petals in the Void\nYou gave all. And something beautiful bloomed.";
+        } else if (used >= 3) { // Changed to check if at least the 3 main story NPCs are helped
+            ending = "Ending: Petals in the Void\nYou gave all you could. And something beautiful bloomed.";
         } else {
             ending = "Ending: The Keeper Becomes Stone\nSome memories returned, others stayed buried.";
         }
         game.setScreen(new EndingScreen(ending));
         endingShown = true;
     }
-
     private boolean isNear(NPC npc) {
         Vector2 playerCenter = player.getCenter(new Vector2());
         Vector2 npcCenter = npc.getBounds().getCenter(new Vector2());
         return playerCenter.dst(npcCenter) < INTERACTION_RADIUS;
     }
-
     @Override
     public void resize(int width, int height) {
         gameViewport.update(width, height, true);
         uiStage.getViewport().update(width, height, true);
         dialogueTable.invalidateHierarchy();
     }
-
-    @Override public void dispose() { shapeRenderer.dispose(); spriteBatch.dispose(); skin.dispose(); uiStage.dispose(); }
+    @Override public void dispose() { shapeRenderer.dispose(); spriteBatch.dispose(); assetManager.dispose(); uiStage.dispose();  }
     @Override public void show() {}
     @Override public void pause() {}
     @Override public void resume() {}
@@ -1391,10 +1419,9 @@ public class DungeonScreen extends InputAdapter implements Screen {
 }
 
 ================================================================================
-// File: screens\EndingScreen.java
-================================================================================
 
-package com.dimmingEchoes.screens;
+--- File: .\screens\EndingScreen.java ---
+package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -1433,3 +1460,6 @@ public class EndingScreen implements Screen {
     @Override public void resume() {}
     @Override public void dispose() { batch.dispose(); font.dispose(); }
 }
+
+================================================================================
+

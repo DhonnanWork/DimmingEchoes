@@ -1,4 +1,4 @@
-package com.dimmingEchoes.dialogue;
+package com.dimmingechoes.dialogue;
 
 public class DialogueChoice {
     public final String choiceText;
