@@ -2,17 +2,53 @@ package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.Align;
 
 public class EndingScreen implements Screen {
     private final String endingMessage;
-    private final SpriteBatch batch = new SpriteBatch();
-    private final BitmapFont font = new BitmapFont();
+    private final SpriteBatch batch;
+    private final BitmapFont font;
 
-    public EndingScreen(String endingMessage) {
+    private Texture endingImage;
+    private final String imagePath;
+
+    public EndingScreen(String endingMessage, String imagePath) {
         this.endingMessage = endingMessage;
+        this.imagePath = imagePath;
+        this.batch = new SpriteBatch();
+
+        // Menggunakan font yang lebih baik, sama seperti di DungeonScreen
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 28; // Ukuran font bisa disesuaikan
+        parameter.color = Color.WHITE;
+        parameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        parameter.shadowOffsetX = 2;
+        parameter.shadowOffsetY = 2;
+        this.font = generator.generateFont(parameter);
+        generator.dispose();
+    }
+
+    public void dispose() {
+        batch.dispose();
+        font.dispose();
+        if (endingImage != null) {
+            endingImage.dispose();
+        }
+    }
+
+    @Override
+    public void show() {
+        // Muat gambar hanya jika path-nya valid
+        if (imagePath != null && !imagePath.isEmpty()) {
+            endingImage = new Texture(Gdx.files.internal(imagePath));
+        }
     }
 
     @Override
@@ -31,9 +67,8 @@ public class EndingScreen implements Screen {
     }
 
     @Override public void resize(int width, int height) {}
-    @Override public void show() {}
     @Override public void hide() {}
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void dispose() { batch.dispose(); font.dispose(); }
+
 }
