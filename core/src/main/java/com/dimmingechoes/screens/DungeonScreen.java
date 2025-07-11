@@ -6,9 +6,12 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
@@ -60,10 +63,14 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private Room currentRoom;
     private final RoomGraph roomGraph;
     private Rectangle player;
-    private static final float PLAYER_SIZE = 40f;
+    private static final float PLAYER_SIZE = 50f;
+    private Texture playerSpriteSheet;
+    private Animation<TextureRegion> playerAnimation;
+    private float stateTime;
     private static final float PLAYER_SPEED = 250f;
     private static final float INTERACTION_RADIUS = 64f;
     private boolean moveUp, moveDown, moveLeft, moveRight;
+    private boolean isFacingRight =true;
     private DialogueNode currentDialogueNode = null;
     private NPC dialogueNPC = null;
     private boolean endingShown = false;
@@ -78,7 +85,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         shapeRenderer = new ShapeRenderer();
         spriteBatch = new SpriteBatch();
         gameCamera = new OrthographicCamera();
-        gameViewport = new FitViewport(1280, 720, gameCamera);
+        gameViewport = new FitViewport(1100, 720, gameCamera);
         skin = new Skin();
         skin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
@@ -149,17 +156,31 @@ public class DungeonScreen extends InputAdapter implements Screen {
     @Override
     public void show() {
         map = new TmxMapLoader().load(currentRoom.getTmxPath());
-
-        // Dapatkan lebar peta dalam piksel
         int mapWidthInPixels = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class);
-
-        // Hitung skala yang dibutuhkan agar lebar peta = lebar viewport
         this.mapScale = gameViewport.getWorldWidth() / mapWidthInPixels;
-
-        // Buat renderer dengan skala yang benar
         renderer = new OrthogonalTiledMapRenderer(map, this.mapScale);
-
         parseCollisionLayer();
+
+        playerSpriteSheet = new Texture(Gdx.files.internal("Player.png"));
+        playerSpriteSheet = new Texture(Gdx.files.internal("player_walk_left.png"));
+
+
+        int FRAME_COLS = 8;
+        int FRAME_ROWS = 1;
+        int frameWidth = playerSpriteSheet.getWidth() / FRAME_COLS;
+        int frameHeight = playerSpriteSheet.getHeight() / FRAME_ROWS;
+
+        TextureRegion[][] tmp = TextureRegion.split(playerSpriteSheet, frameWidth, frameHeight);
+        TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+        int index = 0;
+        for (int i = 0; i < FRAME_ROWS; i++) {
+            for (int j = 0; j < FRAME_COLS; j++) {
+                walkFrames[index++] = tmp[i][j];
+            }
+        }
+
+        playerAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
+        stateTime = 0f;
     }
 
     private void clampCamera() {
@@ -180,28 +201,31 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     @Override
     public void render(float delta) {
+        // TAMBAHKAN BARIS INI di awal render
+        stateTime += delta;
+
         if (currentDialogueNode == null) {
             handleMovement(delta);
         } else {
             updateTypingEffect(delta);
         }
+        // ... sisa kode sampai renderer.render() tidak berubah ...
         Color bgColor = currentRoom.getBackgroundColor();
         ScreenUtils.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
         gameViewport.apply();
         gameCamera.position.x = player.x + player.width / 2;
         gameCamera.position.y = player.y + player.height / 2;
-
-        // Pastikan kamera tidak keluar dari batas peta (opsional tapi sangat direkomendasikan)
         clampCamera();
-
-        // Terapkan perubahan posisi kamera
         gameCamera.update();
         gameViewport.apply();
 
         renderer.setView(gameCamera);
         renderer.render();
-        shapeRenderer.setProjectionMatrix(gameCamera.combined);
+
+        // Panggil renderGame() yang sudah dimodifikasi
         renderGame();
+
+        // Kode UI tidak berubah
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         renderStaticUI();
         uiStage.act(delta);
@@ -212,10 +236,18 @@ public class DungeonScreen extends InputAdapter implements Screen {
         float moveAmount = PLAYER_SPEED * delta;
         float oldX = player.x;
         float oldY = player.y;
+
+        if (moveLeft) {
+            player.x -= moveAmount;
+            isFacingRight = true; // Player menghadap kiri
+        }
+        if (moveRight) {
+            player.x += moveAmount;
+            isFacingRight = false; // Player menghadap kanan
+        }
+
         if (moveUp) player.y += moveAmount;
         if (moveDown) player.y -= moveAmount;
-        if (moveLeft) player.x -= moveAmount;
-        if (moveRight) player.x += moveAmount;
 
         for (DoorZone door : currentRoom.getDoorZones()) {
             if (player.overlaps(door.bounds)) {
@@ -228,11 +260,11 @@ public class DungeonScreen extends InputAdapter implements Screen {
             }
         }
 
-        // PERBAIKAN 1: Kurung kurawal '}' yang hilang menyebabkan blok ini error
+        // Cek tabrakan dengan tembok
         if (player.x != oldX) {
             for (Rectangle obstacle : currentRoom.getObstacles()) {
                 if (player.overlaps(obstacle)) {
-                    player.x = oldX;
+                    player.x = oldX; // Kembalikan ke posisi X semula jika nabrak
                     break;
                 }
             }
@@ -240,12 +272,13 @@ public class DungeonScreen extends InputAdapter implements Screen {
         if (player.y != oldY) {
             for (Rectangle obstacle : currentRoom.getObstacles()) {
                 if (player.overlaps(obstacle)) {
-                    player.y = oldY;
+                    player.y = oldY; // Kembalikan ke posisi Y semula jika nabrak
                     break;
                 }
             }
         }
     }
+
 
     private void changeRoom(DoorZone door) {
         currentRoom = door.leadsTo;
@@ -311,17 +344,27 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     // ... (Sisa kode Anda sama dan tidak perlu diubah) ...
     private void renderGame() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.GOLD);
-        for (DoorZone door : currentRoom.getDoorZones()) {
-            shapeRenderer.rect(door.bounds.x, door.bounds.y, door.bounds.width, door.bounds.height);
-        } for (NPC npc : currentRoom.getNpcs()) {
-            shapeRenderer.setColor(npc.hasReceivedCrystal(game) ? Color.GREEN : Color.MAGENTA);
-            shapeRenderer.rect(npc.getBounds().x, npc.getBounds().y, npc.getBounds().width, npc.getBounds().height);
-        }
-        shapeRenderer.setColor(Color.CYAN);
-        shapeRenderer.rect(player.x, player.y, player.width, player.height);
+        // ... (kode shapeRenderer tetap sama) ...
         shapeRenderer.end();
+
+        // Dapatkan frame animasi seperti biasa
+        TextureRegion currentFrame = playerAnimation.getKeyFrame(stateTime, true);
+
+        // --- LOGIKA MEMBALIK GAMBAR ---
+        // Jika player seharusnya hadap kiri TAPI gambarnya BELUM terbalik, maka balik gambarnya.
+        if (!isFacingRight && !currentFrame.isFlipX()) {
+            currentFrame.flip(true, false);
+        }
+        // Jika player seharusnya hadap kanan TAPI gambarnya TERLANJUR terbalik, maka balikkan lagi.
+        if (isFacingRight && currentFrame.isFlipX()) {
+            currentFrame.flip(true, false);
+        }
+        // ----------------------------
+
+        spriteBatch.setProjectionMatrix(gameCamera.combined);
+        spriteBatch.begin();
+        spriteBatch.draw(currentFrame, player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+        spriteBatch.end();
     }
 
     private void renderStaticUI() { spriteBatch.begin(); BitmapFont font = skin.getFont("default-font"); font.setColor(Color.WHITE); font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10); font.draw(spriteBatch, "Press [F5] to Save", 10, Gdx.graphics.getHeight() - 35); font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 60); spriteBatch.end(); }
@@ -335,8 +378,18 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private void populateChoices() { choicesTable.clear(); if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) { for (final DialogueChoice choice : currentDialogueNode.choices) { TextButton choiceButton = new TextButton(choice.choiceText, skin); choiceButton.getLabel().setAlignment(Align.left); choiceButton.addListener(new ClickListener() { @Override public void clicked(InputEvent event, float x, float y) { processDialogueChoice(choice); } }); choicesTable.add(choiceButton).left().row(); } selectedChoiceIndex = 0; updateChoiceHighlight(); uiStage.setKeyboardFocus(choicesTable); } else { uiStage.setKeyboardFocus(null); } }
     private void processDialogueChoice(DialogueChoice choice) { choicesTable.clear(); uiStage.setKeyboardFocus(null); currentDialogueNode = choice.next; if (currentDialogueNode.requiresCrystal) { if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) { if (!game.getCrystalInventory().useCrystal()) { endDialogue(); return; } game.getUsageLog().logCrystalGiven(dialogueNPC.getName()); } } fullDialogueText = currentDialogueNode.text; charIndex = 0; dialogueTextLabel.setText(""); }
     @Override public void resize(int width, int height) { gameViewport.update(width, height, true); uiStage.getViewport().update(width, height, true); dialogueTable.invalidateHierarchy(); }
-    @Override public void dispose() { shapeRenderer.dispose(); spriteBatch.dispose(); skin.dispose(); uiStage.dispose(); if (map != null) map.dispose(); if (renderer != null) renderer.dispose(); }
-    @Override public void pause() {}
+    @Override
+    public void dispose() {
+        shapeRenderer.dispose();
+        spriteBatch.dispose();
+        skin.dispose();
+        uiStage.dispose();
+        if (map != null) map.dispose();
+        if (renderer != null) renderer.dispose();
+
+        // --- TAMBAHKAN BARIS INI ---
+        playerSpriteSheet.dispose();
+    } @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
 }
