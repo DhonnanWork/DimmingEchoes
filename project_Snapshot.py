@@ -17,17 +17,32 @@ ignore_list = [
 # List of common non-text file extensions to handle gracefully.
 # You can extend this list with more extensions if needed.
 NON_TEXT_EXTENSIONS = {
-    '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp',  # Images
-    '.unity', '.asset', '.mat', '.prefab', '.shader', '.anim', '.controller', # Unity specific
-    '.wav', '.mp3', '.ogg', '.flac',  # Audio
-    '.ttf', '.otf', '.woff', '.woff2',  # Fonts
-    '.fbx', '.obj', '.blend', '.dae',  # 3D Models
-    '.dll', '.exe', '.so', '.dylib',  # Binaries/Executables
-    '.unitypackage', '.zip', '.rar', '.7z', '.tar', '.gz', # Archives
-    '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', # Documents
-    '.psd', '.ai', '.eps', # Design files
-    '.mp4', '.mov', '.avi', '.mkv', # Videos
-    '.json', '.xml', '.yaml', '.yml', # Data files that might be large or have complex structures
+    # Images
+    '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp',
+    # Unity specific (kept for general utility)
+    '.unity', '.asset', '.mat', '.prefab', '.shader', '.anim', '.controller',
+    # Audio
+    '.wav', '.mp3', '.ogg', '.flac',
+    # Fonts
+    '.ttf', '.otf', '.woff', '.woff2',
+    # 3D Models
+    '.fbx', '.obj', '.blend', '.dae',
+    # Binaries/Executables
+    '.dll', '.exe', '.so', '.dylib', '.jar', '.class',
+    # Archives
+    '.unitypackage', '.zip', '.rar', '.7z', '.tar', '.gz',
+    # Documents
+    '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
+    # Design files
+    '.psd', '.ai', '.eps', '.ico', '.icns',
+    # Videos
+    '.mp4', '.mov', '.avi', '.mkv',
+    # Data files that might be large or have complex structures
+    '.json', '.xml', '.yaml', '.yml', '.atlas',
+    # Gradle and IDE specific
+    '.bin', '.lock', '.iml',
+    # Map files
+    '.tiled-project', '.tiled-session'
 }
 
 # --- End Configuration ---
@@ -38,6 +53,9 @@ def is_text_file(filepath):
     Returns True if it's likely text, False otherwise.
     """
     _, ext = os.path.splitext(filepath)
+    # Treat files with no extension as potentially text
+    if not ext:
+        return True
     return ext.lower() not in NON_TEXT_EXTENSIONS
 
 def create_project_snapshot():
@@ -58,8 +76,6 @@ def create_project_snapshot():
             # --- Filtering Logic ---
             # We want to skip ignored directories entirely.
             # We must modify dirnames in place to prevent os.walk from entering them.
-            # Example: If dirnames is ['.git', 'core', 'lwjgl3'], and '.git' is in ignore_list,
-            # dirnames becomes ['core', 'lwjgl3'] for the next iteration.
             dirnames[:] = [d for d in dirnames if d not in ignore_list]
 
             # --- File Processing ---
@@ -88,9 +104,8 @@ def create_project_snapshot():
                         outfile.write(error_message)
                 else:
                     # For non-text files, write a placeholder message.
-                    # You could optionally try to read a small portion or metadata if needed,
-                    # but for a general snapshot, this is safer.
-                    outfile.write(f"*** Non-text file ({os.path.splitext(file_path)[1]} extension). Content not displayed. ***\n")
+                    file_ext = os.path.splitext(file_path)[1]
+                    outfile.write(f"*** Non-text file ({file_ext} extension). Content not displayed. ***\n")
 
                 # Add spacing between files for better readability.
                 outfile.write("\n" + "=" * 80 + "\n\n")
