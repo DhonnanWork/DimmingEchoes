@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Room {
 
+    private final String tmxPath;
     private final RoomType type;
     private final Color backgroundColor; // <-- ADDED
     private final List<NPC> npcs = new ArrayList<>();
@@ -16,20 +17,36 @@ public class Room {
     private final List<DoorZone> doorZones = new ArrayList<>();
 
     // Constructor is now updated
-    public Room(RoomType type, Color backgroundColor) {
+    public Room(String tmxPath, RoomType type, Color backgroundColor) {
+        this.tmxPath = tmxPath;
         this.type = type;
         this.backgroundColor = backgroundColor;
     }
-
-    public RoomType getRoomType() { return type; }
-    public Color getBackgroundColor() { return backgroundColor; } // <-- ADDED
-
-    public List<NPC> getNpcs() { return npcs; }
-    public void addNPC(NPC npc) { npcs.add(npc); }
-
-    public List<Rectangle> getObstacles() { return obstacles; }
-    public void addObstacle(Rectangle obstacle) { obstacles.add(obstacle); }
-
-    public List<DoorZone> getDoorZones() { return doorZones; }
-    public void addDoorZone(DoorZone doorZone) { doorZones.add(doorZone); }
+    public RoomType getRoomType() {
+        return type;
+    }
+    public String getTmxPath() {
+        return tmxPath;
+    }
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    } // <-- ADDED
+    public List<NPC> getNpcs() {
+        return npcs;
+    }
+    public void addNPC(NPC npc) {
+        npcs.add(npc);
+    }
+    public List<Rectangle> getObstacles() {
+        return obstacles;
+    }
+    public void addObstacle(Rectangle obstacle) {
+        obstacles.add(obstacle);
+    }
+    public List<DoorZone> getDoorZones() {
+        return doorZones;
+    }
+    public void addDoorZone(DoorZone doorZone) {
+        doorZones.add(doorZone);
+    }
 }

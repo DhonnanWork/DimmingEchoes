@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DimmingEchoes.iml" filepath="$PROJECT_DIR$/.idea/modules/DimmingEchoes.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/DimmingEchoes.core.test.iml" />
