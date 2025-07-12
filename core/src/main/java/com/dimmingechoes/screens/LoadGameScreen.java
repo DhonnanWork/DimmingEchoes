@@ -1,0 +1,170 @@
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.save.SaveManager;
+
+public class LoadGameScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final MainMenuScreen mainMenuScreen;
+    private final Stage stage;
+    private final Skin skin;
+    private final BitmapFont menuFont;
+    private final BitmapFont titleFont;
+
+    public LoadGameScreen(TheDimmingEcho game, MainMenuScreen mainMenuScreen) {
+        this.game = game;
+        this.mainMenuScreen = mainMenuScreen;
+        this.stage = new Stage(new ScreenViewport());
+
+        // Load pixelated font for menu
+        FreeTypeFontGenerator menuGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter menuParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        menuParameter.size = 28;
+        menuParameter.color = Color.WHITE;
+        menuParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        menuParameter.shadowOffsetX = 2;
+        menuParameter.shadowOffsetY = 2;
+        this.menuFont = menuGenerator.generateFont(menuParameter);
+        menuGenerator.dispose();
+
+        // Load title font
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParameter.size = 36;
+        titleParameter.color = Color.WHITE;
+        titleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        titleParameter.shadowOffsetX = 3;
+        titleParameter.shadowOffsetY = 3;
+        this.titleFont = titleGenerator.generateFont(titleParameter);
+        titleGenerator.dispose();
+
+        // Create skin for UI
+        this.skin = new Skin();
+        skin.add("default-font", menuFont);
+        skin.add("title-font", titleFont);
+        
+        Label.LabelStyle labelStyle = new Label.LabelStyle(menuFont, Color.WHITE);
+        skin.add("default", labelStyle);
+        
+        Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, Color.WHITE);
+        skin.add("title", titleStyle);
+        
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = menuFont;
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.downFontColor = Color.GOLD;
+        buttonStyle.overFontColor = Color.YELLOW;
+        skin.add("default", buttonStyle);
+
+        createUI();
+    }
+
+    private void createUI() {
+        Table mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.center();
+
+        // Title
+        Label titleLabel = new Label("Load Game", skin, "title");
+        mainTable.add(titleLabel).padBottom(50).row();
+
+        // Create save slot buttons
+        for (int i = 1; i <= SaveManager.getMaxSaveSlots(); i++) {
+            final int slot = i;
+            String slotText = getSlotText(slot);
+            
+            TextButton slotButton = new TextButton(slotText, skin);
+            slotButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    if (SaveManager.hasSave(slot)) {
+                        game.loadGame(slot);
+                        game.setScreen(new DungeonScreen(game));
+                    }
+                }
+            });
+            mainTable.add(slotButton).width(350).height(60).padBottom(20).row();
+        }
+
+        // Back Button
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(mainMenuScreen);
+            }
+        });
+        mainTable.add(backButton).width(200).height(50).padTop(30).row();
+
+        stage.addActor(mainTable);
+    }
+
+    private String getSlotText(int slot) {
+        if (SaveManager.hasSave(slot)) {
+            com.dimmingechoes.save.SaveData data = SaveManager.load(slot);
+            if (data != null) {
+                return "Slot " + slot + ": " + data.getSaveTimeString();
+            }
+        }
+        return "Slot " + slot + ": Empty";
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void render(float delta) {
+        // Clear screen
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Draw UI
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void resume() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void hide() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+        skin.dispose();
+        menuFont.dispose();
+        titleFont.dispose();
+    }
+} 

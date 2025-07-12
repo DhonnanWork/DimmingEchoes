@@ -41,6 +41,16 @@ public class NPC {
             return getFinalDialogue(game);
         }
 
+        // Special puzzle reward dialogue for The Laughing Girl
+        if (name.equals("The Laughing Girl")) {
+            try {
+                com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
+                if (ds.isMemoryPuzzleSolved()) {
+                    return new DialogueNode("You solved the memory puzzle! I remember now... Thank you!", new DialogueChoice[0], false, false, true);
+                }
+            } catch (Exception e) { /* ignore */ }
+        }
+
         // Check for special, one-time reactive dialogue before the initial conversation.
         if (!hasHadInitialConversation) {
             if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
@@ -91,6 +101,7 @@ public class NPC {
                     new DialogueChoice[]{
                         new DialogueChoice("Why are you so angry?", askAngry),
                         new DialogueChoice("[Give a Crystal] Quell his anger.", giveCrystal),
+                        new DialogueChoice("Fight", new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false)),
                         new DialogueChoice("Leave.", end) }, false, false, false);
             case "The Whisper":
                 return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
@@ -111,7 +122,8 @@ public class NPC {
             case "The Laughing Girl":
                 return new DialogueNode("Hee hee... still can't remember?", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
             case "The Stranger":
-                return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leaving.", end) }, false, false, false);
+                DialogueNode fightNode2 = new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false);
+                return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Fight", fightNode2), new DialogueChoice("Leaving.", end) }, false, false, false);
             case "The Whisper":
                 // --- FIX: Use the 'game' parameter passed into this method ---
                 boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
@@ -135,7 +147,7 @@ public class NPC {
             case "The Laughing Girl":
                 return new DialogueNode("...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.", new DialogueChoice[0], false, false, true);
             case "The Stranger":
-                return new DialogueNode("It was my fault. I... I couldn't protect her. The laughter stopped because of me.", new DialogueChoice[0], false, false, true);
+                return new DialogueNode("It was my fault. I... I couldn't protect her. The laughter stopped because of me. But now, I feel... at peace.", new DialogueChoice[0], false, false, true);
             case "The Whisper":
                 return new DialogueNode("This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.", new DialogueChoice[0], false, false, true);
         }

@@ -42,7 +42,9 @@ import com.dimmingechoes.dungeon.Room;
 import com.dimmingechoes.dungeon.RoomGraph;
 import com.dimmingechoes.dungeon.RoomType;
 import com.dimmingechoes.entities.NPC;
+import com.dimmingechoes.screens.PauseMenuScreen;
 import com.badlogic.gdx.math.MathUtils;
+import com.dimmingechoes.manager.AudioManager;
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
@@ -79,6 +81,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private float charTimer = 0;
     private int charIndex = 0;
     private final float CHAR_DELAY = 0.03f;
+    private boolean isMemoryPuzzleSolved = false;
+    private Rectangle puzzleTriggerBounds = null;
+    private boolean awaitingFinalChoice = false;
+    private String finalChoiceResult = null;
 
     public DungeonScreen(TheDimmingEcho game) {
         this.game = game;
@@ -160,6 +166,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         this.mapScale = gameViewport.getWorldWidth() / mapWidthInPixels;
         renderer = new OrthogonalTiledMapRenderer(map, this.mapScale);
         parseCollisionLayer();
+        parseInteractablesLayer();
 
         playerSpriteSheet = new Texture(Gdx.files.internal("Player.png"));
         playerSpriteSheet = new Texture(Gdx.files.internal("player_walk_left.png"));
@@ -181,6 +188,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
         playerAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
         stateTime = 0f;
+        AudioManager.getInstance().playMusic("audio/dungeon_theme.mp3", true);
     }
 
     private void clampCamera() {
@@ -252,7 +260,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
         for (DoorZone door : currentRoom.getDoorZones()) {
             if (player.overlaps(door.bounds)) {
                 if (door.leadsTo.getRoomType() == RoomType.FINAL) {
-                    triggerEnding();
+                    if (!awaitingFinalChoice) {
+                        presentFinalChoice();
+                    }
+                    return;
                 } else {
                     changeRoom(door);
                 }
@@ -291,6 +302,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
 // PERBAIKAN 2: Panggil parseCollisionLayer setiap kali pindah ruangan
         parseCollisionLayer();
+        parseInteractablesLayer();
 
         if (dialogueTable.isVisible()) endDialogue();
         switch (door.entryDirection) {
@@ -323,6 +335,26 @@ public class DungeonScreen extends InputAdapter implements Screen {
         endingShown = true;
     }
 
+    private void presentFinalChoice() {
+        awaitingFinalChoice = true;
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
+        DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
+        DialogueChoice[] choices = new DialogueChoice[] {
+            new DialogueChoice("Give the final crystal", giveChoice),
+            new DialogueChoice("Keep it", keepChoice)
+        };
+        DialogueNode choiceNode = new DialogueNode("At the threshold, a choice: Will you give the final crystal, or keep it?", choices, false, false, false);
+        currentDialogueNode = choiceNode;
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear();
+        dialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(uiStage);
+        populateChoices();
+    }
+
     private void parseCollisionLayer() {
         currentRoom.getObstacles().clear();
         if (map.getLayers().get("Collision") == null) return;
@@ -338,6 +370,24 @@ public class DungeonScreen extends InputAdapter implements Screen {
                 rect.height *= this.mapScale;
 
                 currentRoom.addObstacle(rect);
+            }
+        }
+    }
+
+    private void parseInteractablesLayer() {
+        puzzleTriggerBounds = null;
+        if (map.getLayers().get("Interactables") == null) return;
+        for (MapObject object : map.getLayers().get("Interactables").getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                rect.x *= this.mapScale;
+                rect.y *= this.mapScale;
+                rect.width *= this.mapScale;
+                rect.height *= this.mapScale;
+                String name = object.getName();
+                if (name != null && name.equals("PuzzleTrigger")) {
+                    puzzleTriggerBounds = rect;
+                }
             }
         }
     }
@@ -367,8 +417,42 @@ public class DungeonScreen extends InputAdapter implements Screen {
         spriteBatch.end();
     }
 
-    private void renderStaticUI() { spriteBatch.begin(); BitmapFont font = skin.getFont("default-font"); font.setColor(Color.WHITE); font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10); font.draw(spriteBatch, "Press [F5] to Save", 10, Gdx.graphics.getHeight() - 35); font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 60); spriteBatch.end(); }
-    @Override public boolean keyDown(int keycode) { switch (keycode) { case Input.Keys.W: moveUp = true; break; case Input.Keys.S: moveDown = true; break; case Input.Keys.A: moveLeft = true; break; case Input.Keys.D: moveRight = true; break; case Input.Keys.F5: game.saveGame(); return true; case Input.Keys.SPACE: for (NPC npc : currentRoom.getNpcs()) { if (isNear(npc)) { startDialogue(npc); break; } } return true; } return false; }
+    private void renderStaticUI() { 
+        spriteBatch.begin(); 
+        BitmapFont font = skin.getFont("default-font"); 
+        font.setColor(Color.WHITE); 
+        font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10); 
+        font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 35); 
+        font.draw(spriteBatch, "Press [ESC] to pause", 10, Gdx.graphics.getHeight() - 60); 
+        spriteBatch.end(); 
+    }
+    @Override 
+    public boolean keyDown(int keycode) { 
+        switch (keycode) { 
+            case Input.Keys.W: moveUp = true; break; 
+            case Input.Keys.S: moveDown = true; break; 
+            case Input.Keys.A: moveLeft = true; break; 
+            case Input.Keys.D: moveRight = true; break; 
+            case Input.Keys.ESCAPE: 
+                game.setScreen(new PauseMenuScreen(game, this)); 
+                return true; 
+            case Input.Keys.SPACE: 
+                // Puzzle interaction
+                if (!isMemoryPuzzleSolved && puzzleTriggerBounds != null && player.overlaps(puzzleTriggerBounds)) {
+                    isMemoryPuzzleSolved = true;
+                    // Optionally show a message or effect here
+                    return true;
+                }
+                for (NPC npc : currentRoom.getNpcs()) { 
+                    if (isNear(npc)) { 
+                        startDialogue(npc); 
+                        break; 
+                    } 
+                } 
+                return true; 
+        } 
+        return false; 
+    }
     @Override public boolean keyUp(int keycode) { switch (keycode) { case Input.Keys.W: moveUp = false; break; case Input.Keys.S: moveDown = false; break; case Input.Keys.A: moveLeft = false; break; case Input.Keys.D: moveRight = false; break; } return false; }
     private void updateTypingEffect(float delta) { charTimer += delta; if (charIndex < fullDialogueText.length() && charTimer >= CHAR_DELAY) { charIndex++; dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex)); charTimer = 0; if (charIndex == fullDialogueText.length()) populateChoices(); } }
     private void startDialogue(NPC npc) { moveUp = moveDown = moveLeft = moveRight = false; dialogueNPC = npc; currentDialogueNode = npc.getDialogue(game); fullDialogueText = currentDialogueNode.text; charIndex = 0; dialogueTextLabel.setText(""); choicesTable.clear(); dialogueTable.setVisible(true); Gdx.input.setInputProcessor(uiStage); if (charIndex < fullDialogueText.length()) dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex)); else populateChoices(); }
@@ -376,7 +460,55 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private boolean isNear(NPC npc) { return player.getCenter(new Vector2()).dst(npc.getBounds().getCenter(new Vector2())) < INTERACTION_RADIUS; }
     private void updateChoiceHighlight() { for (int i = 0; i < choicesTable.getChildren().size; i++) { TextButton button = (TextButton) choicesTable.getChildren().get(i); button.setColor(i == selectedChoiceIndex ? Color.GOLD : Color.WHITE); } }
     private void populateChoices() { choicesTable.clear(); if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) { for (final DialogueChoice choice : currentDialogueNode.choices) { TextButton choiceButton = new TextButton(choice.choiceText, skin); choiceButton.getLabel().setAlignment(Align.left); choiceButton.addListener(new ClickListener() { @Override public void clicked(InputEvent event, float x, float y) { processDialogueChoice(choice); } }); choicesTable.add(choiceButton).left().row(); } selectedChoiceIndex = 0; updateChoiceHighlight(); uiStage.setKeyboardFocus(choicesTable); } else { uiStage.setKeyboardFocus(null); } }
-    private void processDialogueChoice(DialogueChoice choice) { choicesTable.clear(); uiStage.setKeyboardFocus(null); currentDialogueNode = choice.next; if (currentDialogueNode.requiresCrystal) { if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) { if (!game.getCrystalInventory().useCrystal()) { endDialogue(); return; } game.getUsageLog().logCrystalGiven(dialogueNPC.getName()); } } fullDialogueText = currentDialogueNode.text; charIndex = 0; dialogueTextLabel.setText(""); }
+    private void processDialogueChoice(DialogueChoice choice) {
+        choicesTable.clear();
+        uiStage.setKeyboardFocus(null);
+        // If this is the Stranger's 'Begin Battle' choice, start the battle
+        if (dialogueNPC != null && dialogueNPC.getName().equals("The Stranger") && choice.choiceText.equals("Begin Battle")) {
+            com.dimmingechoes.entities.Player player = new com.dimmingechoes.entities.Player("You", 30, 8, 3, null);
+            java.util.List<com.dimmingechoes.entities.Enemy> enemies = new java.util.ArrayList<>();
+            enemies.add(new com.dimmingechoes.entities.Enemy("The Stranger", 20, 6, 2, null));
+            game.setScreen(new BattleScreen(game, player, enemies));
+            return;
+        }
+        // Handle final choice
+        if (awaitingFinalChoice && (choice.choiceText.equals("Give the final crystal") || choice.choiceText.equals("Keep it"))) {
+            finalChoiceResult = choice.choiceText;
+            awaitingFinalChoice = false;
+            triggerEndingWithChoice(finalChoiceResult);
+            return;
+        }
+        currentDialogueNode = choice.next;
+        if (currentDialogueNode != null && currentDialogueNode.requiresCrystal) {
+            if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
+                if (!game.getCrystalInventory().useCrystal()) {
+                    endDialogue();
+                    return;
+                }
+                game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+            }
+        }
+        if (currentDialogueNode != null) {
+            fullDialogueText = currentDialogueNode.text;
+            charIndex = 0;
+            dialogueTextLabel.setText("");
+        }
+    }
+
+    private void triggerEndingWithChoice(String choice) {
+        if (endingShown) return;
+        String endingMessage;
+        String endingImagePath;
+        if (choice.equals("Give the final crystal")) {
+            endingMessage = "Ending: The Gift\nYou gave the last echo. Peace returns.";
+            endingImagePath = "../Tiled/FinalPuni.png";
+        } else {
+            endingMessage = "Ending: The Keeper\nYou kept the last echo. The silence remains.";
+            endingImagePath = "../Tiled/Shinking.png";
+        }
+        game.setScreen(new EndingScreen(endingMessage, endingImagePath));
+        endingShown = true;
+    }
     @Override public void resize(int width, int height) { gameViewport.update(width, height, true); uiStage.getViewport().update(width, height, true); dialogueTable.invalidateHierarchy(); }
     @Override
     public void dispose() {
@@ -391,5 +523,11 @@ public class DungeonScreen extends InputAdapter implements Screen {
         playerSpriteSheet.dispose();
     } @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() {}
+    @Override public void hide() {
+        AudioManager.getInstance().stopMusic();
+        // Not needed for this screen
+    }
+
+    // Add a getter for isMemoryPuzzleSolved
+    public boolean isMemoryPuzzleSolved() { return isMemoryPuzzleSolved; }
 }
