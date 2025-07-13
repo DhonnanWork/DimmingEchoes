@@ -172,8 +172,16 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   │   ├── Tree1A.tsx
 │   │   └── WallA.tsx
 │   ├── assets.txt
+│   ├── audio
+│   │   ├── Acceptance of hopelessness.mp3
+│   │   ├── ds vu.mp3
+│   │   ├── proximity to the inevitable.mp3
+│   │   └── shaping.mp3
 │   ├── libgdx.png
+│   ├── menu_bg.png
 │   ├── player_walk_left.png
+│   ├── savegame.json
+│   ├── savegame1.json
 │   ├── uiskin.atlas
 │   ├── uiskin.json
 │   └── uiskin.png
@@ -190,7 +198,6 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │           └── java
 │               └── com
 │                   └── dimmingechoes
-│                       ├── Main.java
 │                       ├── TheDimmingEcho.java
 │                       ├── dialogue
 │                       │   ├── DialogueChoice.java
@@ -209,13 +216,20 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │                       │   ├── CrystalInventory.java
 │                       │   ├── DialogueManager.java
 │                       │   └── UsageLog.java
+│                       ├── manager
+│                       │   ├── AudioManager.java
+│                       │   └── BattleManager.java
 │                       ├── save
 │                       │   ├── SaveData.java
 │                       │   └── SaveManager.java
 │                       └── screens
 │                           ├── BattleScreen.java
 │                           ├── DungeonScreen.java
-│                           └── EndingScreen.java
+│                           ├── EndingScreen.java
+│                           ├── LoadGameScreen.java
+│                           ├── MainMenuScreen.java
+│                           ├── PauseMenuScreen.java
+│                           └── TitleScreen.java
 ├── gradle
 │   ├── gradle-daemon-jvm.properties
 │   └── wrapper
@@ -1152,7 +1166,10 @@ Tiled/Tree0A.tsx
 Tiled/Tree1A.tsx
 Tiled/WallA.tsx
 libgdx.png
+menu_bg.png
 player_walk_left.png
+savegame.json
+savegame1.json
 uiskin.atlas
 uiskin.json
 uiskin.png
@@ -1164,9 +1181,27 @@ uiskin.png
 
 ================================================================================
 
+--- File: .\assets\menu_bg.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
 --- File: .\assets\player_walk_left.png ---
 *** Non-text file detected (.png). Content not displayed. ***
 
+================================================================================
+
+--- File: .\assets\savegame.json ---
+{
+crystalCount: 5
+}
+================================================================================
+
+--- File: .\assets\savegame1.json ---
+{
+crystalCount: 5
+saveTimestamp: 1752337613648
+}
 ================================================================================
 
 --- File: .\assets\uiskin.atlas ---
@@ -1201,6 +1236,26 @@ repeat: none
 
 --- File: .\assets\uiskin.png ---
 *** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\audio\Acceptance of hopelessness.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\audio\ds vu.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\audio\proximity to the inevitable.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\audio\shaping.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
 
 ================================================================================
 
@@ -3074,455 +3129,11 @@ java {
 
 ================================================================================
 
---- File: .\core\src\main\java\com\dimmingechoes\Main.java ---
-package com.dimmingechoes;
-
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
-
-public class Main extends ApplicationAdapter {
-
-    // --- Core Rendering Tools ---
-    private ShapeRenderer shapeRenderer;
-    private SpriteBatch batch;
-    private BitmapFont font;
-    private OrthographicCamera uiCamera;
-    private OrthographicCamera gameCamera;
-    private GlyphLayout layout = new GlyphLayout();
-
-    // --- Game State Management ---
-    enum GameState {
-        PLAYING,
-        CONFIRM_TRANSITION
-    }
-    private GameState currentState;
-    private Door pendingDoor;
-    private boolean isYesSelected = true; // --- NEW: Tracks which option is highlighted
-
-    // --- Player State ---
-    private Rectangle player;
-    private Texture playerTexture;
-    private final float PLAYER_SIZE = 50f;
-    private final float PLAYER_SPEED = 300f;
-    private int playerHp;
-    private int playerMaxHp;
-
-    // --- Item System State ---
-    private Array<ItemType> inventory;
-    private int currentItemIndex;
-
-    // --- World State ---
-    private Room[][] rooms;
-    private int currentRoomX;
-    private int currentRoomY;
-    private final int WORLD_WIDTH = 3;
-    private final int WORLD_HEIGHT = 3;
-    private final char[][] roomNames = {
-        {'A', 'B', 'C'},
-        {'D', 'E', 'F'},
-        {'G', 'H', 'I'}
-    };
-
-    private static final String TAG = "GameLog";
-
-    enum ItemType {
-        HEALING_POTION, SPEED_BOOST, TELEPORT_BOMB, SHIELD, DECOY
-    }
-
-    enum Direction {
-        NORTH, SOUTH, EAST, WEST
-    }
-
-    static class Door {
-        Rectangle rect;
-        Direction dir;
-
-        Door(float x, float y, float width, float height, Direction dir) {
-            this.rect = new Rectangle(x, y, width, height);
-            this.dir = dir;
-        }
-    }
-
-    static class Room {
-        Array<Rectangle> walls = new Array<>();
-        Array<Door> doors = new Array<>();
-
-        public Room(float x, float y, float width, float height, float thickness, boolean north, boolean south, boolean east, boolean west) {
-            float doorSize = 100f;
-            walls.add(new Rectangle(x, y, thickness, height));
-            walls.add(new Rectangle(x + width - thickness, y, thickness, height));
-            walls.add(new Rectangle(x, y, width, thickness));
-            walls.add(new Rectangle(x, y + height - thickness, width, thickness));
-            if (north) doors.add(new Door(x + width/2 - doorSize/2, y + height - thickness, doorSize, thickness, Direction.NORTH));
-            if (south) doors.add(new Door(x + width/2 - doorSize/2, y, doorSize, thickness, Direction.SOUTH));
-            if (west)  doors.add(new Door(x, y + height/2 - doorSize/2, thickness, doorSize, Direction.WEST));
-            if (east)  doors.add(new Door(x + width - thickness, y + height/2 - doorSize/2, thickness, doorSize, Direction.EAST));
-        }
-    }
-
-
-    @Override
-    public void create() {
-        shapeRenderer = new ShapeRenderer();
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
-        font.getData().setScale(1.5f);
-
-        // This is a placeholder. You should replace "libgdx.png" with your own player asset.
-        playerTexture = new Texture(Gdx.files.internal("libgdx.png"));
-
-        uiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        uiCamera.setToOrtho(false);
-        gameCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        gameCamera.setToOrtho(false);
-
-        playerMaxHp = 10;
-        playerHp = playerMaxHp;
-        inventory = new Array<>();
-        inventory.add(ItemType.HEALING_POTION);
-        inventory.add(ItemType.SPEED_BOOST);
-        currentItemIndex = 0;
-
-        generateRooms();
-        currentRoomX = 1;
-        currentRoomY = 1;
-
-        float roomWidth = Gdx.graphics.getWidth();
-        float roomHeight = Gdx.graphics.getHeight();
-        player = new Rectangle(
-            (currentRoomX * roomWidth) + (roomWidth / 2f) - (PLAYER_SIZE / 2f),
-            (currentRoomY * roomHeight) + (roomHeight / 2f) - (PLAYER_SIZE / 2f),
-            PLAYER_SIZE,
-            PLAYER_SIZE
-        );
-
-        currentState = GameState.PLAYING;
-        Gdx.input.setCursorCatched(true);
-
-        Gdx.app.log(TAG, "Game created. Player and 3x3 world initialized.");
-    }
-
-    private void generateRooms() {
-        rooms = new Room[WORLD_WIDTH][WORLD_HEIGHT];
-        float roomWidth = Gdx.graphics.getWidth();
-        float roomHeight = Gdx.graphics.getHeight();
-        float wallThickness = 20f;
-
-        for (int x = 0; x < WORLD_WIDTH; x++) {
-            for (int y = 0; y < WORLD_HEIGHT; y++) {
-                boolean north = (y < WORLD_HEIGHT - 1);
-                boolean south = (y > 0);
-                boolean west = (x > 0);
-                boolean east = (x < WORLD_WIDTH - 1);
-                rooms[x][y] = new Room(x * roomWidth, y * roomHeight, roomWidth, roomHeight, wallThickness, north, south, east, west);
-            }
-        }
-    }
-
-    @Override
-    public void render() {
-        switch (currentState) {
-            case PLAYING:
-                handleInput();
-                updatePlayerPosition();
-                checkCollisions();
-                break;
-            case CONFIRM_TRANSITION:
-                handleConfirmationInput();
-                break;
-        }
-
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1);
-        drawWorld();
-        drawUI();
-
-        if (currentState == GameState.CONFIRM_TRANSITION) {
-            drawConfirmationDialog();
-        }
-    }
-
-    private void handleInput() {
-        if (Gdx.input.isKeyJustPressed(Keys.C)) useCurrentItem();
-        if (Gdx.input.isKeyJustPressed(Keys.E)) cycleItem();
-    }
-
-    // --- MODIFIED: Handles highlighting and Enter key confirmation ---
-    private void handleConfirmationInput() {
-        // A/D or Left/Right toggles the selection between Yes and No
-        if (Gdx.input.isKeyJustPressed(Keys.A) || Gdx.input.isKeyJustPressed(Keys.LEFT)) {
-            isYesSelected = true;
-        }
-        if (Gdx.input.isKeyJustPressed(Keys.D) || Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
-            isYesSelected = false;
-        }
-
-        // Enter key confirms the currently highlighted selection
-        if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
-            confirmTransition(isYesSelected);
-            return;
-        }
-
-        // Mouse click logic
-        if (Gdx.input.justTouched()) {
-            float dialogWidth = 400;
-            float screenCenterX = Gdx.graphics.getWidth() / 2f;
-            float screenCenterY = Gdx.graphics.getHeight() / 2f;
-            float buttonWidth = 100;
-            float buttonHeight = 50;
-            float dialogY = screenCenterY - 150 / 2f;
-            float buttonY = dialogY + 20;
-
-            Rectangle yesBounds = new Rectangle(screenCenterX - buttonWidth - 20, buttonY, buttonWidth, buttonHeight);
-            Rectangle noBounds = new Rectangle(screenCenterX + 20, buttonY, buttonWidth, buttonHeight);
-
-            Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            uiCamera.unproject(touchPos);
-
-            if (yesBounds.contains(touchPos.x, touchPos.y)) {
-                confirmTransition(true);
-            } else if (noBounds.contains(touchPos.x, touchPos.y)) {
-                confirmTransition(false);
-            }
-        }
-    }
-
-    private void confirmTransition(boolean accepted) {
-        if (accepted) {
-            changeRoom(pendingDoor);
-        } else {
-            // Push player back slightly if they say no, to prevent re-triggering
-            switch (pendingDoor.dir) {
-                case NORTH: player.y -= 10; break;
-                case SOUTH: player.y += 10; break;
-                case EAST:  player.x -= 10; break;
-                case WEST:  player.x += 10; break;
-            }
-        }
-
-        currentState = GameState.PLAYING;
-        pendingDoor = null;
-        isYesSelected = true; // Reset highlight to default ("Yes")
-        Gdx.input.setCursorCatched(true);
-    }
-
-    private void useCurrentItem() {
-        if (inventory.isEmpty()) return;
-        ItemType item = inventory.get(currentItemIndex);
-        Gdx.app.log(TAG, "Used item: " + item.name());
-        if (item == ItemType.HEALING_POTION) {
-            if (playerHp < playerMaxHp) playerHp++;
-        }
-        inventory.removeIndex(currentItemIndex);
-        if (currentItemIndex >= inventory.size && !inventory.isEmpty()) {
-            currentItemIndex = 0;
-        }
-    }
-
-    private void cycleItem() {
-        if (inventory.isEmpty()) return;
-        currentItemIndex = (currentItemIndex + 1) % inventory.size;
-        Gdx.app.log(TAG, "Cycled to item: " + inventory.get(currentItemIndex).name());
-    }
-
-    private void updatePlayerPosition() {
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        if (Gdx.input.isKeyPressed(Keys.A) || Gdx.input.isKeyPressed(Keys.LEFT))  player.x -= PLAYER_SPEED * deltaTime;
-        if (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT)) player.x += PLAYER_SPEED * deltaTime;
-        if (Gdx.input.isKeyPressed(Keys.W) || Gdx.input.isKeyPressed(Keys.UP))    player.y += PLAYER_SPEED * deltaTime;
-        if (Gdx.input.isKeyPressed(Keys.S) || Gdx.input.isKeyPressed(Keys.DOWN))  player.y -= PLAYER_SPEED * deltaTime;
-    }
-
-    private void checkCollisions() {
-        Room currentRoom = rooms[currentRoomX][currentRoomY];
-
-        float oldX = player.x;
-        // Simplified movement application to avoid duplicating code in updatePlayerPosition
-        for(Rectangle wall : currentRoom.walls) {
-            if (player.overlaps(wall)) {
-                player.x = oldX;
-                break;
-            }
-        }
-
-        float oldY = player.y;
-        for(Rectangle wall : currentRoom.walls) {
-            if (player.overlaps(wall)) {
-                player.y = oldY;
-                break;
-            }
-        }
-
-        for (Door door : currentRoom.doors) {
-            if (player.overlaps(door.rect)) {
-                Gdx.app.log(TAG, "Player entered a " + door.dir.name() + " door.");
-                currentState = GameState.CONFIRM_TRANSITION;
-                pendingDoor = door;
-                Gdx.input.setCursorCatched(false);
-                return;
-            }
-        }
-    }
-
-    // --- MODIFIED: Implements smart teleportation logic ---
-    private void changeRoom(Door door) {
-        float roomWidth = Gdx.graphics.getWidth();
-        float roomHeight = Gdx.graphics.getHeight();
-        float offset = PLAYER_SIZE * 0.5f; // A small buffer distance
-
-        switch (door.dir) {
-            case NORTH:
-                currentRoomY++;
-                // Player appears just above the bottom door of the new room
-                player.y = (currentRoomY * roomHeight) + door.rect.height + offset;
-                break;
-            case SOUTH:
-                currentRoomY--;
-                // Player appears just below the top door of the new room
-                player.y = ((currentRoomY + 1) * roomHeight) - door.rect.height - PLAYER_SIZE - offset;
-                break;
-            case EAST:
-                currentRoomX++;
-                // Player appears just to the right of the left door of the new room
-                player.x = (currentRoomX * roomWidth) + door.rect.width + offset;
-                break;
-            case WEST:
-                currentRoomX--;
-                // Player appears just to the left of the right door of the new room
-                player.x = ((currentRoomX + 1) * roomWidth) - door.rect.width - PLAYER_SIZE - offset;
-                break;
-        }
-    }
-
-    private void drawWorld() {
-        Room currentRoom = rooms[currentRoomX][currentRoomY];
-        gameCamera.position.set(player.x + player.width / 2, player.y + player.height / 2, 0);
-        gameCamera.update();
-
-        shapeRenderer.setProjectionMatrix(gameCamera.combined);
-        shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.GRAY);
-        for (Rectangle wall : currentRoom.walls) {
-            shapeRenderer.rect(wall.x, wall.y, wall.width, wall.height);
-        }
-        shapeRenderer.setColor(Color.GREEN);
-        for (Door door : currentRoom.doors) {
-            shapeRenderer.rect(door.rect.x, door.rect.y, door.rect.width, door.rect.height);
-        }
-        shapeRenderer.end();
-
-        batch.setProjectionMatrix(gameCamera.combined);
-        batch.begin();
-        batch.draw(playerTexture, player.x, player.y, player.width, player.height);
-        batch.end();
-    }
-
-    private void drawUI() {
-        batch.setProjectionMatrix(uiCamera.combined);
-        batch.begin();
-        font.draw(batch, "HP: " + playerHp + " / " + playerMaxHp, 20, Gdx.graphics.getHeight() - 20);
-        String currentItemText = "Item: " + (inventory.isEmpty() ? "NONE" : inventory.get(currentItemIndex).name());
-        font.draw(batch, currentItemText, 20, Gdx.graphics.getHeight() - 40);
-        font.draw(batch, "Room: " + roomNames[currentRoomX][currentRoomY], 20, Gdx.graphics.getHeight() - 60);
-        batch.end();
-    }
-
-    // --- MODIFIED: Draws a highlight based on selection ---
-    private void drawConfirmationDialog() {
-        float dialogWidth = 450; // Made wider for help text
-        float dialogHeight = 150;
-        float screenCenterX = Gdx.graphics.getWidth() / 2f;
-        float screenCenterY = Gdx.graphics.getHeight() / 2f;
-        float dialogX = screenCenterX - dialogWidth / 2;
-        float dialogY = screenCenterY - dialogHeight / 2;
-
-        float buttonWidth = 100;
-        float buttonHeight = 50;
-        float buttonY = dialogY + 45;
-
-        Rectangle yesButtonRect = new Rectangle(screenCenterX - buttonWidth - 20, buttonY, buttonWidth, buttonHeight);
-        Rectangle noButtonRect = new Rectangle(screenCenterX + 20, buttonY, buttonWidth, buttonHeight);
-
-        Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
-        Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
-
-        shapeRenderer.setProjectionMatrix(uiCamera.combined);
-        shapeRenderer.begin(ShapeType.Filled);
-
-        shapeRenderer.setColor(0, 0, 0, 0.7f);
-        shapeRenderer.rect(dialogX, dialogY, dialogWidth, dialogHeight);
-
-        // --- HIGHLIGHT LOGIC ---
-        shapeRenderer.setColor(Color.GOLD);
-        if (isYesSelected) {
-            shapeRenderer.rect(yesButtonRect.x - 2, yesButtonRect.y - 2, yesButtonRect.width + 4, yesButtonRect.height + 4);
-        } else {
-            shapeRenderer.rect(noButtonRect.x - 2, noButtonRect.y - 2, noButtonRect.width + 4, noButtonRect.height + 4);
-        }
-
-        shapeRenderer.end();
-        Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
-
-        batch.setProjectionMatrix(uiCamera.combined);
-        batch.begin();
-
-        int destX = currentRoomX;
-        int destY = currentRoomY;
-        switch (pendingDoor.dir) {
-            case NORTH: destY++; break;
-            case SOUTH: destY--; break;
-            case EAST:  destX++; break;
-            case WEST:  destX--; break;
-        }
-        char destRoomName = roomNames[destX][destY];
-
-        String question = "Move to Room " + destRoomName + "?";
-        layout.setText(font, question);
-        font.draw(batch, layout, screenCenterX - layout.width / 2, dialogY + dialogHeight - 20);
-
-        font.setColor(Color.BLACK);
-        layout.setText(font, "Yes");
-        font.draw(batch, layout, yesButtonRect.x + (yesButtonRect.width / 2 - layout.width / 2), yesButtonRect.y + (yesButtonRect.height / 2 + layout.height / 2));
-
-        layout.setText(font, "No");
-        font.draw(batch, layout, noButtonRect.x + (noButtonRect.width / 2 - layout.width / 2), noButtonRect.y + (noButtonRect.height / 2 + layout.height / 2));
-        font.setColor(Color.WHITE);
-
-        String helpText = "[A/D] or [Left/Right] to select. [Enter] to confirm.";
-        layout.setText(font, helpText);
-        font.draw(batch, layout, screenCenterX - layout.width / 2, dialogY + 30);
-
-        batch.end();
-    }
-
-    @Override
-    public void dispose() {
-        shapeRenderer.dispose();
-        batch.dispose();
-        font.dispose();
-        playerTexture.dispose();
-    }
-}
-
-================================================================================
-
 --- File: .\core\src\main\java\com\dimmingechoes\TheDimmingEcho.java ---
 package com.dimmingechoes;
 
 import com.badlogic.gdx.Game;
+import com.dimmingechoes.screens.TitleScreen;
 import com.dimmingechoes.screens.DungeonScreen;
 import com.dimmingechoes.save.SaveData;
 import com.dimmingechoes.save.SaveManager;
@@ -3539,8 +3150,8 @@ public class TheDimmingEcho extends Game {
         crystalInventory = new CrystalInventory(5);
         usageLog = new UsageLog();
 
-        loadGame();
-        setScreen(new DungeonScreen(this));
+        loadGame(1); // Default to slot 1 on startup
+        setScreen(new TitleScreen(this));
     }
 
     public CrystalInventory getCrystalInventory() {
@@ -3551,21 +3162,32 @@ public class TheDimmingEcho extends Game {
         return usageLog;
     }
 
-    public void saveGame() {
+    public void saveGame(int slot) {
         SaveData data = new SaveData();
         data.crystalCount = crystalInventory.getCrystals();
         data.crystalRecipients = usageLog.getAllRecipients();
-        SaveManager.save(data);
+        SaveManager.save(data, slot);
     }
 
-    public void loadGame() {
-        SaveData data = SaveManager.load();
+    public void loadGame(int slot) {
+        SaveData data = SaveManager.load(slot);
         if (data != null) {
             crystalInventory.reset(data.crystalCount);
+            usageLog.clear(); // Clear existing data
             for (String npc : data.crystalRecipients) {
                 usageLog.logCrystalGiven(npc);
             }
         }
+    }
+
+    // Legacy method for backward compatibility
+    public void saveGame() {
+        saveGame(1);
+    }
+
+    // Legacy method for backward compatibility
+    public void loadGame() {
+        loadGame(1);
     }
 }
 
@@ -3807,7 +3429,53 @@ public enum RoomType {
 --- File: .\core\src\main\java\com\dimmingechoes\entities\Enemy.java ---
 package com.dimmingechoes.entities;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation;
+
 public class Enemy {
+    private int health;
+    private int maxHealth;
+    private int attackPower;
+    private int defense;
+    private Animation<TextureRegion> animation;
+    private String name;
+
+    public Enemy(String name, int maxHealth, int attackPower, int defense, Animation<TextureRegion> animation) {
+        this.name = name;
+        this.maxHealth = maxHealth;
+        this.health = maxHealth;
+        this.attackPower = attackPower;
+        this.defense = defense;
+        this.animation = animation;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = Math.max(0, Math.min(health, maxHealth));
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getAttackPower() {
+        return attackPower;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public Animation<TextureRegion> getAnimation() {
+        return animation;
+    }
 }
 
 ================================================================================
@@ -3854,6 +3522,16 @@ public class NPC {
         // The most important state is whether they have received a crystal. This is their "final" state.
         if (hasReceivedCrystal(game)) {
             return getFinalDialogue(game);
+        }
+
+        // Special puzzle reward dialogue for The Laughing Girl
+        if (name.equals("The Laughing Girl")) {
+            try {
+                com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
+                if (ds.isMemoryPuzzleSolved()) {
+                    return new DialogueNode("You solved the memory puzzle! I remember now... Thank you!", new DialogueChoice[0], false, false, true);
+                }
+            } catch (Exception e) { /* ignore */ }
         }
 
         // Check for special, one-time reactive dialogue before the initial conversation.
@@ -3906,6 +3584,7 @@ public class NPC {
                     new DialogueChoice[]{
                         new DialogueChoice("Why are you so angry?", askAngry),
                         new DialogueChoice("[Give a Crystal] Quell his anger.", giveCrystal),
+                        new DialogueChoice("Fight", new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false)),
                         new DialogueChoice("Leave.", end) }, false, false, false);
             case "The Whisper":
                 return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
@@ -3926,7 +3605,8 @@ public class NPC {
             case "The Laughing Girl":
                 return new DialogueNode("Hee hee... still can't remember?", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
             case "The Stranger":
-                return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leaving.", end) }, false, false, false);
+                DialogueNode fightNode2 = new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false);
+                return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Fight", fightNode2), new DialogueChoice("Leaving.", end) }, false, false, false);
             case "The Whisper":
                 // --- FIX: Use the 'game' parameter passed into this method ---
                 boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
@@ -3950,7 +3630,7 @@ public class NPC {
             case "The Laughing Girl":
                 return new DialogueNode("...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.", new DialogueChoice[0], false, false, true);
             case "The Stranger":
-                return new DialogueNode("It was my fault. I... I couldn't protect her. The laughter stopped because of me.", new DialogueChoice[0], false, false, true);
+                return new DialogueNode("It was my fault. I... I couldn't protect her. The laughter stopped because of me. But now, I feel... at peace.", new DialogueChoice[0], false, false, true);
             case "The Whisper":
                 return new DialogueNode("This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.", new DialogueChoice[0], false, false, true);
         }
@@ -3963,7 +3643,53 @@ public class NPC {
 --- File: .\core\src\main\java\com\dimmingechoes\entities\Player.java ---
 package com.dimmingechoes.entities;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation;
+
 public class Player {
+    private int health;
+    private int maxHealth;
+    private int attackPower;
+    private int defense;
+    private Animation<TextureRegion> animation;
+    private String name;
+
+    public Player(String name, int maxHealth, int attackPower, int defense, Animation<TextureRegion> animation) {
+        this.name = name;
+        this.maxHealth = maxHealth;
+        this.health = maxHealth;
+        this.attackPower = attackPower;
+        this.defense = defense;
+        this.animation = animation;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = Math.max(0, Math.min(health, maxHealth));
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getAttackPower() {
+        return attackPower;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public Animation<TextureRegion> getAnimation() {
+        return animation;
+    }
 }
 
 ================================================================================
@@ -4041,6 +3767,145 @@ public class UsageLog {
 
 ================================================================================
 
+--- File: .\core\src\main\java\com\dimmingechoes\manager\AudioManager.java ---
+package com.dimmingechoes.manager;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
+
+public class AudioManager {
+    private static AudioManager instance;
+    private Music currentMusic;
+
+    private AudioManager() {}
+
+    public static AudioManager getInstance() {
+        if (instance == null) {
+            instance = new AudioManager();
+        }
+        return instance;
+    }
+
+    public void playMusic(String path, boolean looping) {
+        stopMusic();
+        FileHandle file = Gdx.files.internal(path);
+        if (!file.exists()) return;
+        currentMusic = Gdx.audio.newMusic(file);
+        currentMusic.setLooping(looping);
+        currentMusic.play();
+    }
+
+    public void stopMusic() {
+        if (currentMusic != null) {
+            currentMusic.stop();
+            currentMusic.dispose();
+            currentMusic = null;
+        }
+    }
+
+    public void playSound(String path) {
+        FileHandle file = Gdx.files.internal(path);
+        if (!file.exists()) return;
+        Sound sound = Gdx.audio.newSound(file);
+        sound.play();
+        // Optionally dispose after playing if not reused
+        sound.dispose();
+    }
+} 
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\manager\BattleManager.java ---
+package com.dimmingechoes.manager;
+
+import com.dimmingechoes.entities.Enemy;
+import com.dimmingechoes.entities.Player;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+public class BattleManager {
+    private final Player player;
+    private final List<Enemy> enemies;
+    private final Queue<Object> turnQueue; // Object can be Player or Enemy
+    private boolean battleOver = false;
+    private boolean playerTurn = true;
+
+    public BattleManager(Player player, List<Enemy> enemies) {
+        this.player = player;
+        this.enemies = new ArrayList<>(enemies);
+        this.turnQueue = new LinkedList<>();
+        turnQueue.add(player);
+        turnQueue.addAll(enemies);
+    }
+
+    public boolean isBattleOver() {
+        return battleOver;
+    }
+
+    public boolean isPlayerTurn() {
+        return playerTurn;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public void nextTurn() {
+        Object current = turnQueue.poll();
+        turnQueue.offer(current);
+        playerTurn = (turnQueue.peek() instanceof Player);
+    }
+
+    public void playerAttack(Enemy target) {
+        if (!playerTurn || battleOver) return;
+        int damage = Math.max(1, player.getAttackPower() - target.getDefense());
+        target.setHealth(target.getHealth() - damage);
+        if (target.getHealth() <= 0) {
+            enemies.remove(target);
+            turnQueue.remove(target);
+        }
+        checkBattleEnd();
+        nextTurn();
+    }
+
+    public void playerUseItem() {
+        // Implement item logic as needed
+        nextTurn();
+    }
+
+    public void playerFlee() {
+        // Implement flee logic (e.g., random chance)
+        battleOver = true;
+    }
+
+    public void enemyTurn(Enemy enemy) {
+        if (battleOver) return;
+        int damage = Math.max(1, enemy.getAttackPower() - player.getDefense());
+        player.setHealth(player.getHealth() - damage);
+        if (player.getHealth() <= 0) {
+            battleOver = true;
+        }
+        nextTurn();
+    }
+
+    private void checkBattleEnd() {
+        if (enemies.isEmpty()) {
+            battleOver = true;
+        }
+        if (player.getHealth() <= 0) {
+            battleOver = true;
+        }
+    }
+} 
+================================================================================
+
 --- File: .\core\src\main\java\com\dimmingechoes\save\SaveData.java ---
 package com.dimmingechoes.save;
 
@@ -4050,6 +3915,16 @@ import java.util.Set;
 public class SaveData {
     public int crystalCount;
     public Set<String> crystalRecipients = new HashSet<>();
+    public long saveTimestamp;
+    
+    public SaveData() {
+        this.saveTimestamp = System.currentTimeMillis();
+    }
+    
+    public String getSaveTimeString() {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(new java.util.Date(saveTimestamp));
+    }
 }
 
 ================================================================================
@@ -4062,24 +3937,61 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 
 public class SaveManager {
-    private static final String SAVE_FILE = "savegame.json";
+    private static final String SAVE_FILE_PREFIX = "savegame";
+    private static final String SAVE_FILE_SUFFIX = ".json";
+    private static final int MAX_SAVE_SLOTS = 3;
 
-    public static void save(SaveData data) {
-        FileHandle file = Gdx.files.local(SAVE_FILE);
+    public static void save(SaveData data, int slot) {
+        if (slot < 1 || slot > MAX_SAVE_SLOTS) return;
+        
+        String filename = SAVE_FILE_PREFIX + slot + SAVE_FILE_SUFFIX;
+        FileHandle file = Gdx.files.local(filename);
         Json json = new Json();
         file.writeString(json.prettyPrint(data), false);
     }
 
-    public static SaveData load() {
-        FileHandle file = Gdx.files.local(SAVE_FILE);
+    public static SaveData load(int slot) {
+        if (slot < 1 || slot > MAX_SAVE_SLOTS) return null;
+        
+        String filename = SAVE_FILE_PREFIX + slot + SAVE_FILE_SUFFIX;
+        FileHandle file = Gdx.files.local(filename);
         if (!file.exists()) return null;
+        
         Json json = new Json();
         return json.fromJson(SaveData.class, file.readString());
     }
 
-    public static void delete() {
-        FileHandle file = Gdx.files.local(SAVE_FILE);
+    public static boolean hasSave(int slot) {
+        if (slot < 1 || slot > MAX_SAVE_SLOTS) return false;
+        
+        String filename = SAVE_FILE_PREFIX + slot + SAVE_FILE_SUFFIX;
+        FileHandle file = Gdx.files.local(filename);
+        return file.exists();
+    }
+
+    public static void delete(int slot) {
+        if (slot < 1 || slot > MAX_SAVE_SLOTS) return;
+        
+        String filename = SAVE_FILE_PREFIX + slot + SAVE_FILE_SUFFIX;
+        FileHandle file = Gdx.files.local(filename);
         if (file.exists()) file.delete();
+    }
+
+    public static int getMaxSaveSlots() {
+        return MAX_SAVE_SLOTS;
+    }
+
+    // Legacy methods for backward compatibility
+    public static void save(SaveData data) {
+        save(data, 1); // Default to slot 1
+    }
+
+    public static SaveData load() {
+        return load(1); // Default to slot 1
+    }
+
+    public static void delete() {
+        delete(1); // Default to slot 1
     }
 }
 
@@ -4088,7 +4000,346 @@ public class SaveManager {
 --- File: .\core\src\main\java\com\dimmingechoes\screens\BattleScreen.java ---
 package com.dimmingechoes.screens;
 
-public class BattleScreen {
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.BattleManager;
+import com.dimmingechoes.entities.Player;
+import com.dimmingechoes.entities.Enemy;
+import java.util.List;
+import java.util.Random;
+
+public class BattleScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final BattleManager battleManager;
+    private final Stage stage;
+    private final Skin skin;
+    private final BitmapFont font;
+    private final SpriteBatch batch;
+    private final ShapeRenderer shapeRenderer;
+    private Table uiTable;
+    private Label infoLabel;
+    private Enemy selectedEnemy;
+    private int healAmount = 10;
+    private String itemMessage = "";
+    
+    // Victory/Game Over effects
+    private float victoryTimer = 0f;
+    private float victoryAlpha = 0f;
+    private boolean showingVictory = false;
+    private boolean showingGameOver = false;
+    private static final float VICTORY_FADE_DURATION = 2.0f;
+    
+    // Attack delay
+    private float attackDelay = 0f;
+    private static final float ATTACK_DELAY_TIME = 1.0f;
+    private boolean canAttack = true;
+    
+    // Strong attack mechanics
+    private Random random = new Random();
+    private boolean strongAttackMode = false;
+    private static final float STRONG_ATTACK_CHANCE = 0.3f; // 30% chance
+
+    public BattleScreen(TheDimmingEcho game, Player player, List<Enemy> enemies) {
+        this.game = game;
+        this.battleManager = new BattleManager(player, enemies);
+        this.stage = new Stage(new ScreenViewport());
+        this.batch = new SpriteBatch();
+        this.shapeRenderer = new ShapeRenderer();
+
+        // Load pixel font
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 24;
+        parameter.color = Color.WHITE;
+        this.font = generator.generateFont(parameter);
+        generator.dispose();
+
+        this.skin = new Skin();
+        skin.add("default-font", font);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        skin.add("default", labelStyle);
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = font;
+        skin.add("default", buttonStyle);
+
+        createUI();
+    }
+
+    private void createUI() {
+        uiTable = new Table();
+        uiTable.setFillParent(true);
+        uiTable.bottom().padBottom(60);
+
+        infoLabel = new Label("", skin);
+        infoLabel.setAlignment(Align.center);
+        uiTable.add(infoLabel).colspan(3).padBottom(40).row();
+
+        // Attack Button
+        TextButton attackButton = new TextButton("Attack", skin);
+        attackButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (battleManager.isPlayerTurn() && !battleManager.isBattleOver() && canAttack) {
+                    Enemy target = getFirstAliveEnemy();
+                    if (target != null) {
+                        canAttack = false;
+                        attackDelay = ATTACK_DELAY_TIME;
+                        
+                        // Check for strong attack
+                        if (random.nextFloat() < STRONG_ATTACK_CHANCE) {
+                            strongAttackMode = true;
+                            battleManager.getPlayer().setHealth(1);
+                            target.setHealth(1);
+                            infoLabel.setText("Strong attack! Both at 1 HP!");
+                        } else {
+                            battleManager.playerAttack(target);
+                        }
+                        updateInfoLabel();
+                    }
+                }
+            }
+        });
+        uiTable.add(attackButton).width(180).height(60).padRight(30);
+
+        // Echo Crystal Button
+        TextButton itemButton = new TextButton("Use Echo Crystal", skin);
+        itemButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (battleManager.isPlayerTurn() && !battleManager.isBattleOver() && canAttack) {
+                    if (game.getCrystalInventory().getCrystals() > 0) {
+                        game.getCrystalInventory().useCrystal();
+                        battleManager.getPlayer().setHealth(battleManager.getPlayer().getHealth() + healAmount);
+                        itemMessage = "You used an Echo Crystal and healed!";
+                    } else {
+                        itemMessage = "No Echo Crystals left!";
+                    }
+                    battleManager.playerUseItem();
+                    updateInfoLabel();
+                }
+            }
+        });
+        uiTable.add(itemButton).width(180).height(60).padRight(30);
+
+        // Flee Button
+        TextButton fleeButton = new TextButton("Flee", skin);
+        fleeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (battleManager.isPlayerTurn() && !battleManager.isBattleOver() && canAttack) {
+                    battleManager.playerFlee();
+                    updateInfoLabel();
+                }
+            }
+        });
+        uiTable.add(fleeButton).width(180).height(60);
+
+        stage.addActor(uiTable);
+    }
+
+    private Enemy getFirstAliveEnemy() {
+        for (Enemy e : battleManager.getEnemies()) {
+            if (e.getHealth() > 0) return e;
+        }
+        return null;
+    }
+
+    private void updateInfoLabel() {
+        if (!itemMessage.isEmpty()) {
+            infoLabel.setText(itemMessage);
+            itemMessage = "";
+            return;
+        }
+        if (battleManager.isBattleOver()) {
+            if (battleManager.getPlayer().getHealth() <= 0) {
+                showingGameOver = true;
+                victoryTimer = 0f;
+                victoryAlpha = 0f;
+            } else {
+                showingVictory = true;
+                victoryTimer = 0f;
+                victoryAlpha = 0f;
+            }
+        } else if (battleManager.isPlayerTurn()) {
+            infoLabel.setText("Your turn!");
+        } else {
+            infoLabel.setText("Enemy turn...");
+        }
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        updateInfoLabel();
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Update attack delay
+        if (!canAttack) {
+            attackDelay -= delta;
+            if (attackDelay <= 0) {
+                canAttack = true;
+            }
+        }
+
+        // Update victory/game over effects
+        if (showingVictory || showingGameOver) {
+            victoryTimer += delta;
+            victoryAlpha = Math.min(1.0f, victoryTimer / VICTORY_FADE_DURATION);
+            
+            // Auto-return to dungeon after 3 seconds
+            if (victoryTimer > 3.0f) {
+                game.setScreen(new DungeonScreen(game));
+                return;
+            }
+        }
+
+        batch.begin();
+        
+        // Draw player icon and health (bottom left)
+        Player player = battleManager.getPlayer();
+        float playerX = 100; // Gap from left edge
+        float playerY = 100; // Gap from bottom edge
+        float playerSize = 96;
+        
+        // Draw player sprite from player.png
+        try {
+            com.badlogic.gdx.graphics.Texture playerTexture = new com.badlogic.gdx.graphics.Texture(Gdx.files.internal("Player.png"));
+            batch.draw(playerTexture, playerX, playerY, playerSize, playerSize);
+            playerTexture.dispose();
+        } catch (Exception e) {
+            // Fallback to white rectangle if texture not found
+            shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.rect(playerX, playerY, playerSize, playerSize);
+            shapeRenderer.end();
+        }
+        
+        // Draw player health below the player icon
+        font.draw(batch, player.getName() + " HP: " + player.getHealth() + "/" + player.getMaxHealth(), playerX, playerY - 20);
+
+        // Draw enemies with white blobs (top right)
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+        float enemySize = 96;
+        float enemyMargin = enemySize * 1.5f; // 1.5x size from edge
+        float enemyX = screenWidth - enemyMargin - enemySize;
+        float enemyY = screenHeight - enemyMargin - enemySize;
+        
+        for (Enemy enemy : battleManager.getEnemies()) {
+            if (enemy.getHealth() > 0) {
+                // Draw white blob for enemy
+                shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(Color.WHITE);
+                shapeRenderer.circle(enemyX + enemySize/2, enemyY + enemySize/2, enemySize/2);
+                shapeRenderer.end();
+                
+                // Draw enemy health above blob with proper spacing
+                String enemyHealthText = enemy.getName() + " HP: " + enemy.getHealth() + "/" + enemy.getMaxHealth();
+                float textWidth = font.draw(batch, enemyHealthText, 0, 0).width;
+                float textX = enemyX + (enemySize - textWidth) / 2f;
+                float textY = enemyY + enemySize + 30; // 30px gap above blob
+                font.draw(batch, enemyHealthText, textX, textY);
+                
+                // Move to next enemy position (stacked vertically)
+                enemyY -= (enemySize + 60); // 60px gap between enemies
+            }
+        }
+        batch.end();
+
+        // Enemy AI turn
+        if (!battleManager.isBattleOver() && !battleManager.isPlayerTurn() && canAttack) {
+            Enemy enemy = getFirstAliveEnemy();
+            if (enemy != null) {
+                battleManager.enemyTurn(enemy);
+                updateInfoLabel();
+            }
+        }
+
+        // Draw victory/game over screen
+        if (showingVictory || showingGameOver) {
+            batch.begin();
+            font.setColor(1, 1, 1, victoryAlpha);
+            
+            String text = showingVictory ? "VICTORY!" : "GAME OVER";
+            float textWidth = font.draw(batch, text, 0, 0).width;
+            float textX = (Gdx.graphics.getWidth() - textWidth) / 2f;
+            float textY = Gdx.graphics.getHeight() / 2f + 50;
+            
+            // Draw sparkles for victory
+            if (showingVictory) {
+                drawSparkles(textX, textY, victoryAlpha);
+            }
+            
+            font.draw(batch, text, textX, textY);
+            font.setColor(Color.WHITE);
+            batch.end();
+        }
+
+        stage.act(delta);
+        stage.draw();
+    }
+
+    private void drawSparkles(float textX, float textY, float alpha) {
+        // Draw sparkles on left and right sides
+        String sparkle = "*";
+        float sparkleAlpha = (float) Math.abs(Math.sin(victoryTimer * 4)) * alpha;
+        font.setColor(1, 1, 0, sparkleAlpha); // Yellow sparkles
+        
+        // Left sparkles
+        font.draw(batch, sparkle, textX - 60, textY + 20);
+        font.draw(batch, sparkle, textX - 80, textY - 10);
+        font.draw(batch, sparkle, textX - 40, textY - 30);
+        
+        // Right sparkles
+        font.draw(batch, sparkle, textX + 60, textY + 20);
+        font.draw(batch, sparkle, textX + 80, textY - 10);
+        font.draw(batch, sparkle, textX + 40, textY - 30);
+        
+        font.setColor(1, 1, 1, alpha);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {}
+    @Override
+    public void resume() {}
+    @Override
+    public void hide() {}
+    @Override
+    public void dispose() {
+        stage.dispose();
+        skin.dispose();
+        font.dispose();
+        batch.dispose();
+        shapeRenderer.dispose();
+    }
 }
 
 ================================================================================
@@ -4138,7 +4389,9 @@ import com.dimmingechoes.dungeon.Room;
 import com.dimmingechoes.dungeon.RoomGraph;
 import com.dimmingechoes.dungeon.RoomType;
 import com.dimmingechoes.entities.NPC;
+import com.dimmingechoes.screens.PauseMenuScreen;
 import com.badlogic.gdx.math.MathUtils;
+import com.dimmingechoes.manager.AudioManager;
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
@@ -4175,6 +4428,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private float charTimer = 0;
     private int charIndex = 0;
     private final float CHAR_DELAY = 0.03f;
+    private boolean isMemoryPuzzleSolved = false;
+    private Rectangle puzzleTriggerBounds = null;
+    private boolean awaitingFinalChoice = false;
+    private String finalChoiceResult = null;
 
     public DungeonScreen(TheDimmingEcho game) {
         this.game = game;
@@ -4256,6 +4513,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         this.mapScale = gameViewport.getWorldWidth() / mapWidthInPixels;
         renderer = new OrthogonalTiledMapRenderer(map, this.mapScale);
         parseCollisionLayer();
+        parseInteractablesLayer();
 
         playerSpriteSheet = new Texture(Gdx.files.internal("Player.png"));
         playerSpriteSheet = new Texture(Gdx.files.internal("player_walk_left.png"));
@@ -4277,6 +4535,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
         playerAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
         stateTime = 0f;
+        AudioManager.getInstance().playMusic("audio/dungeon_theme.mp3", true);
     }
 
     private void clampCamera() {
@@ -4348,7 +4607,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
         for (DoorZone door : currentRoom.getDoorZones()) {
             if (player.overlaps(door.bounds)) {
                 if (door.leadsTo.getRoomType() == RoomType.FINAL) {
-                    triggerEnding();
+                    if (!awaitingFinalChoice) {
+                        presentFinalChoice();
+                    }
+                    return;
                 } else {
                     changeRoom(door);
                 }
@@ -4387,6 +4649,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
 // PERBAIKAN 2: Panggil parseCollisionLayer setiap kali pindah ruangan
         parseCollisionLayer();
+        parseInteractablesLayer();
 
         if (dialogueTable.isVisible()) endDialogue();
         switch (door.entryDirection) {
@@ -4419,6 +4682,26 @@ public class DungeonScreen extends InputAdapter implements Screen {
         endingShown = true;
     }
 
+    private void presentFinalChoice() {
+        awaitingFinalChoice = true;
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
+        DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
+        DialogueChoice[] choices = new DialogueChoice[] {
+            new DialogueChoice("Give the final crystal", giveChoice),
+            new DialogueChoice("Keep it", keepChoice)
+        };
+        DialogueNode choiceNode = new DialogueNode("At the threshold, a choice: Will you give the final crystal, or keep it?", choices, false, false, false);
+        currentDialogueNode = choiceNode;
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear();
+        dialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(uiStage);
+        populateChoices();
+    }
+
     private void parseCollisionLayer() {
         currentRoom.getObstacles().clear();
         if (map.getLayers().get("Collision") == null) return;
@@ -4434,6 +4717,24 @@ public class DungeonScreen extends InputAdapter implements Screen {
                 rect.height *= this.mapScale;
 
                 currentRoom.addObstacle(rect);
+            }
+        }
+    }
+
+    private void parseInteractablesLayer() {
+        puzzleTriggerBounds = null;
+        if (map.getLayers().get("Interactables") == null) return;
+        for (MapObject object : map.getLayers().get("Interactables").getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                rect.x *= this.mapScale;
+                rect.y *= this.mapScale;
+                rect.width *= this.mapScale;
+                rect.height *= this.mapScale;
+                String name = object.getName();
+                if (name != null && name.equals("PuzzleTrigger")) {
+                    puzzleTriggerBounds = rect;
+                }
             }
         }
     }
@@ -4463,8 +4764,42 @@ public class DungeonScreen extends InputAdapter implements Screen {
         spriteBatch.end();
     }
 
-    private void renderStaticUI() { spriteBatch.begin(); BitmapFont font = skin.getFont("default-font"); font.setColor(Color.WHITE); font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10); font.draw(spriteBatch, "Press [F5] to Save", 10, Gdx.graphics.getHeight() - 35); font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 60); spriteBatch.end(); }
-    @Override public boolean keyDown(int keycode) { switch (keycode) { case Input.Keys.W: moveUp = true; break; case Input.Keys.S: moveDown = true; break; case Input.Keys.A: moveLeft = true; break; case Input.Keys.D: moveRight = true; break; case Input.Keys.F5: game.saveGame(); return true; case Input.Keys.SPACE: for (NPC npc : currentRoom.getNpcs()) { if (isNear(npc)) { startDialogue(npc); break; } } return true; } return false; }
+    private void renderStaticUI() { 
+        spriteBatch.begin(); 
+        BitmapFont font = skin.getFont("default-font"); 
+        font.setColor(Color.WHITE); 
+        font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10); 
+        font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 35); 
+        font.draw(spriteBatch, "Press [ESC] to pause", 10, Gdx.graphics.getHeight() - 60); 
+        spriteBatch.end(); 
+    }
+    @Override 
+    public boolean keyDown(int keycode) { 
+        switch (keycode) { 
+            case Input.Keys.W: moveUp = true; break; 
+            case Input.Keys.S: moveDown = true; break; 
+            case Input.Keys.A: moveLeft = true; break; 
+            case Input.Keys.D: moveRight = true; break; 
+            case Input.Keys.ESCAPE: 
+                game.setScreen(new PauseMenuScreen(game, this)); 
+                return true; 
+            case Input.Keys.SPACE: 
+                // Puzzle interaction
+                if (!isMemoryPuzzleSolved && puzzleTriggerBounds != null && player.overlaps(puzzleTriggerBounds)) {
+                    isMemoryPuzzleSolved = true;
+                    // Optionally show a message or effect here
+                    return true;
+                }
+                for (NPC npc : currentRoom.getNpcs()) { 
+                    if (isNear(npc)) { 
+                        startDialogue(npc); 
+                        break; 
+                    } 
+                } 
+                return true; 
+        } 
+        return false; 
+    }
     @Override public boolean keyUp(int keycode) { switch (keycode) { case Input.Keys.W: moveUp = false; break; case Input.Keys.S: moveDown = false; break; case Input.Keys.A: moveLeft = false; break; case Input.Keys.D: moveRight = false; break; } return false; }
     private void updateTypingEffect(float delta) { charTimer += delta; if (charIndex < fullDialogueText.length() && charTimer >= CHAR_DELAY) { charIndex++; dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex)); charTimer = 0; if (charIndex == fullDialogueText.length()) populateChoices(); } }
     private void startDialogue(NPC npc) { moveUp = moveDown = moveLeft = moveRight = false; dialogueNPC = npc; currentDialogueNode = npc.getDialogue(game); fullDialogueText = currentDialogueNode.text; charIndex = 0; dialogueTextLabel.setText(""); choicesTable.clear(); dialogueTable.setVisible(true); Gdx.input.setInputProcessor(uiStage); if (charIndex < fullDialogueText.length()) dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex)); else populateChoices(); }
@@ -4472,7 +4807,55 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private boolean isNear(NPC npc) { return player.getCenter(new Vector2()).dst(npc.getBounds().getCenter(new Vector2())) < INTERACTION_RADIUS; }
     private void updateChoiceHighlight() { for (int i = 0; i < choicesTable.getChildren().size; i++) { TextButton button = (TextButton) choicesTable.getChildren().get(i); button.setColor(i == selectedChoiceIndex ? Color.GOLD : Color.WHITE); } }
     private void populateChoices() { choicesTable.clear(); if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) { for (final DialogueChoice choice : currentDialogueNode.choices) { TextButton choiceButton = new TextButton(choice.choiceText, skin); choiceButton.getLabel().setAlignment(Align.left); choiceButton.addListener(new ClickListener() { @Override public void clicked(InputEvent event, float x, float y) { processDialogueChoice(choice); } }); choicesTable.add(choiceButton).left().row(); } selectedChoiceIndex = 0; updateChoiceHighlight(); uiStage.setKeyboardFocus(choicesTable); } else { uiStage.setKeyboardFocus(null); } }
-    private void processDialogueChoice(DialogueChoice choice) { choicesTable.clear(); uiStage.setKeyboardFocus(null); currentDialogueNode = choice.next; if (currentDialogueNode.requiresCrystal) { if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) { if (!game.getCrystalInventory().useCrystal()) { endDialogue(); return; } game.getUsageLog().logCrystalGiven(dialogueNPC.getName()); } } fullDialogueText = currentDialogueNode.text; charIndex = 0; dialogueTextLabel.setText(""); }
+    private void processDialogueChoice(DialogueChoice choice) {
+        choicesTable.clear();
+        uiStage.setKeyboardFocus(null);
+        // If this is the Stranger's 'Begin Battle' choice, start the battle
+        if (dialogueNPC != null && dialogueNPC.getName().equals("The Stranger") && choice.choiceText.equals("Begin Battle")) {
+            com.dimmingechoes.entities.Player player = new com.dimmingechoes.entities.Player("You", 30, 8, 3, null);
+            java.util.List<com.dimmingechoes.entities.Enemy> enemies = new java.util.ArrayList<>();
+            enemies.add(new com.dimmingechoes.entities.Enemy("The Stranger", 20, 6, 2, null));
+            game.setScreen(new BattleScreen(game, player, enemies));
+            return;
+        }
+        // Handle final choice
+        if (awaitingFinalChoice && (choice.choiceText.equals("Give the final crystal") || choice.choiceText.equals("Keep it"))) {
+            finalChoiceResult = choice.choiceText;
+            awaitingFinalChoice = false;
+            triggerEndingWithChoice(finalChoiceResult);
+            return;
+        }
+        currentDialogueNode = choice.next;
+        if (currentDialogueNode != null && currentDialogueNode.requiresCrystal) {
+            if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
+                if (!game.getCrystalInventory().useCrystal()) {
+                    endDialogue();
+                    return;
+                }
+                game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+            }
+        }
+        if (currentDialogueNode != null) {
+            fullDialogueText = currentDialogueNode.text;
+            charIndex = 0;
+            dialogueTextLabel.setText("");
+        }
+    }
+
+    private void triggerEndingWithChoice(String choice) {
+        if (endingShown) return;
+        String endingMessage;
+        String endingImagePath;
+        if (choice.equals("Give the final crystal")) {
+            endingMessage = "Ending: The Gift\nYou gave the last echo. Peace returns.";
+            endingImagePath = "../Tiled/FinalPuni.png";
+        } else {
+            endingMessage = "Ending: The Keeper\nYou kept the last echo. The silence remains.";
+            endingImagePath = "../Tiled/Shinking.png";
+        }
+        game.setScreen(new EndingScreen(endingMessage, endingImagePath));
+        endingShown = true;
+    }
     @Override public void resize(int width, int height) { gameViewport.update(width, height, true); uiStage.getViewport().update(width, height, true); dialogueTable.invalidateHierarchy(); }
     @Override
     public void dispose() {
@@ -4487,7 +4870,13 @@ public class DungeonScreen extends InputAdapter implements Screen {
         playerSpriteSheet.dispose();
     } @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() {}
+    @Override public void hide() {
+        AudioManager.getInstance().stopMusic();
+        // Not needed for this screen
+    }
+
+    // Add a getter for isMemoryPuzzleSolved
+    public boolean isMemoryPuzzleSolved() { return isMemoryPuzzleSolved; }
 }
 
 ================================================================================
@@ -4568,6 +4957,806 @@ public class EndingScreen implements Screen {
 
 }
 
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\LoadGameScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.save.SaveManager;
+
+public class LoadGameScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final MainMenuScreen mainMenuScreen;
+    private final Stage stage;
+    private final Skin skin;
+    private final BitmapFont menuFont;
+    private final BitmapFont titleFont;
+
+    public LoadGameScreen(TheDimmingEcho game, MainMenuScreen mainMenuScreen) {
+        this.game = game;
+        this.mainMenuScreen = mainMenuScreen;
+        this.stage = new Stage(new ScreenViewport());
+
+        // Load pixelated font for menu
+        FreeTypeFontGenerator menuGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter menuParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        menuParameter.size = 28;
+        menuParameter.color = Color.WHITE;
+        menuParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        menuParameter.shadowOffsetX = 2;
+        menuParameter.shadowOffsetY = 2;
+        this.menuFont = menuGenerator.generateFont(menuParameter);
+        menuGenerator.dispose();
+
+        // Load title font
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParameter.size = 36;
+        titleParameter.color = Color.WHITE;
+        titleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        titleParameter.shadowOffsetX = 3;
+        titleParameter.shadowOffsetY = 3;
+        this.titleFont = titleGenerator.generateFont(titleParameter);
+        titleGenerator.dispose();
+
+        // Create skin for UI
+        this.skin = new Skin();
+        skin.add("default-font", menuFont);
+        skin.add("title-font", titleFont);
+        
+        Label.LabelStyle labelStyle = new Label.LabelStyle(menuFont, Color.WHITE);
+        skin.add("default", labelStyle);
+        
+        Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, Color.WHITE);
+        skin.add("title", titleStyle);
+        
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = menuFont;
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.downFontColor = Color.GOLD;
+        buttonStyle.overFontColor = Color.YELLOW;
+        skin.add("default", buttonStyle);
+
+        createUI();
+    }
+
+    private void createUI() {
+        Table mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.center();
+
+        // Title
+        Label titleLabel = new Label("Load Game", skin, "title");
+        mainTable.add(titleLabel).padBottom(50).row();
+
+        // Create save slot buttons
+        for (int i = 1; i <= SaveManager.getMaxSaveSlots(); i++) {
+            final int slot = i;
+            String slotText = getSlotText(slot);
+            
+            TextButton slotButton = new TextButton(slotText, skin);
+            slotButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    if (SaveManager.hasSave(slot)) {
+                        game.loadGame(slot);
+                        game.setScreen(new DungeonScreen(game));
+                    }
+                }
+            });
+            mainTable.add(slotButton).width(350).height(60).padBottom(20).row();
+        }
+
+        // Back Button
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(mainMenuScreen);
+            }
+        });
+        mainTable.add(backButton).width(200).height(50).padTop(30).row();
+
+        stage.addActor(mainTable);
+    }
+
+    private String getSlotText(int slot) {
+        if (SaveManager.hasSave(slot)) {
+            com.dimmingechoes.save.SaveData data = SaveManager.load(slot);
+            if (data != null) {
+                return "Slot " + slot + ": " + data.getSaveTimeString();
+            }
+        }
+        return "Slot " + slot + ": Empty";
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void render(float delta) {
+        // Clear screen
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Draw UI
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void resume() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void hide() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+        skin.dispose();
+        menuFont.dispose();
+        titleFont.dispose();
+    }
+} 
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\MainMenuScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.screens.LoadGameScreen;
+import com.dimmingechoes.manager.AudioManager;
+
+public class MainMenuScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final SpriteBatch batch;
+    private final Stage stage;
+    private final Skin skin;
+    private final BitmapFont menuFont;
+    private final BitmapFont titleFont;
+    private Texture backgroundTexture;
+    private boolean backgroundLoaded = false;
+
+    public MainMenuScreen(TheDimmingEcho game) {
+        this.game = game;
+        this.batch = new SpriteBatch();
+        this.stage = new Stage(new ScreenViewport());
+
+        // Load pixelated font for menu
+        FreeTypeFontGenerator menuGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter menuParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        menuParameter.size = 32;
+        menuParameter.color = Color.WHITE;
+        menuParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        menuParameter.shadowOffsetX = 2;
+        menuParameter.shadowOffsetY = 2;
+        this.menuFont = menuGenerator.generateFont(menuParameter);
+        menuGenerator.dispose();
+
+        // Load title font
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParameter.size = 48;
+        titleParameter.color = Color.WHITE;
+        titleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        titleParameter.shadowOffsetX = 3;
+        titleParameter.shadowOffsetY = 3;
+        this.titleFont = titleGenerator.generateFont(titleParameter);
+        titleGenerator.dispose();
+
+        // Create skin for UI
+        this.skin = new Skin();
+        skin.add("default-font", menuFont);
+        
+        Label.LabelStyle labelStyle = new Label.LabelStyle(menuFont, Color.WHITE);
+        skin.add("default", labelStyle);
+        
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = menuFont;
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.downFontColor = Color.GOLD;
+        buttonStyle.overFontColor = Color.YELLOW;
+        skin.add("default", buttonStyle);
+
+        createUI();
+    }
+
+    private void createUI() {
+        Table mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.center();
+
+        // Title
+        Label titleLabel = new Label("DIMming Echoes", skin);
+        titleLabel.setFontScale(1.5f);
+        mainTable.add(titleLabel).padBottom(50).row();
+
+        // New Game Button
+        TextButton newGameButton = new TextButton("New Game", skin);
+        newGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new DungeonScreen(game));
+            }
+        });
+        mainTable.add(newGameButton).width(300).height(60).padBottom(20).row();
+
+        // Load Game Button
+        TextButton loadGameButton = new TextButton("Load Game", skin);
+        loadGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new LoadGameScreen(game, MainMenuScreen.this));
+            }
+        });
+        mainTable.add(loadGameButton).width(300).height(60).padBottom(20).row();
+
+        // GitHub Button
+        TextButton githubButton = new TextButton("See GitHub Page", skin);
+        githubButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.net.openURI("https://github.com/DhonnanWork/DimmingEchoes");
+            }
+        });
+        mainTable.add(githubButton).width(300).height(60).padBottom(20).row();
+
+        // Exit Game Button
+        TextButton exitButton = new TextButton("Exit Game", skin);
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+            }
+        });
+        mainTable.add(exitButton).width(300).height(60).padBottom(20).row();
+
+        stage.addActor(mainTable);
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        
+        // Try to load background image
+        try {
+            backgroundTexture = new Texture(Gdx.files.internal("menu_bg.png"));
+            backgroundLoaded = true;
+        } catch (Exception e) {
+            Gdx.app.log("MainMenuScreen", "Background image not found: menu_bg.png");
+            backgroundLoaded = false;
+        }
+        AudioManager.getInstance().playMusic("audio/menu_theme.mp3", true);
+    }
+
+    @Override
+    public void render(float delta) {
+        // Clear screen
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+
+        // Draw background if available
+        if (backgroundLoaded && backgroundTexture != null) {
+            // Calculate scaling to fit the screen while maintaining aspect ratio
+            float screenWidth = Gdx.graphics.getWidth();
+            float screenHeight = Gdx.graphics.getHeight();
+            float bgWidth = backgroundTexture.getWidth();
+            float bgHeight = backgroundTexture.getHeight();
+            
+            float scaleX = screenWidth / bgWidth;
+            float scaleY = screenHeight / bgHeight;
+            float scale = Math.max(scaleX, scaleY);
+            
+            float scaledWidth = bgWidth * scale;
+            float scaledHeight = bgHeight * scale;
+            float x = (screenWidth - scaledWidth) / 2f;
+            float y = (screenHeight - scaledHeight) / 2f;
+            
+            batch.draw(backgroundTexture, x, y, scaledWidth, scaledHeight);
+        }
+
+        batch.end();
+
+        // Draw UI
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void resume() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void hide() {
+        AudioManager.getInstance().stopMusic();
+        // Not needed for this screen
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        stage.dispose();
+        skin.dispose();
+        menuFont.dispose();
+        titleFont.dispose();
+        if (backgroundTexture != null) {
+            backgroundTexture.dispose();
+        }
+    }
+} 
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\PauseMenuScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.save.SaveManager;
+
+public class PauseMenuScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final DungeonScreen dungeonScreen;
+    private final Stage stage;
+    private final Skin skin;
+    private final BitmapFont menuFont;
+    private final BitmapFont titleFont;
+    private boolean showingSaveSlots = false;
+    private Table mainTable;
+    private Table saveSlotsTable;
+
+    public PauseMenuScreen(TheDimmingEcho game, DungeonScreen dungeonScreen) {
+        this.game = game;
+        this.dungeonScreen = dungeonScreen;
+        this.stage = new Stage(new ScreenViewport());
+
+        // Load pixelated font for menu
+        FreeTypeFontGenerator menuGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter menuParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        menuParameter.size = 28;
+        menuParameter.color = Color.WHITE;
+        menuParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        menuParameter.shadowOffsetX = 2;
+        menuParameter.shadowOffsetY = 2;
+        this.menuFont = menuGenerator.generateFont(menuParameter);
+        menuGenerator.dispose();
+
+        // Load title font
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParameter.size = 36;
+        titleParameter.color = Color.WHITE;
+        titleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        titleParameter.shadowOffsetX = 3;
+        titleParameter.shadowOffsetY = 3;
+        this.titleFont = titleGenerator.generateFont(titleParameter);
+        titleGenerator.dispose();
+
+        // Create skin for UI
+        this.skin = new Skin();
+        skin.add("default-font", menuFont);
+        skin.add("title-font", titleFont);
+        
+        Label.LabelStyle labelStyle = new Label.LabelStyle(menuFont, Color.WHITE);
+        skin.add("default", labelStyle);
+        
+        Label.LabelStyle titleStyle = new Label.LabelStyle(titleFont, Color.WHITE);
+        skin.add("title", titleStyle);
+        
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = menuFont;
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.downFontColor = Color.GOLD;
+        buttonStyle.overFontColor = Color.YELLOW;
+        skin.add("default", buttonStyle);
+
+        createMainMenu();
+        createSaveSlotsMenu();
+    }
+
+    private void createMainMenu() {
+        mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.center();
+
+        // Title
+        Label titleLabel = new Label("PAUSED", skin, "title");
+        mainTable.add(titleLabel).padBottom(50).row();
+
+        // Resume Button
+        TextButton resumeButton = new TextButton("Resume", skin);
+        resumeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(dungeonScreen);
+            }
+        });
+        mainTable.add(resumeButton).width(250).height(50).padBottom(20).row();
+
+        // Save Game Button
+        TextButton saveButton = new TextButton("Save Game", skin);
+        saveButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                showSaveSlots();
+            }
+        });
+        mainTable.add(saveButton).width(250).height(50).padBottom(20).row();
+
+        // Exit to Main Menu Button
+        TextButton exitButton = new TextButton("Exit to Main Menu", skin);
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+        mainTable.add(exitButton).width(250).height(50).padBottom(20).row();
+
+        // Exit Game Button
+        TextButton exitGameButton = new TextButton("Exit Game", skin);
+        exitGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+            }
+        });
+        mainTable.add(exitGameButton).width(250).height(50).padBottom(20).row();
+
+        stage.addActor(mainTable);
+    }
+
+    private void createSaveSlotsMenu() {
+        saveSlotsTable = new Table();
+        saveSlotsTable.setFillParent(true);
+        saveSlotsTable.center();
+
+        // Title
+        Label titleLabel = new Label("Select Save Slot", skin, "title");
+        saveSlotsTable.add(titleLabel).padBottom(50).row();
+
+        // Create save slot buttons
+        for (int i = 1; i <= SaveManager.getMaxSaveSlots(); i++) {
+            final int slot = i;
+            String slotText = getSlotText(slot);
+            
+            TextButton slotButton = new TextButton(slotText, skin);
+            slotButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    game.saveGame(slot);
+                    showMainMenu();
+                }
+            });
+            saveSlotsTable.add(slotButton).width(300).height(50).padBottom(15).row();
+        }
+
+        // Back Button
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                showMainMenu();
+            }
+        });
+        saveSlotsTable.add(backButton).width(200).height(50).padTop(20).row();
+
+        stage.addActor(saveSlotsTable);
+        saveSlotsTable.setVisible(false);
+    }
+
+    private String getSlotText(int slot) {
+        if (SaveManager.hasSave(slot)) {
+            com.dimmingechoes.save.SaveData data = SaveManager.load(slot);
+            if (data != null) {
+                return "Slot " + slot + ": " + data.getSaveTimeString();
+            }
+        }
+        return "Slot " + slot + ": Empty";
+    }
+
+    private void showSaveSlots() {
+        mainTable.setVisible(false);
+        saveSlotsTable.setVisible(true);
+        showingSaveSlots = true;
+        
+        // Update slot texts
+        for (int i = 0; i < saveSlotsTable.getChildren().size - 1; i++) { // -1 for back button
+            if (saveSlotsTable.getChildren().get(i) instanceof TextButton) {
+                TextButton button = (TextButton) saveSlotsTable.getChildren().get(i);
+                button.setText(getSlotText(i + 1));
+            }
+        }
+    }
+
+    private void showMainMenu() {
+        mainTable.setVisible(true);
+        saveSlotsTable.setVisible(false);
+        showingSaveSlots = false;
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void render(float delta) {
+        // Render the dungeon screen first (as background)
+        dungeonScreen.render(delta);
+        
+        // Draw semi-transparent overlay
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glClearColor(0, 0, 0, 0.5f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        // Draw UI
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void resume() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void hide() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+        skin.dispose();
+        menuFont.dispose();
+        titleFont.dispose();
+    }
+} 
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\TitleScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.Align;
+import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.AudioManager;
+
+public class TitleScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final SpriteBatch batch;
+    private final BitmapFont titleFont;
+    private final BitmapFont subtitleFont;
+    private float fadeTimer = 0f;
+    private float alpha = 0f;
+    private boolean fadeInComplete = false;
+    private static final float FADE_DURATION = 2.0f;
+    private static final float DISPLAY_DURATION = 3.0f;
+    private float displayTimer = 0f;
+    private boolean shouldTransition = false;
+
+    public TitleScreen(TheDimmingEcho game) {
+        this.game = game;
+        this.batch = new SpriteBatch();
+
+        // Load pixelated font for title
+        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        titleParameter.size = 48;
+        titleParameter.color = Color.WHITE;
+        titleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        titleParameter.shadowOffsetX = 2;
+        titleParameter.shadowOffsetY = 2;
+        this.titleFont = titleGenerator.generateFont(titleParameter);
+        titleGenerator.dispose();
+
+        // Load subtitle font
+        FreeTypeFontGenerator subtitleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter subtitleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        subtitleParameter.size = 24;
+        subtitleParameter.color = Color.WHITE;
+        subtitleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        subtitleParameter.shadowOffsetX = 1;
+        subtitleParameter.shadowOffsetY = 1;
+        this.subtitleFont = subtitleGenerator.generateFont(subtitleParameter);
+        subtitleGenerator.dispose();
+    }
+
+    @Override
+    public void show() {
+        fadeTimer = 0f;
+        alpha = 0f;
+        fadeInComplete = false;
+        displayTimer = 0f;
+        shouldTransition = false;
+        AudioManager.getInstance().playMusic("audio/title_theme.mp3", true);
+    }
+
+    @Override
+    public void render(float delta) {
+        // Update fade timer
+        if (!fadeInComplete) {
+            fadeTimer += delta;
+            alpha = Math.min(1.0f, fadeTimer / FADE_DURATION);
+            if (alpha >= 1.0f) {
+                fadeInComplete = true;
+                fadeTimer = 0f;
+            }
+        } else {
+            displayTimer += delta;
+            if (displayTimer >= DISPLAY_DURATION) {
+                shouldTransition = true;
+            }
+        }
+
+        // Check for input to skip or transition
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
+            shouldTransition = true;
+        }
+
+        // Transition to main menu
+        if (shouldTransition) {
+            game.setScreen(new MainMenuScreen(game));
+            return;
+        }
+
+        // Clear screen
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+
+        // Set alpha for fade effect
+        titleFont.setColor(1, 1, 1, alpha);
+        subtitleFont.setColor(1, 1, 1, alpha);
+
+        // Draw title
+        String title = "DIMming Echoes";
+        float titleWidth = titleFont.draw(batch, title, 0, 0).width;
+        float titleX = (Gdx.graphics.getWidth() - titleWidth) / 2f;
+        float titleY = Gdx.graphics.getHeight() / 2f + 50;
+        titleFont.draw(batch, title, titleX, titleY);
+
+        // Draw subtitle with blinking effect
+        if (fadeInComplete) {
+            String subtitle = "Click to continue...";
+            float subtitleWidth = subtitleFont.draw(batch, subtitle, 0, 0).width;
+            float subtitleX = (Gdx.graphics.getWidth() - subtitleWidth) / 2f;
+            float subtitleY = titleY - 100;
+            
+            // Blinking effect
+            float blinkAlpha = (float) Math.abs(Math.sin(displayTimer * 3)) * alpha;
+            subtitleFont.setColor(1, 1, 1, blinkAlpha);
+            subtitleFont.draw(batch, subtitle, subtitleX, subtitleY);
+        }
+
+        batch.end();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void pause() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void resume() {
+        // Not needed for this screen
+    }
+
+    @Override
+    public void hide() {
+        AudioManager.getInstance().stopMusic();
+        // Not needed for this screen
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        titleFont.dispose();
+        subtitleFont.dispose();
+    }
+} 
 ================================================================================
 
 --- File: .\gradle\gradle-daemon-jvm.properties ---
@@ -5104,6 +6293,7 @@ public class StartupHelper {
     "activeFile": "",
     "expandedProjectPaths": [
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
     },
     "openFiles": [

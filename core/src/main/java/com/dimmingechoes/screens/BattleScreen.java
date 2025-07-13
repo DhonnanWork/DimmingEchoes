@@ -76,6 +76,8 @@ public class BattleScreen implements Screen {
         skin.add("default", labelStyle);
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = font;
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.overFontColor = Color.YELLOW; // Add yellow hover effect
         skin.add("default", buttonStyle);
 
         createUI();
@@ -84,7 +86,7 @@ public class BattleScreen implements Screen {
     private void createUI() {
         uiTable = new Table();
         uiTable.setFillParent(true);
-        uiTable.bottom().padBottom(60);
+        uiTable.bottom().left().padBottom(60).padLeft(60); // Align to bottom-left with padding
 
         infoLabel = new Label("", skin);
         infoLabel.setAlignment(Align.center);
@@ -115,7 +117,7 @@ public class BattleScreen implements Screen {
                 }
             }
         });
-        uiTable.add(attackButton).width(180).height(60).padRight(30);
+        uiTable.add(attackButton).left().width(180).height(60).padRight(30).row(); // Left-align
 
         // Echo Crystal Button
         TextButton itemButton = new TextButton("Use Echo Crystal", skin);
@@ -135,7 +137,7 @@ public class BattleScreen implements Screen {
                 }
             }
         });
-        uiTable.add(itemButton).width(180).height(60).padRight(30);
+        uiTable.add(itemButton).left().width(180).height(60).padRight(30).row(); // Left-align
 
         // Flee Button
         TextButton fleeButton = new TextButton("Flee", skin);
@@ -148,7 +150,7 @@ public class BattleScreen implements Screen {
                 }
             }
         });
-        uiTable.add(fleeButton).width(180).height(60);
+        uiTable.add(fleeButton).left().width(180).height(60); // Left-align
 
         stage.addActor(uiTable);
     }
@@ -176,6 +178,7 @@ public class BattleScreen implements Screen {
                 victoryTimer = 0f;
                 victoryAlpha = 0f;
             }
+            uiTable.setVisible(false); // Hide UI controls on battle end
         } else if (battleManager.isPlayerTurn()) {
             infoLabel.setText("Your turn!");
         } else {
@@ -215,7 +218,8 @@ public class BattleScreen implements Screen {
         }
 
         batch.begin();
-        
+        // Draw player HP at top-left (always visible)
+        font.draw(batch, battleManager.getPlayer().getName() + " HP: " + battleManager.getPlayer().getHealth() + "/" + battleManager.getPlayer().getMaxHealth(), 100, Gdx.graphics.getHeight() - 100);
         // Draw player icon and health (bottom left)
         Player player = battleManager.getPlayer();
         float playerX = 100; // Gap from left edge
@@ -236,9 +240,6 @@ public class BattleScreen implements Screen {
             shapeRenderer.end();
         }
         
-        // Draw player health below the player icon
-        font.draw(batch, player.getName() + " HP: " + player.getHealth() + "/" + player.getMaxHealth(), playerX, playerY - 20);
-
         // Draw enemies with white blobs (top right)
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
@@ -282,17 +283,14 @@ public class BattleScreen implements Screen {
         if (showingVictory || showingGameOver) {
             batch.begin();
             font.setColor(1, 1, 1, victoryAlpha);
-            
             String text = showingVictory ? "VICTORY!" : "GAME OVER";
             float textWidth = font.draw(batch, text, 0, 0).width;
             float textX = (Gdx.graphics.getWidth() - textWidth) / 2f;
             float textY = Gdx.graphics.getHeight() / 2f + 50;
-            
             // Draw sparkles for victory
             if (showingVictory) {
                 drawSparkles(textX, textY, victoryAlpha);
             }
-            
             font.draw(batch, text, textX, textY);
             font.setColor(Color.WHITE);
             batch.end();

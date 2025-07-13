@@ -188,7 +188,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
         playerAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
         stateTime = 0f;
-        AudioManager.getInstance().playMusic("audio/dungeon_theme.mp3", true);
+        AudioManager.getInstance().playMusic("audio/proximity to the inevitable.mp3", true); // Play new main background music
     }
 
     private void clampCamera() {
@@ -311,28 +311,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
             case TOP: player.x = gameViewport.getWorldWidth() / 2f; player.y = 48f; break;
             case BOTTOM: player.x = gameViewport.getWorldWidth() / 2f; player.y = gameViewport.getWorldHeight() - player.height - 48f; break;
         }
-    }
-
-    private void triggerEnding() {
-        if (endingShown) return;
-        // PERBAIKAN 4: Variabel 'ending' diganti menjadi 'endingMessage' agar cocok
-        int used = game.getUsageLog().totalGiven();
-        String endingMessage;
-        String endingImagePath;
-
-        if (used == 0) {
-            endingMessage = "Ending: A Place That No Longer Exists\nYou remembered, but never acted.";
-            endingImagePath = "../Tiled/Shinking.png";
-        } else if (used >= 3) {
-            endingMessage = "Ending: Petals in the Void\nYou gave all you could. And something beautiful bloomed.";
-            endingImagePath = "../Tiled/Roblox.png";
-        } else {
-            endingMessage = "Ending: The Keeper Becomes Stone\nSome memories returned, others stayed buried.";
-            endingImagePath = "../Tiled/FinalPuni.png";
-        }
-
-        game.setScreen(new EndingScreen(endingMessage, endingImagePath));
-        endingShown = true;
     }
 
     private void presentFinalChoice() {
@@ -497,16 +475,16 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
+        int crystalsUsed = game.getUsageLog().totalGiven();
         String endingMessage;
-        String endingImagePath;
-        if (choice.equals("Give the final crystal")) {
-            endingMessage = "Ending: The Gift\nYou gave the last echo. Peace returns.";
-            endingImagePath = "../Tiled/FinalPuni.png";
+        if (crystalsUsed == 0) {
+            endingMessage = "Ending 1: You left the echoes to fade on their own.";
+        } else if (crystalsUsed >= 5) {
+            endingMessage = "Ending 2: You gave everything to restore the echoes, finding peace in sacrifice.";
         } else {
-            endingMessage = "Ending: The Keeper\nYou kept the last echo. The silence remains.";
-            endingImagePath = "../Tiled/Shinking.png";
+            endingMessage = "Ending 3: You helped who you could, but some echoes remain adrift.";
         }
-        game.setScreen(new EndingScreen(endingMessage, endingImagePath));
+        game.setScreen(new EndingScreen(endingMessage));
         endingShown = true;
     }
     @Override public void resize(int width, int height) { gameViewport.update(width, height, true); uiStage.getViewport().update(width, height, true); dialogueTable.invalidateHierarchy(); }

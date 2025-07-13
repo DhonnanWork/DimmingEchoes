@@ -9,18 +9,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Align;
+import com.dimmingechoes.manager.AudioManager;
 
 public class EndingScreen implements Screen {
     private final String endingMessage;
     private final SpriteBatch batch;
     private final BitmapFont font;
 
-    private Texture endingImage;
-    private final String imagePath;
-
-    public EndingScreen(String endingMessage, String imagePath) {
+    public EndingScreen(String endingMessage) {
         this.endingMessage = endingMessage;
-        this.imagePath = imagePath;
         this.batch = new SpriteBatch();
 
         // Menggunakan font yang lebih baik, sama seperti di DungeonScreen
@@ -38,17 +35,10 @@ public class EndingScreen implements Screen {
     public void dispose() {
         batch.dispose();
         font.dispose();
-        if (endingImage != null) {
-            endingImage.dispose();
-        }
     }
 
     @Override
     public void show() {
-        // Muat gambar hanya jika path-nya valid
-        if (imagePath != null && !imagePath.isEmpty()) {
-            endingImage = new Texture(Gdx.files.internal(imagePath));
-        }
     }
 
     @Override
@@ -57,8 +47,7 @@ public class EndingScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        font.draw(batch, endingMessage, 50, Gdx.graphics.getHeight() - 50);
-        font.draw(batch, "Press ESC to exit.", 50, 100);
+        font.draw(batch, endingMessage, 0, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth(), Align.center, true);
         batch.end();
 
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
