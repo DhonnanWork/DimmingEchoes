@@ -61,10 +61,10 @@ public class MainMenuScreen implements Screen {
         // Create skin for UI
         this.skin = new Skin();
         skin.add("default-font", menuFont);
-        
+
         Label.LabelStyle labelStyle = new Label.LabelStyle(menuFont, Color.WHITE);
         skin.add("default", labelStyle);
-        
+
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = menuFont;
         buttonStyle.fontColor = Color.WHITE;
@@ -81,7 +81,7 @@ public class MainMenuScreen implements Screen {
         mainTable.center();
 
         // Title
-        Label titleLabel = new Label("DIMming Echoes", skin);
+        Label titleLabel = new Label("Dimming Echoes", skin);
         titleLabel.setFontScale(1.5f);
         mainTable.add(titleLabel).padBottom(50).row();
 
@@ -131,10 +131,10 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        
+
         // Try to load background image
         try {
-            backgroundTexture = new Texture(Gdx.files.internal("menu_bg.png"));
+            backgroundTexture = new Texture(Gdx.files.internal("menu+bg.png"));
             backgroundLoaded = true;
         } catch (Exception e) {
             Gdx.app.log("MainMenuScreen", "Background image not found: menu_bg.png");
@@ -158,16 +158,16 @@ public class MainMenuScreen implements Screen {
             float screenHeight = Gdx.graphics.getHeight();
             float bgWidth = backgroundTexture.getWidth();
             float bgHeight = backgroundTexture.getHeight();
-            
+
             float scaleX = screenWidth / bgWidth;
             float scaleY = screenHeight / bgHeight;
             float scale = Math.max(scaleX, scaleY);
-            
+
             float scaledWidth = bgWidth * scale;
             float scaledHeight = bgHeight * scale;
             float x = (screenWidth - scaledWidth) / 2f;
             float y = (screenHeight - scaledHeight) / 2f;
-            
+
             batch.draw(backgroundTexture, x, y, scaledWidth, scaledHeight);
         }
 
@@ -210,4 +210,4 @@ public class MainMenuScreen implements Screen {
             backgroundTexture.dispose();
         }
     }
-} 
+}

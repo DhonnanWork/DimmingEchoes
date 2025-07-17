@@ -102,7 +102,7 @@ public class TitleScreen implements Screen {
         subtitleFont.setColor(1, 1, 1, alpha);
 
         // Draw title
-        String title = "DIMming Echoes";
+        String title = "Dimming Echoes";
         float titleWidth = titleFont.draw(batch, title, 0, 0).width;
         float titleX = (Gdx.graphics.getWidth() - titleWidth) / 2f;
         float titleY = Gdx.graphics.getHeight() / 2f + 50;
@@ -114,7 +114,7 @@ public class TitleScreen implements Screen {
             float subtitleWidth = subtitleFont.draw(batch, subtitle, 0, 0).width;
             float subtitleX = (Gdx.graphics.getWidth() - subtitleWidth) / 2f;
             float subtitleY = titleY - 100;
-            
+
             // Blinking effect
             float blinkAlpha = (float) Math.abs(Math.sin(displayTimer * 3)) * alpha;
             subtitleFont.setColor(1, 1, 1, blinkAlpha);
@@ -151,4 +151,4 @@ public class TitleScreen implements Screen {
         titleFont.dispose();
         subtitleFont.dispose();
     }
-} 
+}

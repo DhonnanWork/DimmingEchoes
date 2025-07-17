@@ -1,3 +1,5 @@
+// File: core/src/main/java/com/dimmingechoes/entities/NPC.java
+
 package com.dimmingechoes.entities;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -10,17 +12,17 @@ public class NPC {
     private final String name;
     private final float x, y;
     private final Rectangle bounds;
-
-    // This flag tracks if the NPC has had their first, main conversation.
+    public final int gid;
     private boolean hasHadInitialConversation = false;
+    private static final float NPC_INTERACTION_WIDTH = 48f;
+    private static final float NPC_INTERACTION_HEIGHT = 48f;
 
-    private static final float NPC_SIZE = 48f;
-
-    public NPC(String name, RoomType room, float x, float y) {
+    public NPC(String name, RoomType room, float x, float y, int gid) {
         this.name = name;
         this.x = x;
         this.y = y;
-        this.bounds = new Rectangle(x - NPC_SIZE / 2, y - NPC_SIZE / 2, NPC_SIZE, NPC_SIZE);
+        this.gid = gid;
+        this.bounds = new Rectangle(x - NPC_INTERACTION_WIDTH / 2, y, NPC_INTERACTION_WIDTH, NPC_INTERACTION_HEIGHT);
     }
 
     public String getName() { return name; }
@@ -32,26 +34,22 @@ public class NPC {
         return game.getUsageLog().hasGivenCrystal(this.name);
     }
 
-    /**
-     * This method is a state machine that returns a dialogue tree based on game state.
-     */
     public DialogueNode getDialogue(TheDimmingEcho game) {
-        // The most important state is whether they have received a crystal. This is their "final" state.
         if (hasReceivedCrystal(game)) {
             return getFinalDialogue(game);
         }
 
-        // Special puzzle reward dialogue for The Laughing Girl
         if (name.equals("The Laughing Girl")) {
             try {
                 com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
-                if (ds.isMemoryPuzzleSolved()) {
-                    return new DialogueNode("You solved the memory puzzle! I remember now... Thank you!", new DialogueChoice[0], false, false, true);
+                if (ds != null && ds.isMemoryPuzzleSolved()) {
+                    return new DialogueNode("You solved it! It was a book! I remember now... thank you!", new DialogueChoice[0], false, false, true);
                 }
-            } catch (Exception e) { /* ignore */ }
+            } catch (ClassCastException e) {
+                // Ignore if not on DungeonScreen
+            }
         }
 
-        // Check for special, one-time reactive dialogue before the initial conversation.
         if (!hasHadInitialConversation) {
             if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
                 hasHadInitialConversation = true;
@@ -63,25 +61,20 @@ public class NPC {
             }
         }
 
-        // If it's the first time talking to them, give the full initial dialogue.
         if (!hasHadInitialConversation) {
-            hasHadInitialConversation = true; // Set the flag so this dialogue only appears once.
+            hasHadInitialConversation = true;
             return getInitialDialogue(game);
         }
 
-        // If we reach here, it means we've talked before but haven't given a crystal. Give the looping dialogue.
         return getLoopingDialogue(game);
     }
 
-    /**
-     * The dialogue for the first time you speak to an NPC.
-     */
     private DialogueNode getInitialDialogue(TheDimmingEcho game) {
         DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
         DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
 
         switch (name) {
-            case "The Keeper":
+            case "The Laughing One":
                 DialogueNode askAboutPlace = new DialogueNode("This place is a reflection of what was lost. To remember, you must give a part of yourself.", new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
                 return new DialogueNode("You have returned to the place of echoes. What will you do?",
                     new DialogueChoice[]{
@@ -89,12 +82,11 @@ public class NPC {
                         new DialogueChoice("[Give a Crystal] Restore an echo.", giveCrystal),
                         new DialogueChoice("Say nothing.", end) }, false, false, false);
             case "The Laughing Girl":
-                DialogueNode askForget = new DialogueNode("I don't know... It felt warm. Like the sun on my face. But now it's cold.", new DialogueChoice[]{new DialogueChoice("I'm sorry.", end)}, false, false, false);
-                return new DialogueNode("Hee hee... did you forget something?",
-                    new DialogueChoice[]{
-                        new DialogueChoice("Forget what?", askForget),
-                        new DialogueChoice("[Give a Crystal] Help her remember.", giveCrystal),
-                        new DialogueChoice("Leave her be.", end) }, false, false, false);
+                return new DialogueNode(
+                    "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... Find it for me? Please?",
+                    new DialogueChoice[]{ new DialogueChoice("I will look for it.", end) },
+                    false, false, false
+                );
             case "The Stranger":
                 DialogueNode askAngry = new DialogueNode("You weren't there. You didn't see. Some things are better left buried.", new DialogueChoice[]{new DialogueChoice("I will find out.", end)}, false, false, false);
                 return new DialogueNode("You again. What do you want?",
@@ -106,26 +98,22 @@ public class NPC {
             case "The Whisper":
                 return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
         }
-        return end; // Default case
+        return end;
     }
 
-    /**
-     * The shorter dialogue for subsequent conversations before giving a crystal.
-     */
     private DialogueNode getLoopingDialogue(TheDimmingEcho game) {
         DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
         DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
 
         switch (name) {
-            case "The Keeper":
+            case "The Laughing One":
                 return new DialogueNode("Still you linger in the dust of what was.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leave.", end) }, false, false, false);
             case "The Laughing Girl":
-                return new DialogueNode("Hee hee... still can't remember?", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
+                return new DialogueNode("Hee hee... still can't remember? Find the thing with leaves but no tree...", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
             case "The Stranger":
                 DialogueNode fightNode2 = new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false);
                 return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Fight", fightNode2), new DialogueChoice("Leaving.", end) }, false, false, false);
             case "The Whisper":
-                // --- FIX: Use the 'game' parameter passed into this method ---
                 boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
                 boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
                 if (girlHelped && strangerHelped) {
@@ -137,12 +125,9 @@ public class NPC {
         return end;
     }
 
-    /**
-     * The final, permanent dialogue after a crystal has been given.
-     */
     private DialogueNode getFinalDialogue(TheDimmingEcho game) {
         switch (name) {
-            case "The Keeper":
+            case "The Laughing One":
                 return new DialogueNode("The echo you restored in me is quiet. It is at peace. Thank you.", new DialogueChoice[0], false, false, true);
             case "The Laughing Girl":
                 return new DialogueNode("...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.", new DialogueChoice[0], false, false, true);

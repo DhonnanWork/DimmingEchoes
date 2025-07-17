@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="63">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="65">
  <tileset firstgid="1" source="WallA.tsx"/>
  <tileset firstgid="1021" source="FloorA.tsx"/>
  <tileset firstgid="1840" source="Decor0A.tsx"/>
@@ -109,11 +109,10 @@
   <object id="35" x="64.6667" y="15.3333" width="13.3333" height="125.333"/>
   <object id="36" x="66.6667" y="14.6667" width="381.333" height="16.6667"/>
   <object id="37" x="432.667" y="16.6667" width="14" height="222"/>
-  <object id="39" x="400" y="160" width="36" height="16.6667"/>
   <object id="40" x="320.667" y="225.333" width="48" height="13.3333"/>
   <object id="41" x="322" y="224.667" width="14" height="67.3333"/>
   <object id="42" x="64.6667" y="272.667" width="271.333" height="12.6667"/>
-  <object id="43" x="0" y="176" width="78.6667" height="14"/>
+  <object id="43" x="0" y="176" width="63.771" height="14"/>
   <object id="44" x="64" y="177.333" width="15.3333" height="98"/>
   <object id="45" x="77.3333" y="224.667" width="113.333" height="50.6667"/>
   <object id="46" x="115.333" y="29.3333" width="74" height="17.3333"/>
@@ -122,14 +121,27 @@
   <object id="50" x="225.333" y="45.3333" width="60.6667" height="18"/>
   <object id="51" x="304.667" y="31.3333" width="94" height="16"/>
   <object id="52" x="320.667" y="46" width="62.6667" height="16.6667"/>
-  <object id="54" x="313.333" y="265.333"/>
-  <object id="55" x="353.333" y="176.667" width="18.6667" height="14.6667"/>
   <object id="56" x="374" y="176.667" width="66.6667" height="16"/>
   <object id="57" x="386.667" y="192.667" width="46.6667" height="43.3333"/>
   <object id="60" x="367.333" y="224.667" width="68" height="13.3333"/>
   <object id="62" x="374.667" y="187.333" width="12" height="40"/>
  </objectgroup>
- <objectgroup id="8" name="The Stranger">
+ <objectgroup id="9" name="Spawns">
+  <object id="63" x="262.5" y="164.5">
+   <properties>
+    <property name="name" value="The Stranger"/>
+    <property name="type" value="NPC"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="64" x="34" y="160.5">
+   <properties>
+    <property name="type" value="Player"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="Entities">
   <object id="53" name="The Stranger" gid="2802" x="255.333" y="168" width="16" height="16">
    <properties>
     <property name="name" value="The Stranger"/>

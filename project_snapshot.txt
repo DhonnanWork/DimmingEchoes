@@ -1,6 +1,6 @@
 --- Project File Structure ---
 
-F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
+C:\Users\Pongo\IdeaProjects\DimmingEchoV3
 ├── .editorconfig
 ├── .gitattributes
 ├── .gitignore
@@ -187,11 +187,6 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   └── uiskin.png
 ├── build.gradle
 ├── core
-│   ├── bin
-│   │   └── main
-│   │       └── com
-│   │           └── dimmingechoes
-│   │               └── Main.class
 │   ├── build.gradle
 │   └── src
 │       └── main
@@ -239,19 +234,6 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 ├── gradlew
 ├── gradlew.bat
 ├── lwjgl3
-│   ├── bin
-│   │   └── main
-│   │       ├── assets.txt
-│   │       ├── com
-│   │       │   └── dimmingechoes
-│   │       │       └── lwjgl3
-│   │       │           ├── Lwjgl3Launcher.class
-│   │       │           └── StartupHelper.class
-│   │       ├── libgdx.png
-│   │       ├── libgdx128.png
-│   │       ├── libgdx16.png
-│   │       ├── libgdx32.png
-│   │       └── libgdx64.png
 │   ├── build.gradle
 │   ├── icons
 │   │   ├── logo.icns
@@ -1165,6 +1147,10 @@ Tiled/Tengah.tmx
 Tiled/Tree0A.tsx
 Tiled/Tree1A.tsx
 Tiled/WallA.tsx
+audio/Acceptance of hopelessness.mp3
+audio/ds vu.mp3
+audio/proximity to the inevitable.mp3
+audio/shaping.mp3
 libgdx.png
 menu_bg.png
 player_walk_left.png
@@ -3124,11 +3110,6 @@ java {
 
 ================================================================================
 
---- File: .\core\bin\main\com\dimmingechoes\Main.class ---
-*** Non-text file detected (.class). Content not displayed. ***
-
-================================================================================
-
 --- File: .\core\src\main\java\com\dimmingechoes\TheDimmingEcho.java ---
 package com.dimmingechoes;
 
@@ -4076,6 +4057,8 @@ public class BattleScreen implements Screen {
         skin.add("default", labelStyle);
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = font;
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.overFontColor = Color.YELLOW; // Add yellow hover effect
         skin.add("default", buttonStyle);
 
         createUI();
@@ -4084,7 +4067,7 @@ public class BattleScreen implements Screen {
     private void createUI() {
         uiTable = new Table();
         uiTable.setFillParent(true);
-        uiTable.bottom().padBottom(60);
+        uiTable.bottom().left().padBottom(60).padLeft(60); // Align to bottom-left with padding
 
         infoLabel = new Label("", skin);
         infoLabel.setAlignment(Align.center);
@@ -4115,7 +4098,7 @@ public class BattleScreen implements Screen {
                 }
             }
         });
-        uiTable.add(attackButton).width(180).height(60).padRight(30);
+        uiTable.add(attackButton).left().width(180).height(60).padRight(30).row(); // Left-align
 
         // Echo Crystal Button
         TextButton itemButton = new TextButton("Use Echo Crystal", skin);
@@ -4135,7 +4118,7 @@ public class BattleScreen implements Screen {
                 }
             }
         });
-        uiTable.add(itemButton).width(180).height(60).padRight(30);
+        uiTable.add(itemButton).left().width(180).height(60).padRight(30).row(); // Left-align
 
         // Flee Button
         TextButton fleeButton = new TextButton("Flee", skin);
@@ -4148,7 +4131,7 @@ public class BattleScreen implements Screen {
                 }
             }
         });
-        uiTable.add(fleeButton).width(180).height(60);
+        uiTable.add(fleeButton).left().width(180).height(60); // Left-align
 
         stage.addActor(uiTable);
     }
@@ -4176,6 +4159,7 @@ public class BattleScreen implements Screen {
                 victoryTimer = 0f;
                 victoryAlpha = 0f;
             }
+            uiTable.setVisible(false); // Hide UI controls on battle end
         } else if (battleManager.isPlayerTurn()) {
             infoLabel.setText("Your turn!");
         } else {
@@ -4215,7 +4199,8 @@ public class BattleScreen implements Screen {
         }
 
         batch.begin();
-        
+        // Draw player HP at top-left (always visible)
+        font.draw(batch, battleManager.getPlayer().getName() + " HP: " + battleManager.getPlayer().getHealth() + "/" + battleManager.getPlayer().getMaxHealth(), 100, Gdx.graphics.getHeight() - 100);
         // Draw player icon and health (bottom left)
         Player player = battleManager.getPlayer();
         float playerX = 100; // Gap from left edge
@@ -4236,9 +4221,6 @@ public class BattleScreen implements Screen {
             shapeRenderer.end();
         }
         
-        // Draw player health below the player icon
-        font.draw(batch, player.getName() + " HP: " + player.getHealth() + "/" + player.getMaxHealth(), playerX, playerY - 20);
-
         // Draw enemies with white blobs (top right)
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
@@ -4282,17 +4264,14 @@ public class BattleScreen implements Screen {
         if (showingVictory || showingGameOver) {
             batch.begin();
             font.setColor(1, 1, 1, victoryAlpha);
-            
             String text = showingVictory ? "VICTORY!" : "GAME OVER";
             float textWidth = font.draw(batch, text, 0, 0).width;
             float textX = (Gdx.graphics.getWidth() - textWidth) / 2f;
             float textY = Gdx.graphics.getHeight() / 2f + 50;
-            
             // Draw sparkles for victory
             if (showingVictory) {
                 drawSparkles(textX, textY, victoryAlpha);
             }
-            
             font.draw(batch, text, textX, textY);
             font.setColor(Color.WHITE);
             batch.end();
@@ -4535,7 +4514,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
         playerAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
         stateTime = 0f;
-        AudioManager.getInstance().playMusic("audio/dungeon_theme.mp3", true);
+        AudioManager.getInstance().playMusic("audio/proximity to the inevitable.mp3", true); // Play new main background music
     }
 
     private void clampCamera() {
@@ -4658,28 +4637,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
             case TOP: player.x = gameViewport.getWorldWidth() / 2f; player.y = 48f; break;
             case BOTTOM: player.x = gameViewport.getWorldWidth() / 2f; player.y = gameViewport.getWorldHeight() - player.height - 48f; break;
         }
-    }
-
-    private void triggerEnding() {
-        if (endingShown) return;
-        // PERBAIKAN 4: Variabel 'ending' diganti menjadi 'endingMessage' agar cocok
-        int used = game.getUsageLog().totalGiven();
-        String endingMessage;
-        String endingImagePath;
-
-        if (used == 0) {
-            endingMessage = "Ending: A Place That No Longer Exists\nYou remembered, but never acted.";
-            endingImagePath = "../Tiled/Shinking.png";
-        } else if (used >= 3) {
-            endingMessage = "Ending: Petals in the Void\nYou gave all you could. And something beautiful bloomed.";
-            endingImagePath = "../Tiled/Roblox.png";
-        } else {
-            endingMessage = "Ending: The Keeper Becomes Stone\nSome memories returned, others stayed buried.";
-            endingImagePath = "../Tiled/FinalPuni.png";
-        }
-
-        game.setScreen(new EndingScreen(endingMessage, endingImagePath));
-        endingShown = true;
     }
 
     private void presentFinalChoice() {
@@ -4844,16 +4801,16 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
+        int crystalsUsed = game.getUsageLog().totalGiven();
         String endingMessage;
-        String endingImagePath;
-        if (choice.equals("Give the final crystal")) {
-            endingMessage = "Ending: The Gift\nYou gave the last echo. Peace returns.";
-            endingImagePath = "../Tiled/FinalPuni.png";
+        if (crystalsUsed == 0) {
+            endingMessage = "Ending 1: You left the echoes to fade on their own.";
+        } else if (crystalsUsed >= 5) {
+            endingMessage = "Ending 2: You gave everything to restore the echoes, finding peace in sacrifice.";
         } else {
-            endingMessage = "Ending: The Keeper\nYou kept the last echo. The silence remains.";
-            endingImagePath = "../Tiled/Shinking.png";
+            endingMessage = "Ending 3: You helped who you could, but some echoes remain adrift.";
         }
-        game.setScreen(new EndingScreen(endingMessage, endingImagePath));
+        game.setScreen(new EndingScreen(endingMessage));
         endingShown = true;
     }
     @Override public void resize(int width, int height) { gameViewport.update(width, height, true); uiStage.getViewport().update(width, height, true); dialogueTable.invalidateHierarchy(); }
@@ -4893,18 +4850,15 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Align;
+import com.dimmingechoes.manager.AudioManager;
 
 public class EndingScreen implements Screen {
     private final String endingMessage;
     private final SpriteBatch batch;
     private final BitmapFont font;
 
-    private Texture endingImage;
-    private final String imagePath;
-
-    public EndingScreen(String endingMessage, String imagePath) {
+    public EndingScreen(String endingMessage) {
         this.endingMessage = endingMessage;
-        this.imagePath = imagePath;
         this.batch = new SpriteBatch();
 
         // Menggunakan font yang lebih baik, sama seperti di DungeonScreen
@@ -4922,17 +4876,10 @@ public class EndingScreen implements Screen {
     public void dispose() {
         batch.dispose();
         font.dispose();
-        if (endingImage != null) {
-            endingImage.dispose();
-        }
     }
 
     @Override
     public void show() {
-        // Muat gambar hanya jika path-nya valid
-        if (imagePath != null && !imagePath.isEmpty()) {
-            endingImage = new Texture(Gdx.files.internal(imagePath));
-        }
     }
 
     @Override
@@ -4941,8 +4888,7 @@ public class EndingScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        font.draw(batch, endingMessage, 50, Gdx.graphics.getHeight() - 50);
-        font.draw(batch, "Press ESC to exit.", 50, 100);
+        font.draw(batch, endingMessage, 0, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth(), Align.center, true);
         batch.end();
 
         if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
@@ -6026,46 +5972,6 @@ project(":lwjgl3") {
     )
   }
 }
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\assets.txt ---
-libgdx.png
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\libgdx.png ---
-*** Non-text file detected (.png). Content not displayed. ***
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\libgdx128.png ---
-*** Non-text file detected (.png). Content not displayed. ***
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\libgdx16.png ---
-*** Non-text file detected (.png). Content not displayed. ***
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\libgdx32.png ---
-*** Non-text file detected (.png). Content not displayed. ***
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\libgdx64.png ---
-*** Non-text file detected (.png). Content not displayed. ***
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\com\dimmingechoes\lwjgl3\Lwjgl3Launcher.class ---
-*** Non-text file detected (.class). Content not displayed. ***
-
-================================================================================
-
---- File: .\lwjgl3\bin\main\com\dimmingechoes\lwjgl3\StartupHelper.class ---
-*** Non-text file detected (.class). Content not displayed. ***
 
 ================================================================================
 
