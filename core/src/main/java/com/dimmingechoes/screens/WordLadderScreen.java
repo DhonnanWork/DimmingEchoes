@@ -31,8 +31,16 @@ public class WordLadderScreen implements Screen {
     private Label infoLabel;
     private final Label[] wordLabels;
 
-    private final String[] ladder = {"COLD", "CORD", "WORD", "WARM"};
-    private int currentStep = 0;
+    // Add a set of valid 4-letter words for validation
+    private static final java.util.Set<String> VALID_WORDS = new java.util.HashSet<>(java.util.Arrays.asList(
+        "COLD", "CORD", "CARD", "WORD", "WARD", "WARM"
+    ));
+    // Change ladder to only require start and end
+    private final String startWord = "COLD";
+    private final String endWord = "WARM";
+    private String currentWord = startWord;
+    private int steps = 0;
+    private static final int MAX_STEPS = 5;
     private final StringBuilder currentGuess = new StringBuilder();
 
     private boolean puzzleOver = false;
@@ -63,7 +71,7 @@ public class WordLadderScreen implements Screen {
         buttonStyle.font = font;
         skin.add("default", buttonStyle);
 
-        wordLabels = new Label[ladder.length];
+        wordLabels = new Label[MAX_STEPS + 1];
         setupUI();
     }
 
@@ -72,11 +80,13 @@ public class WordLadderScreen implements Screen {
         root.setFillParent(true);
         root.center();
 
-        infoLabel = new Label("Change one letter at a time.", skin);
+        infoLabel = new Label("Change one letter at a time to turn COLD into WARM.", skin);
         root.add(infoLabel).padBottom(30).row();
-
-        for (int i = 0; i < ladder.length; i++) {
-            wordLabels[i] = new Label(i == 0 ? ladder[i] : "_ _ _ _", skin);
+        wordLabels[0] = new Label(startWord, skin);
+        wordLabels[0].setAlignment(Align.center);
+        root.add(wordLabels[0]).padBottom(15).row();
+        for (int i = 1; i <= MAX_STEPS; i++) {
+            wordLabels[i] = new Label("_ _ _ _", skin);
             wordLabels[i].setAlignment(Align.center);
             root.add(wordLabels[i]).padBottom(15).row();
         }
@@ -88,7 +98,7 @@ public class WordLadderScreen implements Screen {
             @Override
             public boolean keyTyped(com.badlogic.gdx.scenes.scene2d.InputEvent event, char character) {
                 if (puzzleOver) return false;
-                if (Character.isLetter(character) && currentGuess.length() < ladder[0].length()) {
+                if (Character.isLetter(character) && currentGuess.length() < 4) {
                     currentGuess.append(Character.toUpperCase(character));
                     updateDisplay();
                 }
@@ -98,7 +108,7 @@ public class WordLadderScreen implements Screen {
             @Override
             public boolean keyDown(com.badlogic.gdx.scenes.scene2d.InputEvent event, int keycode) {
                 if (puzzleOver) return false;
-                if (keycode == Input.Keys.ENTER && currentGuess.length() == ladder[0].length()) {
+                if (keycode == Input.Keys.ENTER && currentGuess.length() == 4) {
                     submitGuess();
                 } else if (keycode == Input.Keys.BACKSPACE && currentGuess.length() > 0) {
                     currentGuess.deleteCharAt(currentGuess.length() - 1);
@@ -123,7 +133,7 @@ public class WordLadderScreen implements Screen {
             btn.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                    if (!puzzleOver && !gameOver && currentGuess.length() < ladder[0].length()) {
+                    if (!puzzleOver && !gameOver && currentGuess.length() < 4) {
                         currentGuess.append(btn.getText().toString());
                         updateDisplay();
                     }
@@ -141,31 +151,43 @@ public class WordLadderScreen implements Screen {
 
     private void submitGuess() {
         if (gameOver) return;
-        if (currentGuess.toString().equals(ladder[currentStep + 1])) {
-            currentStep++;
-            wordLabels[currentStep].setText(ladder[currentStep]);
-            wordLabels[currentStep].setColor(Color.GREEN);
+        String guess = currentGuess.toString();
+        if (guess.length() != 4 || !VALID_WORDS.contains(guess)) {
+            infoLabel.setText("Not a valid word.");
             currentGuess.setLength(0);
-            incorrectAttempts = 0;
-            if (currentStep == ladder.length - 1) {
-                infoLabel.setText("You solved it!");
-                puzzleOver = true;
-                transitionTimer = TRANSITION_DELAY;
-            }
-        } else {
-            incorrectAttempts++;
-            if (incorrectAttempts >= MAX_ATTEMPTS) {
-                infoLabel.setText("Game Over! Too many incorrect attempts.");
-                gameOver = true;
-                transitionTimer = TRANSITION_DELAY;
-            } else {
-                infoLabel.setText("Not the right word. Attempts left: " + (MAX_ATTEMPTS - incorrectAttempts));
-            }
+            updateDisplay();
+            return;
+        }
+        // Check one letter difference
+        int diff = 0;
+        for (int i = 0; i < 4; i++) {
+            if (guess.charAt(i) != currentWord.charAt(i)) diff++;
+        }
+        if (diff != 1) {
+            infoLabel.setText("Change exactly one letter.");
+            currentGuess.setLength(0);
+            updateDisplay();
+            return;
+        }
+        steps++;
+        currentWord = guess;
+        wordLabels[steps].setText(currentWord);
+        wordLabels[steps].setColor(Color.GREEN);
+        currentGuess.setLength(0);
+        incorrectAttempts = 0;
+        if (currentWord.equals(endWord)) {
+            infoLabel.setText("You solved it!");
+            puzzleOver = true;
+            transitionTimer = TRANSITION_DELAY;
+        } else if (steps == MAX_STEPS) {
+            infoLabel.setText("Game Over! Too many steps.");
+            gameOver = true;
+            transitionTimer = TRANSITION_DELAY;
         }
     }
 
     private void updateDisplay() {
-        wordLabels[currentStep + 1].setText(currentGuess.toString() + "_ ".repeat(Math.max(0, ladder[0].length() - currentGuess.length())));
+        wordLabels[steps + 1].setText(currentGuess.toString() + "_ ".repeat(Math.max(0, 4 - currentGuess.length())));
     }
 
     @Override

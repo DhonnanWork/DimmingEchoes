@@ -203,6 +203,7 @@ public class WordleScreen implements Screen {
             puzzleOver = true;
             puzzleWon = true;
             infoLabel.setText("Correct! It was BOOK.");
+            game.setPuzzleWordleSolved(true);
             transitionTimer = TRANSITION_DELAY;
             return;
         }

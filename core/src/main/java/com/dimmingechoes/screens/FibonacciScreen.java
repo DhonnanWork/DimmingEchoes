@@ -48,9 +48,7 @@ public class FibonacciScreen implements Screen {
         TextField.TextFieldStyle tfs = new TextField.TextFieldStyle();
         tfs.font = font;
         tfs.fontColor = Color.WHITE;
-        tfs.cursor = skin.newDrawable("white");
-        tfs.selection = skin.newDrawable("white", 0.5f, 0.5f, 0.5f, 0.5f);
-        tfs.background = skin.newDrawable("white", Color.DARK_GRAY);
+        // Do not set cursor, selection, or background drawables to avoid 'white' error
         skin.add("default", tfs);
 
         setupUI();

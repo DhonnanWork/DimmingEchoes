@@ -230,10 +230,12 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │                           ├── BattleScreen.java
 │                           ├── DungeonScreen.java
 │                           ├── EndingScreen.java
+│                           ├── FibonacciScreen.java
 │                           ├── LoadGameScreen.java
 │                           ├── MainMenuScreen.java
 │                           ├── PauseMenuScreen.java
 │                           ├── PrologueScreen.java
+│                           ├── WordLadderScreen.java
 │                           └── WordleScreen.java
 ├── gradle
 │   ├── gradle-daemon-jvm.properties
@@ -3227,6 +3229,9 @@ public class TheDimmingEcho extends Game {
     private CrystalInventory crystalInventory;
     private UsageLog usageLog;
     private int crystalsLostToFailure = 0;
+    private boolean puzzleWordleSolved = false;
+    private boolean puzzleWordLadderSolved = false;
+    private boolean puzzleFibonacciSolved = false;
 
     @Override
     public void create() {
@@ -3245,10 +3250,20 @@ public class TheDimmingEcho extends Game {
         return usageLog;
     }
 
+    public boolean isPuzzleWordleSolved() { return puzzleWordleSolved; }
+    public void setPuzzleWordleSolved(boolean puzzleWordleSolved) { this.puzzleWordleSolved = puzzleWordleSolved; }
+    public boolean isPuzzleWordLadderSolved() { return puzzleWordLadderSolved; }
+    public void setPuzzleWordLadderSolved(boolean puzzleWordLadderSolved) { this.puzzleWordLadderSolved = puzzleWordLadderSolved; }
+    public boolean isPuzzleFibonacciSolved() { return puzzleFibonacciSolved; }
+    public void setPuzzleFibonacciSolved(boolean puzzleFibonacciSolved) { this.puzzleFibonacciSolved = puzzleFibonacciSolved; }
+
     public void saveGame(int slot) {
         SaveData data = new SaveData();
         data.crystalCount = crystalInventory.getCrystals();
         data.crystalRecipients = usageLog.getAllRecipients();
+        data.puzzleWordleSolved = this.puzzleWordleSolved;
+        data.puzzleWordLadderSolved = this.puzzleWordLadderSolved;
+        data.puzzleFibonacciSolved = this.puzzleFibonacciSolved;
         SaveManager.save(data, slot);
     }
 
@@ -3260,6 +3275,9 @@ public class TheDimmingEcho extends Game {
             for (String npc : data.crystalRecipients) {
                 usageLog.logCrystalGiven(npc);
             }
+            this.puzzleWordleSolved = data.puzzleWordleSolved;
+            this.puzzleWordLadderSolved = data.puzzleWordLadderSolved;
+            this.puzzleFibonacciSolved = data.puzzleFibonacciSolved;
         }
     }
 
@@ -3284,6 +3302,9 @@ public class TheDimmingEcho extends Game {
         crystalInventory = new CrystalInventory(5);
         usageLog = new UsageLog();
         crystalsLostToFailure = 0;
+        puzzleWordleSolved = false;
+        puzzleWordLadderSolved = false;
+        puzzleFibonacciSolved = false;
     }
 }
 
@@ -3472,7 +3493,7 @@ public class RoomGraph {
         // Step 1: Define the rooms with their TMX paths and background colors.
         Room start = new Room("Tiled/Tengah.tmx", RoomType.START, new Color(0.2f, 0.2f, 0.2f, 1));
         Room memory = new Room("Tiled/Kiri.tmx", RoomType.MEMORY, new Color(0.1f, 0.2f, 0.3f, 1));
-        Room battle = new Room("Tiled/Kanan.tmx", RoomType.BATTLE, new Color(0.3f, 0.1f, 0.1f, 1));
+        Room battle = new Room("Tiled/Kanan.tmx", RoomType.EMPTY, new Color(0.3f, 0.1f, 0.1f, 1));
         Room finalRoomTrigger = new Room("", RoomType.FINAL, new Color(0.1f, 0.1f, 0.1f, 1));
 
         // Step 2: Define the connections (DoorZones) between rooms.
@@ -3497,7 +3518,7 @@ package com.dimmingechoes.dungeon;
 public enum RoomType {
     START,
     MEMORY,
-    BATTLE,
+    EMPTY,
     FINAL
 }
 
@@ -3569,6 +3590,9 @@ import com.dimmingechoes.dialogue.DialogueChoice;
 import com.dimmingechoes.dialogue.DialogueNode;
 import com.dimmingechoes.dungeon.RoomType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NPC {
     private final String name;
     private final float x, y;
@@ -3600,28 +3624,19 @@ public class NPC {
             return getFinalDialogue(game);
         }
 
-        // Inter-NPC conditional dialogue before initial conversation
-        if (!hasHadInitialConversation) {
-            if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
-                hasHadInitialConversation = true;
-                return new DialogueNode("That angry man... he seems less stormy now. Is he... sad?", new DialogueChoice[0], false, false, true);
-            }
-            if (name.equals("The Stranger") && game.getUsageLog().hasGivenCrystal("The Laughing Girl")) {
-                hasHadInitialConversation = true;
-                return new DialogueNode("I hear laughter on the wind. It's... faint. But it's there. What have you done?", new DialogueChoice[0], false, false, true);
-            }
-        }
-
-        // The Laughing Girl reacts to memory puzzle
+        // The Laughing Girl special puzzle logic
         if (name.equals("The Laughing Girl")) {
-            try {
-                com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
-                if (ds != null && ds.isMemoryPuzzleSolved()) {
-                    return new DialogueNode("You solved it! It was a book! I remember now... thank you!", new DialogueChoice[0], false, false, true);
-                }
-            } catch (ClassCastException e) {
-                // Ignore if not on DungeonScreen
+            boolean allPuzzlesSolved = game.isPuzzleWordleSolved() && game.isPuzzleWordLadderSolved() && game.isPuzzleFibonacciSolved();
+            if (allPuzzlesSolved) {
+                DialogueNode end = new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
+                DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+                return new DialogueNode("You solved them all! I... I remember so much more now. Thank you!",
+                    new DialogueChoice[]{
+                        new DialogueChoice("[Give a Crystal] Help her remember more.", giveCrystal),
+                        new DialogueChoice("You're welcome.", end)
+                    }, false, false, false);
             }
+            return getPuzzleSelectionDialogue(game);
         }
 
         if (!hasHadInitialConversation) {
@@ -3632,150 +3647,64 @@ public class NPC {
         return getLoopingDialogue(game);
     }
 
+    private DialogueNode getPuzzleSelectionDialogue(TheDimmingEcho game) {
+        List<DialogueChoice> puzzleChoices = new ArrayList<>();
+        if (!game.isPuzzleWordleSolved()) {
+            puzzleChoices.add(new DialogueChoice("[Attempt the word puzzle]", null));
+        }
+        if (!game.isPuzzleWordLadderSolved()) {
+            puzzleChoices.add(new DialogueChoice("[Attempt the ladder puzzle]", null));
+        }
+        if (!game.isPuzzleFibonacciSolved()) {
+            puzzleChoices.add(new DialogueChoice("[Attempt the number puzzle]", null));
+        }
+        puzzleChoices.add(new DialogueChoice("I'll come back later.", new DialogueNode("...", new DialogueChoice[]{}, false, false, true)));
+
+        return new DialogueNode("Hee hee... I remember bits and pieces, like games! Which one do you want to play?",
+            puzzleChoices.toArray(new DialogueChoice[0]), false, false, false);
+    }
+
     private DialogueNode getInitialDialogue(TheDimmingEcho game) {
-        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
-        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
 
         switch (name) {
-            case "The Laughing One": {
-                DialogueNode askAboutPlace = new DialogueNode(
-                    "This place is a reflection of what was lost. To remember, you must give a part of yourself.",
-                    new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
-                DialogueNode askAboutOthers = new DialogueNode(
-                    "The others are echoes, too. Joy, sorrow, and silence. Each a piece of what you left behind.",
-                    new DialogueChoice[]{new DialogueChoice("I understand.", end)}, false, false, false);
-                return new DialogueNode(
-                    "You have returned to the place of echoes. What will you do?",
-                    new DialogueChoice[]{
-                        new DialogueChoice("Ask about this place.", askAboutPlace),
-                        new DialogueChoice("Ask about the others.", askAboutOthers),
-                        new DialogueChoice("[Give a Crystal] Restore an echo.", giveCrystal),
-                        new DialogueChoice("Say nothing.", end)
-                    }, false, false, false);
-            }
-            case "The Laughing Girl": {
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                String riddle = "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... What is it?";
-                if (strangerHelped) {
-                    riddle += "\nThat angry man... he seems different now. Did you help him?";
-                }
-                return new DialogueNode(
-                    riddle,
-                    new DialogueChoice[]{
-                        new DialogueChoice("I will look for it.", end),
-                        new DialogueChoice("[Attempt the riddle]", null)
-                    }, false, false, false);
-            }
             case "The Stranger": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
                 DialogueNode askAngry = new DialogueNode("You weren't there. You didn't see. Some things are better left buried.", new DialogueChoice[]{new DialogueChoice("I will find out.", end)}, false, false, false);
-                String intro = "You again. What do you want?";
-                if (girlHelped) {
-                    intro += "\nI hear laughter on the wind. It's... faint. But it's there. What have you done?";
-                }
-                return new DialogueNode(intro,
+                return new DialogueNode("You again. What do you want?",
                     new DialogueChoice[]{
                         new DialogueChoice("Why are you so angry?", askAngry),
-                        new DialogueChoice("[Give a Crystal] Quell his anger.", giveCrystal),
-                        new DialogueChoice("Fight", new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false)),
                         new DialogueChoice("Leave.", end)
                     }, false, false, false);
-            }
-            case "The Whisper": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                if (girlHelped && strangerHelped) {
-                    return new DialogueNode("...the time is almost right... come back when you are ready...", new DialogueChoice[0], false, false, true);
-                }
-                return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
             }
         }
         return end;
     }
 
     private DialogueNode getLoopingDialogue(TheDimmingEcho game) {
-        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
-        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
 
         switch (name) {
-            case "The Laughing One":
-                return new DialogueNode(
-                    "Still you linger in the dust of what was. The truth is not always kind.",
+            case "The Stranger":
+                 return new DialogueNode("Still here? State your business or leave.",
                     new DialogueChoice[]{
-                        new DialogueChoice("[Give Crystal]", giveCrystal),
-                        new DialogueChoice("Leave.", end)
-                    }, false, false, false);
-            case "The Laughing Girl": {
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                String msg = "Hee hee... still can't remember? Find the thing with leaves but no tree...";
-                if (strangerHelped) {
-                    msg += "\nHe seems less angry now. Did you talk to him?";
-                }
-                return new DialogueNode(msg,
-                    new DialogueChoice[]{
-                        new DialogueChoice("[Give Crystal]", giveCrystal),
-                        new DialogueChoice("Not yet.", end)
-                    }, false, false, false);
-            }
-            case "The Stranger": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                DialogueNode fightNode2 = new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false);
-                String msg = "Still here? State your business or leave.";
-                if (girlHelped) {
-                    msg += "\nThe laughter... it's not so far away now.";
-                }
-                return new DialogueNode(msg,
-                    new DialogueChoice[]{
-                        new DialogueChoice("[Give Crystal]", giveCrystal),
-                        new DialogueChoice("Fight", fightNode2),
                         new DialogueChoice("Leaving.", end)
                     }, false, false, false);
-            }
-            case "The Whisper": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                if (girlHelped && strangerHelped) {
-                    return new DialogueNode(
-                        "You have pieced together the joy and the sorrow... Are you ready for the truth?",
-                        new DialogueChoice[]{
-                            new DialogueChoice("[Give the Final Crystal] Learn the truth.", giveCrystal),
-                            new DialogueChoice("I'm not ready.", end)
-                        }, false, false, false);
-                }
-                return new DialogueNode("...the echoes are not yet settled...", new DialogueChoice[0], false, false, true);
-            }
         }
         return end;
     }
 
     private DialogueNode getFinalDialogue(TheDimmingEcho game) {
         switch (name) {
-            case "The Laughing One":
-                return new DialogueNode(
-                    "The echo you restored in me is quiet. But the dust still stirs. Some mysteries are not meant to be solved. Thank you... or perhaps, I'm sorry.",
-                    new DialogueChoice[0], false, false, true);
             case "The Laughing Girl":
                 return new DialogueNode(
                     "...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.",
-                    new DialogueChoice[0], false, false, true);
+                    new DialogueChoice[]{}, false, false, true);
             case "The Stranger":
                 return new DialogueNode(
                     "It was my fault. I... I couldn't protect her. The laughter stopped because of me. But now, I feel... at peace.",
-                    new DialogueChoice[0], false, false, true);
-            case "The Whisper": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                if (girlHelped && strangerHelped) {
-                    return new DialogueNode(
-                        "This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend. Take the final crystal, and remember.",
-                        new DialogueChoice[0], false, false, true);
-                }
-                return new DialogueNode(
-                    "This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.",
-                    new DialogueChoice[0], false, false, true);
-            }
+                    new DialogueChoice[]{}, false, false, true);
         }
-        return new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        return new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
     }
 }
 
@@ -4057,6 +3986,9 @@ public class SaveData {
     public int crystalCount;
     public Set<String> crystalRecipients = new HashSet<>();
     public long saveTimestamp;
+    public boolean puzzleWordleSolved = false;
+    public boolean puzzleWordLadderSolved = false;
+    public boolean puzzleFibonacciSolved = false;
     
     public SaveData() {
         this.saveTimestamp = System.currentTimeMillis();
@@ -4569,10 +4501,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private int charIndex = 0;
     private final float CHAR_DELAY = 0.03f;
     private float mapScale;
-    private boolean isMemoryPuzzleSolved = false;
-    private Rectangle puzzleTriggerBounds = null;
-    private boolean awaitingFinalChoice = false;
-    private String finalChoiceResult = null;
 
     // --- NEW: ShapeRenderer for Debugging ---
     private final ShapeRenderer debugRenderer;
@@ -4774,7 +4702,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private void parseTiledMapObjects() {
         currentRoom.getObstacles().clear();
         currentRoom.getNpcs().clear();
-        puzzleTriggerBounds = null;
 
         if (map.getLayers().get("Collision") != null) {
             for (MapObject object : map.getLayers().get("Collision").getObjects()) {
@@ -4819,17 +4746,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
                     player.setPosition(x, y);
                     playerSpawned = true;
                     break;
-                }
-            }
-        }
-
-        if (map.getLayers().get("Interactables") != null) {
-            for (MapObject object : map.getLayers().get("Interactables").getObjects()) {
-                if (object.getName() != null && object.getName().equals("PuzzleTrigger")) {
-                    if (object instanceof RectangleMapObject) {
-                        Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                        puzzleTriggerBounds = new Rectangle(rect.x * mapScale, rect.y * mapScale, rect.width * mapScale, rect.height * mapScale);
-                    }
                 }
             }
         }
@@ -4916,7 +4832,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         if (dialogueTable.isVisible()) endDialogue();
 
         if (currentRoom.getTmxPath() == null || currentRoom.getTmxPath().isEmpty()) {
-            if (currentRoom.getRoomType() == RoomType.FINAL && !awaitingFinalChoice) {
+            if (currentRoom.getRoomType() == RoomType.FINAL && !endingShown) {
                 // Check for 'A Place That No Longer Exists' ending
                 if (game.getUsageLog().totalGiven() == 0 && game.getCrystalsLostToFailure() == 0) {
                     game.setScreen(new EndingScreen(game, "NOMATTER"));
@@ -4941,10 +4857,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
             case Input.Keys.D: case Input.Keys.RIGHT: moveRight = true; break;
             case Input.Keys.ESCAPE: game.setScreen(new PauseMenuScreen(game, this)); return true;
             case Input.Keys.SPACE:
-                if (!isMemoryPuzzleSolved && puzzleTriggerBounds != null && player.overlaps(puzzleTriggerBounds)) {
-                    isMemoryPuzzleSolved = true;
-                    return true;
-                }
                 for (NPC npc : currentRoom.getNpcs()) {
                     if (isNear(npc)) {
                         startDialogue(npc);
@@ -4998,27 +4910,22 @@ public class DungeonScreen extends InputAdapter implements Screen {
         choicesTable.clear();
         uiStage.setKeyboardFocus(null);
 
-        // Launch WordleScreen if the Laughing Girl's riddle is attempted
-        if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl") && choice.choiceText.equals("[Attempt the riddle]")) {
-            endDialogue();
-            game.setScreen(new WordleScreen(game, this));
-            return;
-        }
-
-        if (dialogueNPC != null && dialogueNPC.getName().equals("The Stranger") && choice.choiceText.equals("Begin Battle")) {
-            com.dimmingechoes.entities.Player playerEntity = new com.dimmingechoes.entities.Player("You", 30, 8, 3, null);
-            java.util.List<com.dimmingechoes.entities.Enemy> enemies = new java.util.ArrayList<>();
-            enemies.add(new com.dimmingechoes.entities.Enemy("The Stranger", 20, 6, 2, null));
-            game.setScreen(new BattleScreen(game, playerEntity, enemies));
-            return;
-        }
-
-        if (awaitingFinalChoice) {
-            finalChoiceResult = choice.choiceText;
-            awaitingFinalChoice = false;
-            endDialogue();
-            triggerEndingWithChoice(finalChoiceResult);
-            return;
+        if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl")) {
+            if (choice.choiceText.equals("[Attempt the word puzzle]")) {
+                endDialogue();
+                game.setScreen(new WordleScreen(game, this));
+                return;
+            }
+            if (choice.choiceText.equals("[Attempt the ladder puzzle]")) {
+                endDialogue();
+                game.setScreen(new WordLadderScreen(game, this));
+                return;
+            }
+            if (choice.choiceText.equals("[Attempt the number puzzle]")) {
+                endDialogue();
+                game.setScreen(new FibonacciScreen(game, this));
+                return;
+            }
         }
 
         if (choice.next != null) {
@@ -5062,7 +4969,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
     }
 
     private void presentFinalChoice() {
-        awaitingFinalChoice = true;
         DialogueNode end = new DialogueNode("...", null, false, false, true);
         DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
         DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
@@ -5131,13 +5037,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private boolean isNear(NPC npc) {
         return player.getCenter(new Vector2()).dst(npc.getBounds().getCenter(new Vector2())) < INTERACTION_RADIUS;
-    }
-
-    public boolean isMemoryPuzzleSolved() { return isMemoryPuzzleSolved; }
-
-    // Called by WordleScreen when the puzzle is completed
-    public void puzzleCompleted(boolean success) {
-        isMemoryPuzzleSolved = success;
     }
 
     @Override public void resize(int width, int height) {
@@ -5215,15 +5114,15 @@ public class EndingScreen implements Screen {
         switch (id) {
             case "FADE":
                 narrationText = "You gave everything you could. The echoes fade, but peace settles in the silence. The world is lighter, if only for a moment.";
-                finalLineText = "Ending: Petals in the Void";
+                finalLineText = "Ending: The Fading Light";
                 break;
             case "STONE":
                 narrationText = "You kept the last piece for yourself. The echoes remain, unresolved. The world outside is unchanged, but you carry the weight within.";
-                finalLineText = "Ending: The Keeper Becomes Stone";
+                finalLineText = "Ending: The Stone Heart";
                 break;
             case "VOID":
                 narrationText = "You gave until there was nothing left. The echoes vanish, and so do you. In the void, there is neither pain nor memory.";
-                finalLineText = "Ending: The Memory That Fades";
+                finalLineText = "Ending: The Vanishing";
                 break;
             case "NOMATTER":
                 narrationText = "You walked these halls untouched, never giving nor losing. The world remains as it was, and so do you. Some stories end before they begin.";
@@ -5299,6 +5198,145 @@ public class EndingScreen implements Screen {
 
 }
 
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\FibonacciScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+
+public class FibonacciScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final DungeonScreen dungeonScreen;
+    private final Stage stage;
+    private final Skin skin;
+    private Label sequenceLabel;
+    private TextField answerField;
+    private Label infoLabel;
+
+    private final int correctAnswer = 8;
+    private boolean puzzleOver = false;
+    private float transitionTimer = 0f;
+    private static final float TRANSITION_DELAY = 2.0f;
+
+    public FibonacciScreen(TheDimmingEcho game, DungeonScreen dungeonScreen) {
+        this.game = game;
+        this.dungeonScreen = dungeonScreen;
+        this.stage = new Stage(new ScreenViewport());
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 32;
+        parameter.color = Color.WHITE;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+
+        this.skin = new Skin();
+        skin.add("default-font", font);
+        skin.add("default", new Label.LabelStyle(font, Color.WHITE));
+        TextField.TextFieldStyle tfs = new TextField.TextFieldStyle();
+        tfs.font = font;
+        tfs.fontColor = Color.WHITE;
+        tfs.cursor = skin.newDrawable("white");
+        tfs.selection = skin.newDrawable("white", 0.5f, 0.5f, 0.5f, 0.5f);
+        tfs.background = skin.newDrawable("white", Color.DARK_GRAY);
+        skin.add("default", tfs);
+
+        setupUI();
+    }
+
+    private void setupUI() {
+        Table root = new Table();
+        root.setFillParent(true);
+        root.center();
+
+        infoLabel = new Label("What number comes next?", skin);
+        root.add(infoLabel).padBottom(30).row();
+
+        sequenceLabel = new Label("1, 1, 2, 3, 5, ?", skin);
+        root.add(sequenceLabel).padBottom(20).row();
+
+        answerField = new TextField("", skin);
+        answerField.setAlignment(Align.center);
+        root.add(answerField).width(100).padBottom(20).row();
+
+        stage.addActor(root);
+        stage.setKeyboardFocus(answerField);
+
+        answerField.setTextFieldListener((textField, c) -> {
+            if (c == '\n' || c == '\r') {
+                submitGuess();
+            }
+        });
+    }
+
+    private void submitGuess() {
+        if (puzzleOver) return;
+        try {
+            int guess = Integer.parseInt(answerField.getText());
+            if (guess == correctAnswer) {
+                infoLabel.setText("Correct!");
+                puzzleOver = true;
+                transitionTimer = TRANSITION_DELAY;
+            } else {
+                infoLabel.setText("That's not it. Try again.");
+                answerField.setText("");
+            }
+        } catch (NumberFormatException e) {
+            infoLabel.setText("Please enter a number.");
+            answerField.setText("");
+        }
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0.2f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        stage.act(delta);
+        stage.draw();
+
+        if (puzzleOver) {
+            transitionTimer -= delta;
+            if (transitionTimer <= 0) {
+                game.setPuzzleFibonacciSolved(true);
+                game.setScreen(dungeonScreen);
+            }
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
+    @Override public void dispose() {
+        stage.dispose();
+        skin.dispose();
+    }
+} 
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\LoadGameScreen.java ---
@@ -6092,6 +6130,217 @@ public class PrologueScreen implements Screen {
 } 
 ================================================================================
 
+--- File: .\core\src\main\java\com\dimmingechoes\screens\WordLadderScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+public class WordLadderScreen implements Screen {
+    private final TheDimmingEcho game;
+    private final DungeonScreen dungeonScreen;
+    private final SpriteBatch batch;
+    private final Stage stage;
+    private final Skin skin;
+    private Label infoLabel;
+    private final Label[] wordLabels;
+
+    private final String[] ladder = {"COLD", "CORD", "WORD", "WARM"};
+    private int currentStep = 0;
+    private final StringBuilder currentGuess = new StringBuilder();
+
+    private boolean puzzleOver = false;
+    private float transitionTimer = 0f;
+    private static final float TRANSITION_DELAY = 2.0f;
+    private int incorrectAttempts = 0;
+    private static final int MAX_ATTEMPTS = 3;
+    private boolean gameOver = false;
+
+    public WordLadderScreen(TheDimmingEcho game, DungeonScreen dungeonScreen) {
+        this.game = game;
+        this.dungeonScreen = dungeonScreen;
+        this.batch = new SpriteBatch();
+        this.stage = new Stage(new ScreenViewport());
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 32;
+        parameter.color = Color.WHITE;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+
+        this.skin = new Skin();
+        skin.add("default-font", font);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        skin.add("default", labelStyle);
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = font;
+        skin.add("default", buttonStyle);
+
+        wordLabels = new Label[ladder.length];
+        setupUI();
+    }
+
+    private void setupUI() {
+        Table root = new Table();
+        root.setFillParent(true);
+        root.center();
+
+        infoLabel = new Label("Change one letter at a time.", skin);
+        root.add(infoLabel).padBottom(30).row();
+
+        for (int i = 0; i < ladder.length; i++) {
+            wordLabels[i] = new Label(i == 0 ? ladder[i] : "_ _ _ _", skin);
+            wordLabels[i].setAlignment(Align.center);
+            root.add(wordLabels[i]).padBottom(15).row();
+        }
+
+        setupKeyboard();
+
+        stage.addActor(root);
+        stage.addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
+            @Override
+            public boolean keyTyped(com.badlogic.gdx.scenes.scene2d.InputEvent event, char character) {
+                if (puzzleOver) return false;
+                if (Character.isLetter(character) && currentGuess.length() < ladder[0].length()) {
+                    currentGuess.append(Character.toUpperCase(character));
+                    updateDisplay();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean keyDown(com.badlogic.gdx.scenes.scene2d.InputEvent event, int keycode) {
+                if (puzzleOver) return false;
+                if (keycode == Input.Keys.ENTER && currentGuess.length() == ladder[0].length()) {
+                    submitGuess();
+                } else if (keycode == Input.Keys.BACKSPACE && currentGuess.length() > 0) {
+                    currentGuess.deleteCharAt(currentGuess.length() - 1);
+                    updateDisplay();
+                }
+                return true;
+            }
+        });
+    }
+
+    private void setupKeyboard() {
+        Table keyboard = stage.getRoot().findActor("keyboard");
+        if (keyboard == null) {
+            keyboard = new Table();
+            keyboard.setName("keyboard");
+            stage.addActor(keyboard);
+        }
+        keyboard.clear();
+        String keys = "QWERTYUIOPASDFGHJKLZXCVBNM";
+        for (char c : keys.toCharArray()) {
+            TextButton btn = new TextButton(String.valueOf(c), skin);
+            btn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                    if (!puzzleOver && !gameOver && currentGuess.length() < ladder[0].length()) {
+                        currentGuess.append(btn.getText().toString());
+                        updateDisplay();
+                    }
+                }
+            });
+            keyboard.add(btn).width(50).height(50).pad(2);
+            if (c == 'P' || c == 'L') keyboard.row();
+        }
+        // Position the keyboard at 20% of the screen height and center it
+        keyboard.setPosition(
+            (stage.getWidth() - keyboard.getPrefWidth()) / 2f,
+            stage.getHeight() * 0.2f
+        );
+    }
+
+    private void submitGuess() {
+        if (gameOver) return;
+        if (currentGuess.toString().equals(ladder[currentStep + 1])) {
+            currentStep++;
+            wordLabels[currentStep].setText(ladder[currentStep]);
+            wordLabels[currentStep].setColor(Color.GREEN);
+            currentGuess.setLength(0);
+            incorrectAttempts = 0;
+            if (currentStep == ladder.length - 1) {
+                infoLabel.setText("You solved it!");
+                puzzleOver = true;
+                transitionTimer = TRANSITION_DELAY;
+            }
+        } else {
+            incorrectAttempts++;
+            if (incorrectAttempts >= MAX_ATTEMPTS) {
+                infoLabel.setText("Game Over! Too many incorrect attempts.");
+                gameOver = true;
+                transitionTimer = TRANSITION_DELAY;
+            } else {
+                infoLabel.setText("Not the right word. Attempts left: " + (MAX_ATTEMPTS - incorrectAttempts));
+            }
+        }
+    }
+
+    private void updateDisplay() {
+        wordLabels[currentStep + 1].setText(currentGuess.toString() + "_ ".repeat(Math.max(0, ladder[0].length() - currentGuess.length())));
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        stage.act(delta);
+        stage.draw();
+
+        if ((puzzleOver || gameOver) && transitionTimer > 0) {
+            transitionTimer -= delta;
+            if (transitionTimer <= 0) {
+                if (puzzleOver) {
+                    game.setPuzzleWordLadderSolved(true);
+                }
+                game.setScreen(dungeonScreen);
+            }
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
+    @Override public void dispose() {
+        batch.dispose();
+        stage.dispose();
+        skin.dispose();
+    }
+} 
+================================================================================
+
 --- File: .\core\src\main\java\com\dimmingechoes\screens\WordleScreen.java ---
 package com.dimmingechoes.screens;
 
@@ -6333,7 +6582,7 @@ public class WordleScreen implements Screen {
                     game.setScreen(new EndingScreen(game, "FAILURE"));
                     return;
                 } else {
-                    dungeonScreen.puzzleCompleted(true);
+                    // dungeonScreen.puzzleCompleted(true); // This line is removed as per the edit hint.
                     game.setScreen(dungeonScreen);
                 }
             }
