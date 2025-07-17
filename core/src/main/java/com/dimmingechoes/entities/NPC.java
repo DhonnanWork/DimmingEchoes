@@ -8,6 +8,9 @@ import com.dimmingechoes.dialogue.DialogueChoice;
 import com.dimmingechoes.dialogue.DialogueNode;
 import com.dimmingechoes.dungeon.RoomType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NPC {
     private final String name;
     private final float x, y;
@@ -39,28 +42,19 @@ public class NPC {
             return getFinalDialogue(game);
         }
 
-        // Inter-NPC conditional dialogue before initial conversation
-        if (!hasHadInitialConversation) {
-            if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
-                hasHadInitialConversation = true;
-                return new DialogueNode("That angry man... he seems less stormy now. Is he... sad?", new DialogueChoice[0], false, false, true);
-            }
-            if (name.equals("The Stranger") && game.getUsageLog().hasGivenCrystal("The Laughing Girl")) {
-                hasHadInitialConversation = true;
-                return new DialogueNode("I hear laughter on the wind. It's... faint. But it's there. What have you done?", new DialogueChoice[0], false, false, true);
-            }
-        }
-
-        // The Laughing Girl reacts to memory puzzle
+        // The Laughing Girl special puzzle logic
         if (name.equals("The Laughing Girl")) {
-            try {
-                com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
-                if (ds != null && ds.isMemoryPuzzleSolved()) {
-                    return new DialogueNode("You solved it! It was a book! I remember now... thank you!", new DialogueChoice[0], false, false, true);
-                }
-            } catch (ClassCastException e) {
-                // Ignore if not on DungeonScreen
+            boolean allPuzzlesSolved = game.isPuzzleWordleSolved() && game.isPuzzleWordLadderSolved() && game.isPuzzleFibonacciSolved();
+            if (allPuzzlesSolved) {
+                DialogueNode end = new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
+                DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+                return new DialogueNode("You solved them all! I... I remember so much more now. Thank you!",
+                    new DialogueChoice[]{
+                        new DialogueChoice("[Give a Crystal] Help her remember more.", giveCrystal),
+                        new DialogueChoice("You're welcome.", end)
+                    }, false, false, false);
             }
+            return getPuzzleSelectionDialogue(game);
         }
 
         if (!hasHadInitialConversation) {
@@ -71,149 +65,63 @@ public class NPC {
         return getLoopingDialogue(game);
     }
 
+    private DialogueNode getPuzzleSelectionDialogue(TheDimmingEcho game) {
+        List<DialogueChoice> puzzleChoices = new ArrayList<>();
+        if (!game.isPuzzleWordleSolved()) {
+            puzzleChoices.add(new DialogueChoice("[Attempt the word puzzle]", null));
+        }
+        if (!game.isPuzzleWordLadderSolved()) {
+            puzzleChoices.add(new DialogueChoice("[Attempt the ladder puzzle]", null));
+        }
+        if (!game.isPuzzleFibonacciSolved()) {
+            puzzleChoices.add(new DialogueChoice("[Attempt the number puzzle]", null));
+        }
+        puzzleChoices.add(new DialogueChoice("I'll come back later.", new DialogueNode("...", new DialogueChoice[]{}, false, false, true)));
+
+        return new DialogueNode("Hee hee... I remember bits and pieces, like games! Which one do you want to play?",
+            puzzleChoices.toArray(new DialogueChoice[0]), false, false, false);
+    }
+
     private DialogueNode getInitialDialogue(TheDimmingEcho game) {
-        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
-        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
 
         switch (name) {
-            case "The Laughing One": {
-                DialogueNode askAboutPlace = new DialogueNode(
-                    "This place is a reflection of what was lost. To remember, you must give a part of yourself.",
-                    new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
-                DialogueNode askAboutOthers = new DialogueNode(
-                    "The others are echoes, too. Joy, sorrow, and silence. Each a piece of what you left behind.",
-                    new DialogueChoice[]{new DialogueChoice("I understand.", end)}, false, false, false);
-                return new DialogueNode(
-                    "You have returned to the place of echoes. What will you do?",
-                    new DialogueChoice[]{
-                        new DialogueChoice("Ask about this place.", askAboutPlace),
-                        new DialogueChoice("Ask about the others.", askAboutOthers),
-                        new DialogueChoice("[Give a Crystal] Restore an echo.", giveCrystal),
-                        new DialogueChoice("Say nothing.", end)
-                    }, false, false, false);
-            }
-            case "The Laughing Girl": {
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                String riddle = "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... What is it?";
-                if (strangerHelped) {
-                    riddle += "\nThat angry man... he seems different now. Did you help him?";
-                }
-                return new DialogueNode(
-                    riddle,
-                    new DialogueChoice[]{
-                        new DialogueChoice("I will look for it.", end),
-                        new DialogueChoice("[Attempt the riddle]", null)
-                    }, false, false, false);
-            }
             case "The Stranger": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
                 DialogueNode askAngry = new DialogueNode("You weren't there. You didn't see. Some things are better left buried.", new DialogueChoice[]{new DialogueChoice("I will find out.", end)}, false, false, false);
-                String intro = "You again. What do you want?";
-                if (girlHelped) {
-                    intro += "\nI hear laughter on the wind. It's... faint. But it's there. What have you done?";
-                }
-                return new DialogueNode(intro,
+                return new DialogueNode("You again. What do you want?",
                     new DialogueChoice[]{
                         new DialogueChoice("Why are you so angry?", askAngry),
-                        new DialogueChoice("[Give a Crystal] Quell his anger.", giveCrystal),
-                        new DialogueChoice("Fight", new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false)),
                         new DialogueChoice("Leave.", end)
                     }, false, false, false);
-            }
-            case "The Whisper": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                if (girlHelped && strangerHelped) {
-                    return new DialogueNode("...the time is almost right... come back when you are ready...", new DialogueChoice[0], false, false, true);
-                }
-                return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
             }
         }
         return end;
     }
 
     private DialogueNode getLoopingDialogue(TheDimmingEcho game) {
-        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
-        DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
+        DialogueNode end = new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
 
         switch (name) {
-            case "The Laughing One":
-                return new DialogueNode(
-                    "Still you linger in the dust of what was. The truth is not always kind.",
+            case "The Stranger":
+                 return new DialogueNode("Still here? State your business or leave.",
                     new DialogueChoice[]{
-                        new DialogueChoice("[Give Crystal]", giveCrystal),
-                        new DialogueChoice("Leave.", end)
-                    }, false, false, false);
-            case "The Laughing Girl": {
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                String msg = "Hee hee... still can't remember? Find the thing with leaves but no tree...";
-                if (strangerHelped) {
-                    msg += "\nHe seems less angry now. Did you talk to him?";
-                }
-                return new DialogueNode(msg,
-                    new DialogueChoice[]{
-                        new DialogueChoice("[Give Crystal]", giveCrystal),
-                        new DialogueChoice("Not yet.", end)
-                    }, false, false, false);
-            }
-            case "The Stranger": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                DialogueNode fightNode2 = new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false);
-                String msg = "Still here? State your business or leave.";
-                if (girlHelped) {
-                    msg += "\nThe laughter... it's not so far away now.";
-                }
-                return new DialogueNode(msg,
-                    new DialogueChoice[]{
-                        new DialogueChoice("[Give Crystal]", giveCrystal),
-                        new DialogueChoice("Fight", fightNode2),
                         new DialogueChoice("Leaving.", end)
                     }, false, false, false);
-            }
-            case "The Whisper": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                if (girlHelped && strangerHelped) {
-                    return new DialogueNode(
-                        "You have pieced together the joy and the sorrow... Are you ready for the truth?",
-                        new DialogueChoice[]{
-                            new DialogueChoice("[Give the Final Crystal] Learn the truth.", giveCrystal),
-                            new DialogueChoice("I'm not ready.", end)
-                        }, false, false, false);
-                }
-                return new DialogueNode("...the echoes are not yet settled...", new DialogueChoice[0], false, false, true);
-            }
         }
         return end;
     }
 
     private DialogueNode getFinalDialogue(TheDimmingEcho game) {
         switch (name) {
-            case "The Laughing One":
-                return new DialogueNode(
-                    "The echo you restored in me is quiet. But the dust still stirs. Some mysteries are not meant to be solved. Thank you... or perhaps, I'm sorry.",
-                    new DialogueChoice[0], false, false, true);
             case "The Laughing Girl":
                 return new DialogueNode(
                     "...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.",
-                    new DialogueChoice[0], false, false, true);
+                    new DialogueChoice[]{}, false, false, true);
             case "The Stranger":
                 return new DialogueNode(
                     "It was my fault. I... I couldn't protect her. The laughter stopped because of me. But now, I feel... at peace.",
-                    new DialogueChoice[0], false, false, true);
-            case "The Whisper": {
-                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
-                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
-                if (girlHelped && strangerHelped) {
-                    return new DialogueNode(
-                        "This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend. Take the final crystal, and remember.",
-                        new DialogueChoice[0], false, false, true);
-                }
-                return new DialogueNode(
-                    "This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.",
-                    new DialogueChoice[0], false, false, true);
-            }
+                    new DialogueChoice[]{}, false, false, true);
         }
-        return new DialogueNode("...", new DialogueChoice[0], false, false, true);
+        return new DialogueNode("...", new DialogueChoice[]{}, false, false, true);
     }
 }

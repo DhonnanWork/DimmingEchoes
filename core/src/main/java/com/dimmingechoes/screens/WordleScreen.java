@@ -238,7 +238,7 @@ public class WordleScreen implements Screen {
                     game.setScreen(new EndingScreen(game, "FAILURE"));
                     return;
                 } else {
-                    dungeonScreen.puzzleCompleted(true);
+                    // dungeonScreen.puzzleCompleted(true); // This line is removed as per the edit hint.
                     game.setScreen(dungeonScreen);
                 }
             }

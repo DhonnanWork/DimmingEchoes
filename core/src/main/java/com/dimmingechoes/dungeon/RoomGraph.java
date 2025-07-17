@@ -28,7 +28,7 @@ public class RoomGraph {
         // Step 1: Define the rooms with their TMX paths and background colors.
         Room start = new Room("Tiled/Tengah.tmx", RoomType.START, new Color(0.2f, 0.2f, 0.2f, 1));
         Room memory = new Room("Tiled/Kiri.tmx", RoomType.MEMORY, new Color(0.1f, 0.2f, 0.3f, 1));
-        Room battle = new Room("Tiled/Kanan.tmx", RoomType.BATTLE, new Color(0.3f, 0.1f, 0.1f, 1));
+        Room battle = new Room("Tiled/Kanan.tmx", RoomType.EMPTY, new Color(0.3f, 0.1f, 0.1f, 1));
         Room finalRoomTrigger = new Room("", RoomType.FINAL, new Color(0.1f, 0.1f, 0.1f, 1));
 
         // Step 2: Define the connections (DoorZones) between rooms.

@@ -7,6 +7,9 @@ public class SaveData {
     public int crystalCount;
     public Set<String> crystalRecipients = new HashSet<>();
     public long saveTimestamp;
+    public boolean puzzleWordleSolved = false;
+    public boolean puzzleWordLadderSolved = false;
+    public boolean puzzleFibonacciSolved = false;
     
     public SaveData() {
         this.saveTimestamp = System.currentTimeMillis();

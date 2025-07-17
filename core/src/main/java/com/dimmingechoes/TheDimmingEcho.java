@@ -14,6 +14,9 @@ public class TheDimmingEcho extends Game {
     private CrystalInventory crystalInventory;
     private UsageLog usageLog;
     private int crystalsLostToFailure = 0;
+    private boolean puzzleWordleSolved = false;
+    private boolean puzzleWordLadderSolved = false;
+    private boolean puzzleFibonacciSolved = false;
 
     @Override
     public void create() {
@@ -32,10 +35,20 @@ public class TheDimmingEcho extends Game {
         return usageLog;
     }
 
+    public boolean isPuzzleWordleSolved() { return puzzleWordleSolved; }
+    public void setPuzzleWordleSolved(boolean puzzleWordleSolved) { this.puzzleWordleSolved = puzzleWordleSolved; }
+    public boolean isPuzzleWordLadderSolved() { return puzzleWordLadderSolved; }
+    public void setPuzzleWordLadderSolved(boolean puzzleWordLadderSolved) { this.puzzleWordLadderSolved = puzzleWordLadderSolved; }
+    public boolean isPuzzleFibonacciSolved() { return puzzleFibonacciSolved; }
+    public void setPuzzleFibonacciSolved(boolean puzzleFibonacciSolved) { this.puzzleFibonacciSolved = puzzleFibonacciSolved; }
+
     public void saveGame(int slot) {
         SaveData data = new SaveData();
         data.crystalCount = crystalInventory.getCrystals();
         data.crystalRecipients = usageLog.getAllRecipients();
+        data.puzzleWordleSolved = this.puzzleWordleSolved;
+        data.puzzleWordLadderSolved = this.puzzleWordLadderSolved;
+        data.puzzleFibonacciSolved = this.puzzleFibonacciSolved;
         SaveManager.save(data, slot);
     }
 
@@ -47,6 +60,9 @@ public class TheDimmingEcho extends Game {
             for (String npc : data.crystalRecipients) {
                 usageLog.logCrystalGiven(npc);
             }
+            this.puzzleWordleSolved = data.puzzleWordleSolved;
+            this.puzzleWordLadderSolved = data.puzzleWordLadderSolved;
+            this.puzzleFibonacciSolved = data.puzzleFibonacciSolved;
         }
     }
 
@@ -71,5 +87,8 @@ public class TheDimmingEcho extends Game {
         crystalInventory = new CrystalInventory(5);
         usageLog = new UsageLog();
         crystalsLostToFailure = 0;
+        puzzleWordleSolved = false;
+        puzzleWordLadderSolved = false;
+        puzzleFibonacciSolved = false;
     }
 }

@@ -86,10 +86,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private int charIndex = 0;
     private final float CHAR_DELAY = 0.03f;
     private float mapScale;
-    private boolean isMemoryPuzzleSolved = false;
-    private Rectangle puzzleTriggerBounds = null;
-    private boolean awaitingFinalChoice = false;
-    private String finalChoiceResult = null;
 
     // --- NEW: ShapeRenderer for Debugging ---
     private final ShapeRenderer debugRenderer;
@@ -291,7 +287,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private void parseTiledMapObjects() {
         currentRoom.getObstacles().clear();
         currentRoom.getNpcs().clear();
-        puzzleTriggerBounds = null;
 
         if (map.getLayers().get("Collision") != null) {
             for (MapObject object : map.getLayers().get("Collision").getObjects()) {
@@ -336,17 +331,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
                     player.setPosition(x, y);
                     playerSpawned = true;
                     break;
-                }
-            }
-        }
-
-        if (map.getLayers().get("Interactables") != null) {
-            for (MapObject object : map.getLayers().get("Interactables").getObjects()) {
-                if (object.getName() != null && object.getName().equals("PuzzleTrigger")) {
-                    if (object instanceof RectangleMapObject) {
-                        Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                        puzzleTriggerBounds = new Rectangle(rect.x * mapScale, rect.y * mapScale, rect.width * mapScale, rect.height * mapScale);
-                    }
                 }
             }
         }
@@ -433,7 +417,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         if (dialogueTable.isVisible()) endDialogue();
 
         if (currentRoom.getTmxPath() == null || currentRoom.getTmxPath().isEmpty()) {
-            if (currentRoom.getRoomType() == RoomType.FINAL && !awaitingFinalChoice) {
+            if (currentRoom.getRoomType() == RoomType.FINAL && !endingShown) {
                 // Check for 'A Place That No Longer Exists' ending
                 if (game.getUsageLog().totalGiven() == 0 && game.getCrystalsLostToFailure() == 0) {
                     game.setScreen(new EndingScreen(game, "NOMATTER"));
@@ -458,10 +442,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
             case Input.Keys.D: case Input.Keys.RIGHT: moveRight = true; break;
             case Input.Keys.ESCAPE: game.setScreen(new PauseMenuScreen(game, this)); return true;
             case Input.Keys.SPACE:
-                if (!isMemoryPuzzleSolved && puzzleTriggerBounds != null && player.overlaps(puzzleTriggerBounds)) {
-                    isMemoryPuzzleSolved = true;
-                    return true;
-                }
                 for (NPC npc : currentRoom.getNpcs()) {
                     if (isNear(npc)) {
                         startDialogue(npc);
@@ -515,27 +495,22 @@ public class DungeonScreen extends InputAdapter implements Screen {
         choicesTable.clear();
         uiStage.setKeyboardFocus(null);
 
-        // Launch WordleScreen if the Laughing Girl's riddle is attempted
-        if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl") && choice.choiceText.equals("[Attempt the riddle]")) {
-            endDialogue();
-            game.setScreen(new WordleScreen(game, this));
-            return;
-        }
-
-        if (dialogueNPC != null && dialogueNPC.getName().equals("The Stranger") && choice.choiceText.equals("Begin Battle")) {
-            com.dimmingechoes.entities.Player playerEntity = new com.dimmingechoes.entities.Player("You", 30, 8, 3, null);
-            java.util.List<com.dimmingechoes.entities.Enemy> enemies = new java.util.ArrayList<>();
-            enemies.add(new com.dimmingechoes.entities.Enemy("The Stranger", 20, 6, 2, null));
-            game.setScreen(new BattleScreen(game, playerEntity, enemies));
-            return;
-        }
-
-        if (awaitingFinalChoice) {
-            finalChoiceResult = choice.choiceText;
-            awaitingFinalChoice = false;
-            endDialogue();
-            triggerEndingWithChoice(finalChoiceResult);
-            return;
+        if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl")) {
+            if (choice.choiceText.equals("[Attempt the word puzzle]")) {
+                endDialogue();
+                game.setScreen(new WordleScreen(game, this));
+                return;
+            }
+            if (choice.choiceText.equals("[Attempt the ladder puzzle]")) {
+                endDialogue();
+                game.setScreen(new WordLadderScreen(game, this));
+                return;
+            }
+            if (choice.choiceText.equals("[Attempt the number puzzle]")) {
+                endDialogue();
+                game.setScreen(new FibonacciScreen(game, this));
+                return;
+            }
         }
 
         if (choice.next != null) {
@@ -579,7 +554,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
     }
 
     private void presentFinalChoice() {
-        awaitingFinalChoice = true;
         DialogueNode end = new DialogueNode("...", null, false, false, true);
         DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
         DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
@@ -648,13 +622,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private boolean isNear(NPC npc) {
         return player.getCenter(new Vector2()).dst(npc.getBounds().getCenter(new Vector2())) < INTERACTION_RADIUS;
-    }
-
-    public boolean isMemoryPuzzleSolved() { return isMemoryPuzzleSolved; }
-
-    // Called by WordleScreen when the puzzle is completed
-    public void puzzleCompleted(boolean success) {
-        isMemoryPuzzleSolved = success;
     }
 
     @Override public void resize(int width, int height) {
