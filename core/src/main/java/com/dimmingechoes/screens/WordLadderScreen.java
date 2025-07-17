@@ -38,6 +38,9 @@ public class WordLadderScreen implements Screen {
     private boolean puzzleOver = false;
     private float transitionTimer = 0f;
     private static final float TRANSITION_DELAY = 2.0f;
+    private int incorrectAttempts = 0;
+    private static final int MAX_ATTEMPTS = 3;
+    private boolean gameOver = false;
 
     public WordLadderScreen(TheDimmingEcho game, DungeonScreen dungeonScreen) {
         this.game = game;
@@ -120,7 +123,7 @@ public class WordLadderScreen implements Screen {
             btn.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                    if (!puzzleOver && currentGuess.length() < ladder[0].length()) {
+                    if (!puzzleOver && !gameOver && currentGuess.length() < ladder[0].length()) {
                         currentGuess.append(btn.getText().toString());
                         updateDisplay();
                     }
@@ -129,21 +132,35 @@ public class WordLadderScreen implements Screen {
             keyboard.add(btn).width(50).height(50).pad(2);
             if (c == 'P' || c == 'L') keyboard.row();
         }
+        // Position the keyboard at 20% of the screen height and center it
+        keyboard.setPosition(
+            (stage.getWidth() - keyboard.getPrefWidth()) / 2f,
+            stage.getHeight() * 0.2f
+        );
     }
 
     private void submitGuess() {
+        if (gameOver) return;
         if (currentGuess.toString().equals(ladder[currentStep + 1])) {
             currentStep++;
             wordLabels[currentStep].setText(ladder[currentStep]);
             wordLabels[currentStep].setColor(Color.GREEN);
             currentGuess.setLength(0);
+            incorrectAttempts = 0;
             if (currentStep == ladder.length - 1) {
                 infoLabel.setText("You solved it!");
                 puzzleOver = true;
                 transitionTimer = TRANSITION_DELAY;
             }
         } else {
-            infoLabel.setText("Not the right word. Try again.");
+            incorrectAttempts++;
+            if (incorrectAttempts >= MAX_ATTEMPTS) {
+                infoLabel.setText("Game Over! Too many incorrect attempts.");
+                gameOver = true;
+                transitionTimer = TRANSITION_DELAY;
+            } else {
+                infoLabel.setText("Not the right word. Attempts left: " + (MAX_ATTEMPTS - incorrectAttempts));
+            }
         }
     }
 
@@ -164,10 +181,12 @@ public class WordLadderScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-        if (puzzleOver) {
+        if ((puzzleOver || gameOver) && transitionTimer > 0) {
             transitionTimer -= delta;
             if (transitionTimer <= 0) {
-                game.setPuzzleWordLadderSolved(true);
+                if (puzzleOver) {
+                    game.setPuzzleWordLadderSolved(true);
+                }
                 game.setScreen(dungeonScreen);
             }
         }
