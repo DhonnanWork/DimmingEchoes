@@ -90,7 +90,8 @@ public class MainMenuScreen implements Screen {
         newGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new DungeonScreen(game));
+                game.resetGame();
+                game.setScreen(new PrologueScreen(game));
             }
         });
         mainTable.add(newGameButton).width(300).height(60).padBottom(20).row();

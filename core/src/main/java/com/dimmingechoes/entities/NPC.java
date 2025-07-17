@@ -83,8 +83,11 @@ public class NPC {
                         new DialogueChoice("Say nothing.", end) }, false, false, false);
             case "The Laughing Girl":
                 return new DialogueNode(
-                    "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... Find it for me? Please?",
-                    new DialogueChoice[]{ new DialogueChoice("I will look for it.", end) },
+                    "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... What is it?",
+                    new DialogueChoice[]{
+                        new DialogueChoice("I will look for it.", end),
+                        new DialogueChoice("[Attempt the riddle]", null)
+                    },
                     false, false, false
                 );
             case "The Stranger":

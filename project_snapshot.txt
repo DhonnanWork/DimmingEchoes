@@ -1,6 +1,6 @@
 --- Project File Structure ---
 
-C:\Users\Pongo\IdeaProjects\DimmingEchoV3
+F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 ├── .editorconfig
 ├── .gitattributes
 ├── .gitignore
@@ -178,6 +178,10 @@ C:\Users\Pongo\IdeaProjects\DimmingEchoV3
 │   │   ├── proximity to the inevitable.mp3
 │   │   └── shaping.mp3
 │   ├── libgdx.png
+│   ├── memorythatfades.png
+│   ├── menu+bg.png
+│   ├── menu-animation.png
+│   ├── menu-bg.png
 │   ├── menu_bg.png
 │   ├── player_walk_left.png
 │   ├── savegame.json
@@ -187,6 +191,11 @@ C:\Users\Pongo\IdeaProjects\DimmingEchoV3
 │   └── uiskin.png
 ├── build.gradle
 ├── core
+│   ├── bin
+│   │   └── main
+│   │       └── com
+│   │           └── dimmingechoes
+│   │               └── Main.class
 │   ├── build.gradle
 │   └── src
 │       └── main
@@ -224,7 +233,8 @@ C:\Users\Pongo\IdeaProjects\DimmingEchoV3
 │                           ├── LoadGameScreen.java
 │                           ├── MainMenuScreen.java
 │                           ├── PauseMenuScreen.java
-│                           └── TitleScreen.java
+│                           ├── PrologueScreen.java
+│                           └── WordleScreen.java
 ├── gradle
 │   ├── gradle-daemon-jvm.properties
 │   └── wrapper
@@ -234,6 +244,19 @@ C:\Users\Pongo\IdeaProjects\DimmingEchoV3
 ├── gradlew
 ├── gradlew.bat
 ├── lwjgl3
+│   ├── bin
+│   │   └── main
+│   │       ├── assets.txt
+│   │       ├── com
+│   │       │   └── dimmingechoes
+│   │       │       └── lwjgl3
+│   │       │           ├── Lwjgl3Launcher.class
+│   │       │           └── StartupHelper.class
+│   │       ├── libgdx.png
+│   │       ├── libgdx128.png
+│   │       ├── libgdx16.png
+│   │       ├── libgdx32.png
+│   │       └── libgdx64.png
 │   ├── build.gradle
 │   ├── icons
 │   │   ├── logo.icns
@@ -1152,6 +1175,10 @@ audio/ds vu.mp3
 audio/proximity to the inevitable.mp3
 audio/shaping.mp3
 libgdx.png
+memorythatfades.png
+menu+bg.png
+menu-animation.png
+menu-bg.png
 menu_bg.png
 player_walk_left.png
 savegame.json
@@ -1163,6 +1190,26 @@ uiskin.png
 ================================================================================
 
 --- File: .\assets\libgdx.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\memorythatfades.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\menu+bg.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\menu-animation.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\menu-bg.png ---
 *** Non-text file detected (.png). Content not displayed. ***
 
 ================================================================================
@@ -1186,7 +1233,7 @@ crystalCount: 5
 --- File: .\assets\savegame1.json ---
 {
 crystalCount: 5
-saveTimestamp: 1752337613648
+saveTimestamp: 1752720247270
 }
 ================================================================================
 
@@ -2552,7 +2599,7 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
 
 --- File: .\assets\Tiled\Kanan.tmx ---
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="63">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="65">
  <tileset firstgid="1" source="WallA.tsx"/>
  <tileset firstgid="1021" source="FloorA.tsx"/>
  <tileset firstgid="1840" source="Decor0A.tsx"/>
@@ -2662,11 +2709,10 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
   <object id="35" x="64.6667" y="15.3333" width="13.3333" height="125.333"/>
   <object id="36" x="66.6667" y="14.6667" width="381.333" height="16.6667"/>
   <object id="37" x="432.667" y="16.6667" width="14" height="222"/>
-  <object id="39" x="400" y="160" width="36" height="16.6667"/>
   <object id="40" x="320.667" y="225.333" width="48" height="13.3333"/>
   <object id="41" x="322" y="224.667" width="14" height="67.3333"/>
   <object id="42" x="64.6667" y="272.667" width="271.333" height="12.6667"/>
-  <object id="43" x="0" y="176" width="78.6667" height="14"/>
+  <object id="43" x="0" y="176" width="63.771" height="14"/>
   <object id="44" x="64" y="177.333" width="15.3333" height="98"/>
   <object id="45" x="77.3333" y="224.667" width="113.333" height="50.6667"/>
   <object id="46" x="115.333" y="29.3333" width="74" height="17.3333"/>
@@ -2675,14 +2721,27 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
   <object id="50" x="225.333" y="45.3333" width="60.6667" height="18"/>
   <object id="51" x="304.667" y="31.3333" width="94" height="16"/>
   <object id="52" x="320.667" y="46" width="62.6667" height="16.6667"/>
-  <object id="54" x="313.333" y="265.333"/>
-  <object id="55" x="353.333" y="176.667" width="18.6667" height="14.6667"/>
   <object id="56" x="374" y="176.667" width="66.6667" height="16"/>
   <object id="57" x="386.667" y="192.667" width="46.6667" height="43.3333"/>
   <object id="60" x="367.333" y="224.667" width="68" height="13.3333"/>
   <object id="62" x="374.667" y="187.333" width="12" height="40"/>
  </objectgroup>
- <objectgroup id="8" name="The Stranger">
+ <objectgroup id="9" name="Spawns">
+  <object id="63" x="262.5" y="164.5">
+   <properties>
+    <property name="name" value="The Stranger"/>
+    <property name="type" value="NPC"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="64" x="34" y="160.5">
+   <properties>
+    <property name="type" value="Player"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="Entities">
   <object id="53" name="The Stranger" gid="2802" x="255.333" y="168" width="16" height="16">
    <properties>
     <property name="name" value="The Stranger"/>
@@ -2696,7 +2755,7 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
 
 --- File: .\assets\Tiled\Kiri.tmx ---
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="28">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="31">
  <tileset firstgid="1" source="WallA.tsx"/>
  <tileset firstgid="1021" source="FloorA.tsx"/>
  <tileset firstgid="1840" source="FleshA.tsx"/>
@@ -2808,7 +2867,7 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="6" name="Collision" locked="1">
+ <objectgroup id="6" name="Collision">
   <object id="7" x="182" y="59.3333" height="1.33333"/>
   <object id="8" x="182" y="56"/>
   <object id="9" x="182" y="75.3333"/>
@@ -2818,8 +2877,8 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
   <object id="14" x="96" y="96.6667" width="14.6667" height="159.333"/>
   <object id="16" x="191.333" y="49.3333" width="238.667" height="16"/>
   <object id="17" x="415.333" y="59.3333" width="17.3333" height="82"/>
-  <object id="18" x="418.667" y="128" width="60.6667" height="14"/>
-  <object id="19" x="416.667" y="174.667" width="64" height="16.6667"/>
+  <object id="18" x="433" y="128" width="46.3334" height="14"/>
+  <object id="19" x="433" y="174.667" width="47.6667" height="16.6667"/>
   <object id="20" x="418" y="175.333" width="14" height="96"/>
   <object id="21" x="132" y="256.667" width="288.667" height="14.6667"/>
   <object id="22" x="96" y="256" width="39.3333" height="14.6667"/>
@@ -2827,12 +2886,27 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
   <object id="24" x="119.333" y="116.667"/>
   <object id="25" x="352" y="224" width="66.6667" height="34"/>
  </objectgroup>
- <objectgroup id="9">
-  <object id="27" name="The Laughing Girl" gid="3738" x="260.5" y="175" width="16" height="16">
+ <objectgroup id="11" name="Entities">
+  <object id="30" name="The Laughing Girl" gid="3738" x="260.5" y="175" width="16" height="16">
    <properties>
     <property name="name" value="The Laughing Girl"/>
     <property name="type" value="NPC"/>
    </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="Spawns">
+  <object id="28" x="269.333" y="171.667">
+   <properties>
+    <property name="name" value="The Laughing Girl"/>
+    <property name="type" value="NPC"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" x="433.333" y="170">
+   <properties>
+    <property name="type" value="Player"/>
+   </properties>
+   <point/>
   </object>
  </objectgroup>
 </map>
@@ -2907,7 +2981,7 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
 
 --- File: .\assets\Tiled\Tengah.tmx ---
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="25">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="38">
  <tileset firstgid="1" source="Decor0A.tsx"/>
  <tileset firstgid="177" source="Decor1A.tsx"/>
  <tileset firstgid="353" source="Tree1A.tsx"/>
@@ -3025,18 +3099,38 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="5" name="The Whisper">
+ <objectgroup id="9" name="Spawns">
+  <object id="27" x="239.333" y="147.333">
+   <properties>
+    <property name="type" value="Player"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" x="309.333" y="173.333">
+   <properties>
+    <property name="name" value="The Whisper"/>
+    <property name="type" value="NPC"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" x="136" y="124.667">
+   <properties>
+    <property name="name" value="The Keeper"/>
+    <property name="type" value="NPC"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="Entities">
   <object id="5" name="The Whisper" gid="4689" x="302" y="178" width="16" height="16">
    <properties>
     <property name="name" value="The Whisper"/>
     <property name="type" value="NPC"/>
    </properties>
   </object>
- </objectgroup>
- <objectgroup id="6" name="The Keeper">
-  <object id="7" name="The Keeper" gid="2147488194" x="128" y="131" width="16" height="16">
+  <object id="37" name="The Laughing One" gid="4585" x="129.667" y="133.333" width="16" height="16">
    <properties>
-    <property name="name" value="The Keeper"/>
+    <property name="name" value="The Laughing One"/>
     <property name="type" value="NPC"/>
    </properties>
   </object>
@@ -3045,21 +3139,22 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
   <object id="8" x="48.5" y="48" width="175.5" height="14"/>
   <object id="9" x="207.5" y="-2.5" width="15.5" height="52.5"/>
   <object id="10" x="257" y="-2" width="14" height="64"/>
-  <object id="11" x="48.5" y="62" width="63.5" height="14.5"/>
-  <object id="12" x="45.5" y="73.5" width="17" height="67"/>
-  <object id="13" x="-1.5" y="129" width="63" height="12.5"/>
-  <object id="14" x="-1" y="175.5" width="65" height="16"/>
-  <object id="15" x="47.5" y="177.5" width="14.5" height="92"/>
-  <object id="16" x="55" y="226" width="104.5" height="29"/>
+  <object id="11" x="65.1667" y="64" width="63.5" height="14.5"/>
+  <object id="12" x="45.5" y="62.8333" width="17" height="78.3333"/>
+  <object id="13" x="-1.5" y="129" width="45.3333" height="12.5"/>
+  <object id="14" x="-1" y="175.5" width="47.6667" height="16"/>
+  <object id="15" x="47.1667" y="175.167" width="14.5" height="92"/>
+  <object id="16" x="62.6667" y="226" width="104.5" height="29"/>
   <object id="17" x="57.5" y="254.5" width="375.5" height="17"/>
-  <object id="18" x="416.5" y="175" width="14" height="83"/>
-  <object id="19" x="402" y="176" width="70.5" height="14.5"/>
-  <object id="20" x="417" y="127" width="53" height="16"/>
+  <object id="18" x="416.5" y="195.333" width="14" height="58.6667"/>
+  <object id="19" x="416.333" y="179.667" width="70.5" height="14.5"/>
+  <object id="20" x="417" y="127" width="66" height="16"/>
   <object id="21" x="418" y="50.5" width="17.5" height="79.5"/>
   <object id="22" x="399.5" y="49" width="18" height="62"/>
   <object id="23" x="258" y="47.5" width="168" height="14"/>
   <object id="24" x="114.5" y="95.5" width="44.5" height="15"/>
  </objectgroup>
+ <objectgroup id="8" name="DoorZone"/>
 </map>
 
 ================================================================================
@@ -3110,21 +3205,28 @@ java {
 
 ================================================================================
 
+--- File: .\core\bin\main\com\dimmingechoes\Main.class ---
+*** Non-text file detected (.class). Content not displayed. ***
+
+================================================================================
+
 --- File: .\core\src\main\java\com\dimmingechoes\TheDimmingEcho.java ---
 package com.dimmingechoes;
 
 import com.badlogic.gdx.Game;
-import com.dimmingechoes.screens.TitleScreen;
+import com.dimmingechoes.screens.PrologueScreen;
 import com.dimmingechoes.screens.DungeonScreen;
 import com.dimmingechoes.save.SaveData;
 import com.dimmingechoes.save.SaveManager;
 import com.dimmingechoes.logic.CrystalInventory;
 import com.dimmingechoes.logic.UsageLog;
+import com.dimmingechoes.screens.MainMenuScreen;
 
 public class TheDimmingEcho extends Game {
 
     private CrystalInventory crystalInventory;
     private UsageLog usageLog;
+    private int crystalsLostToFailure = 0;
 
     @Override
     public void create() {
@@ -3132,7 +3234,7 @@ public class TheDimmingEcho extends Game {
         usageLog = new UsageLog();
 
         loadGame(1); // Default to slot 1 on startup
-        setScreen(new TitleScreen(this));
+        setScreen(new MainMenuScreen(this));
     }
 
     public CrystalInventory getCrystalInventory() {
@@ -3169,6 +3271,19 @@ public class TheDimmingEcho extends Game {
     // Legacy method for backward compatibility
     public void loadGame() {
         loadGame(1);
+    }
+
+    // Add failure tracker methods
+    public void logFailure() {
+        crystalsLostToFailure++;
+    }
+    public int getCrystalsLostToFailure() {
+        return crystalsLostToFailure;
+    }
+    public void resetGame() {
+        crystalInventory = new CrystalInventory(5);
+        usageLog = new UsageLog();
+        crystalsLostToFailure = 0;
     }
 }
 
@@ -3327,17 +3442,18 @@ public class Room {
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\dungeon\RoomGraph.java ---
+// File: core/src/main/java/com/dimmingechoes/dungeon/RoomGraph.java
+
 package com.dimmingechoes.dungeon;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
-import com.dimmingechoes.entities.NPC;
 
 public class RoomGraph {
 
     private Room startingRoom;
 
-    // --- Define the world dimensions ---
+    // --- World dimensions for defining door zones ---
     private static final float WORLD_WIDTH = 1280;
     private static final float WORLD_HEIGHT = 720;
     private static final float WALL_THICKNESS = 32;
@@ -3353,43 +3469,24 @@ public class RoomGraph {
     }
 
     private void generateRooms() {
-        // Build all the room objects first, now with colors
+        // Step 1: Define the rooms with their TMX paths and background colors.
         Room start = new Room("Tiled/Tengah.tmx", RoomType.START, new Color(0.2f, 0.2f, 0.2f, 1));
         Room memory = new Room("Tiled/Kiri.tmx", RoomType.MEMORY, new Color(0.1f, 0.2f, 0.3f, 1));
         Room battle = new Room("Tiled/Kanan.tmx", RoomType.BATTLE, new Color(0.3f, 0.1f, 0.1f, 1));
-
         Room finalRoomTrigger = new Room("", RoomType.FINAL, new Color(0.1f, 0.1f, 0.1f, 1));
 
-        // --- Define START Room Layout ---
-        start.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), memory, DoorZone.Direction.LEFT));
-        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), battle, DoorZone.Direction.RIGHT));
-        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, WORLD_HEIGHT - DOOR_THICKNESS, DOOR_WIDTH, DOOR_THICKNESS), finalRoomTrigger, DoorZone.Direction.TOP));
-        start.addNPC(new NPC("The Keeper", RoomType.START, 300, 500));
-        start.addNPC(new NPC("The Whisper", RoomType.START, 800, 400));
+        // Step 2: Define the connections (DoorZones) between rooms.
+        start.addDoorZone(new DoorZone(new Rectangle(0, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), memory, DoorZone.Direction.LEFT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), battle, DoorZone.Direction.RIGHT));
+        start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH / 2 - DOOR_WIDTH / 2, (WORLD_HEIGHT - DOOR_THICKNESS), DOOR_WIDTH, DOOR_THICKNESS), finalRoomTrigger, DoorZone.Direction.TOP));
+        memory.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.RIGHT));
+        battle.addDoorZone(new DoorZone(new Rectangle(0, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.LEFT));
 
-        // --- Define MEMORY Room Layout --
-        memory.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.RIGHT));
-        memory.addNPC(new NPC("The Laughing Girl", RoomType.MEMORY, WORLD_WIDTH / 2, WORLD_HEIGHT / 2));
-       // --- Obstacle Memory Room ---
-        memory.addObstacle(new Rectangle(200, 200, 50, 50));
-        memory.addObstacle(new Rectangle(900, 450, 80, 80));
-
-        // --- Define BATTLE Room Layout ---
-        //setupRoomBoundaries(battle);
-        battle.addDoorZone(new DoorZone(new Rectangle(0, WORLD_HEIGHT / 2 - DOOR_WIDTH / 2, DOOR_THICKNESS, DOOR_WIDTH), start, DoorZone.Direction.LEFT));
-        battle.addNPC(new NPC("The Stranger", RoomType.BATTLE, WORLD_WIDTH / 2, 400));
-
-        // --- FINAL Room dihapus karena bukan ruangan fisik ---
+        // NOTE: All addNPC() calls have been REMOVED.
+        // The TMX file is now the single source of truth for NPC placement.
 
         this.startingRoom = start;
     }
-
-//    private void setupRoomBoundaries(Room room) {
-//        room.addObstacle(new Rectangle(0, 0, WORLD_WIDTH, WALL_THICKNESS));
-//        room.addObstacle(new Rectangle(0, WORLD_HEIGHT - WALL_THICKNESS, WORLD_WIDTH, WALL_THICKNESS));
-//        room.addObstacle(new Rectangle(0, 0, WALL_THICKNESS, WORLD_HEIGHT));
-//        room.addObstacle(new Rectangle(WORLD_WIDTH - WALL_THICKNESS, 0, WALL_THICKNESS, WORLD_HEIGHT));
-//    }
 }
 
 ================================================================================
@@ -3462,6 +3559,8 @@ public class Enemy {
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\entities\NPC.java ---
+// File: core/src/main/java/com/dimmingechoes/entities/NPC.java
+
 package com.dimmingechoes.entities;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -3474,17 +3573,17 @@ public class NPC {
     private final String name;
     private final float x, y;
     private final Rectangle bounds;
-
-    // This flag tracks if the NPC has had their first, main conversation.
+    public final int gid;
     private boolean hasHadInitialConversation = false;
+    private static final float NPC_INTERACTION_WIDTH = 48f;
+    private static final float NPC_INTERACTION_HEIGHT = 48f;
 
-    private static final float NPC_SIZE = 48f;
-
-    public NPC(String name, RoomType room, float x, float y) {
+    public NPC(String name, RoomType room, float x, float y, int gid) {
         this.name = name;
         this.x = x;
         this.y = y;
-        this.bounds = new Rectangle(x - NPC_SIZE / 2, y - NPC_SIZE / 2, NPC_SIZE, NPC_SIZE);
+        this.gid = gid;
+        this.bounds = new Rectangle(x - NPC_INTERACTION_WIDTH / 2, y, NPC_INTERACTION_WIDTH, NPC_INTERACTION_HEIGHT);
     }
 
     public String getName() { return name; }
@@ -3496,26 +3595,22 @@ public class NPC {
         return game.getUsageLog().hasGivenCrystal(this.name);
     }
 
-    /**
-     * This method is a state machine that returns a dialogue tree based on game state.
-     */
     public DialogueNode getDialogue(TheDimmingEcho game) {
-        // The most important state is whether they have received a crystal. This is their "final" state.
         if (hasReceivedCrystal(game)) {
             return getFinalDialogue(game);
         }
 
-        // Special puzzle reward dialogue for The Laughing Girl
         if (name.equals("The Laughing Girl")) {
             try {
                 com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
-                if (ds.isMemoryPuzzleSolved()) {
-                    return new DialogueNode("You solved the memory puzzle! I remember now... Thank you!", new DialogueChoice[0], false, false, true);
+                if (ds != null && ds.isMemoryPuzzleSolved()) {
+                    return new DialogueNode("You solved it! It was a book! I remember now... thank you!", new DialogueChoice[0], false, false, true);
                 }
-            } catch (Exception e) { /* ignore */ }
+            } catch (ClassCastException e) {
+                // Ignore if not on DungeonScreen
+            }
         }
 
-        // Check for special, one-time reactive dialogue before the initial conversation.
         if (!hasHadInitialConversation) {
             if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
                 hasHadInitialConversation = true;
@@ -3527,25 +3622,20 @@ public class NPC {
             }
         }
 
-        // If it's the first time talking to them, give the full initial dialogue.
         if (!hasHadInitialConversation) {
-            hasHadInitialConversation = true; // Set the flag so this dialogue only appears once.
+            hasHadInitialConversation = true;
             return getInitialDialogue(game);
         }
 
-        // If we reach here, it means we've talked before but haven't given a crystal. Give the looping dialogue.
         return getLoopingDialogue(game);
     }
 
-    /**
-     * The dialogue for the first time you speak to an NPC.
-     */
     private DialogueNode getInitialDialogue(TheDimmingEcho game) {
         DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
         DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
 
         switch (name) {
-            case "The Keeper":
+            case "The Laughing One":
                 DialogueNode askAboutPlace = new DialogueNode("This place is a reflection of what was lost. To remember, you must give a part of yourself.", new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
                 return new DialogueNode("You have returned to the place of echoes. What will you do?",
                     new DialogueChoice[]{
@@ -3553,12 +3643,14 @@ public class NPC {
                         new DialogueChoice("[Give a Crystal] Restore an echo.", giveCrystal),
                         new DialogueChoice("Say nothing.", end) }, false, false, false);
             case "The Laughing Girl":
-                DialogueNode askForget = new DialogueNode("I don't know... It felt warm. Like the sun on my face. But now it's cold.", new DialogueChoice[]{new DialogueChoice("I'm sorry.", end)}, false, false, false);
-                return new DialogueNode("Hee hee... did you forget something?",
+                return new DialogueNode(
+                    "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... What is it?",
                     new DialogueChoice[]{
-                        new DialogueChoice("Forget what?", askForget),
-                        new DialogueChoice("[Give a Crystal] Help her remember.", giveCrystal),
-                        new DialogueChoice("Leave her be.", end) }, false, false, false);
+                        new DialogueChoice("I will look for it.", end),
+                        new DialogueChoice("[Attempt the riddle]", null)
+                    },
+                    false, false, false
+                );
             case "The Stranger":
                 DialogueNode askAngry = new DialogueNode("You weren't there. You didn't see. Some things are better left buried.", new DialogueChoice[]{new DialogueChoice("I will find out.", end)}, false, false, false);
                 return new DialogueNode("You again. What do you want?",
@@ -3570,26 +3662,22 @@ public class NPC {
             case "The Whisper":
                 return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
         }
-        return end; // Default case
+        return end;
     }
 
-    /**
-     * The shorter dialogue for subsequent conversations before giving a crystal.
-     */
     private DialogueNode getLoopingDialogue(TheDimmingEcho game) {
         DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
         DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
 
         switch (name) {
-            case "The Keeper":
+            case "The Laughing One":
                 return new DialogueNode("Still you linger in the dust of what was.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leave.", end) }, false, false, false);
             case "The Laughing Girl":
-                return new DialogueNode("Hee hee... still can't remember?", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
+                return new DialogueNode("Hee hee... still can't remember? Find the thing with leaves but no tree...", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
             case "The Stranger":
                 DialogueNode fightNode2 = new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false);
                 return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Fight", fightNode2), new DialogueChoice("Leaving.", end) }, false, false, false);
             case "The Whisper":
-                // --- FIX: Use the 'game' parameter passed into this method ---
                 boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
                 boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
                 if (girlHelped && strangerHelped) {
@@ -3601,12 +3689,9 @@ public class NPC {
         return end;
     }
 
-    /**
-     * The final, permanent dialogue after a crystal has been given.
-     */
     private DialogueNode getFinalDialogue(TheDimmingEcho game) {
         switch (name) {
-            case "The Keeper":
+            case "The Laughing One":
                 return new DialogueNode("The echo you restored in me is quiet. It is at peace. Thank you.", new DialogueChoice[0], false, false, true);
             case "The Laughing Girl":
                 return new DialogueNode("...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.", new DialogueChoice[0], false, false, true);
@@ -4151,6 +4236,12 @@ public class BattleScreen implements Screen {
         }
         if (battleManager.isBattleOver()) {
             if (battleManager.getPlayer().getHealth() <= 0) {
+                game.logFailure();
+                game.getCrystalInventory().useCrystal();
+                if (game.getCrystalInventory().getCrystals() <= 0) {
+                    game.setScreen(new EndingScreen("Your echoes have faded completely. The silence is now absolute."));
+                    return;
+                }
                 showingGameOver = true;
                 victoryTimer = 0f;
                 victoryAlpha = 0f;
@@ -4324,6 +4415,8 @@ public class BattleScreen implements Screen {
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\DungeonScreen.java ---
+// File: core/src/main/java/com/dimmingechoes/screens/DungeonScreen.java
+
 package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -4331,6 +4424,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -4340,9 +4434,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -4368,14 +4464,12 @@ import com.dimmingechoes.dungeon.Room;
 import com.dimmingechoes.dungeon.RoomGraph;
 import com.dimmingechoes.dungeon.RoomType;
 import com.dimmingechoes.entities.NPC;
-import com.dimmingechoes.screens.PauseMenuScreen;
 import com.badlogic.gdx.math.MathUtils;
 import com.dimmingechoes.manager.AudioManager;
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
-    private float mapScale;
-    // Variabel-variabel (tidak ada perubahan di sini)
+    // --- All fields ---
     private final TheDimmingEcho game;
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch spriteBatch;
@@ -4394,11 +4488,12 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private static final float PLAYER_SIZE = 50f;
     private Texture playerSpriteSheet;
     private Animation<TextureRegion> playerAnimation;
+    private final Label speakerNameLabel;
     private float stateTime;
     private static final float PLAYER_SPEED = 250f;
     private static final float INTERACTION_RADIUS = 64f;
     private boolean moveUp, moveDown, moveLeft, moveRight;
-    private boolean isFacingRight =true;
+    private boolean isFacingRight = true;
     private DialogueNode currentDialogueNode = null;
     private NPC dialogueNPC = null;
     private boolean endingShown = false;
@@ -4407,50 +4502,68 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private float charTimer = 0;
     private int charIndex = 0;
     private final float CHAR_DELAY = 0.03f;
+    private float mapScale;
     private boolean isMemoryPuzzleSolved = false;
     private Rectangle puzzleTriggerBounds = null;
     private boolean awaitingFinalChoice = false;
     private String finalChoiceResult = null;
 
+    // --- NEW: ShapeRenderer for Debugging ---
+    private final ShapeRenderer debugRenderer;
+
     public DungeonScreen(TheDimmingEcho game) {
         this.game = game;
         shapeRenderer = new ShapeRenderer();
         spriteBatch = new SpriteBatch();
+        // --- NEW: Initialize Debug Renderer ---
+        debugRenderer = new ShapeRenderer();
+
         gameCamera = new OrthographicCamera();
-        gameViewport = new FitViewport(1100, 720, gameCamera);
+        gameViewport = new FitViewport(1280, 720, gameCamera);
+
         skin = new Skin();
         skin.addRegions(new TextureAtlas(Gdx.files.internal("uiskin.atlas")));
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
         parameter.color = Color.WHITE;
-        BitmapFont font = generator.generateFont(parameter);
+        BitmapFont defaultFont = generator.generateFont(parameter);
+        skin.add("default-font", defaultFont);
+        parameter.size = 22;
+        parameter.color = Color.GOLD;
+        BitmapFont nameFont = generator.generateFont(parameter);
+        skin.add("name-font", nameFont);
         generator.dispose();
-        skin.add("default-font", font);
-        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
-        skin.add("default", labelStyle);
+
+        Label.LabelStyle defaultLabelStyle = new Label.LabelStyle(defaultFont, Color.WHITE);
+        skin.add("default", defaultLabelStyle);
+        Label.LabelStyle nameLabelStyle = new Label.LabelStyle(nameFont, Color.GOLD);
+        skin.add("name-style", nameLabelStyle);
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = font;
+        textButtonStyle.font = defaultFont;
         skin.add("default", textButtonStyle);
+
         uiStage = new Stage(new ScreenViewport());
         dialogueTable = new Table(skin);
-        dialogueTable.setFillParent(true);
-        dialogueTable.bottom().padBottom(50);
-        uiStage.addActor(dialogueTable);
+        speakerNameLabel = new Label("", skin, "name-style");
         dialogueTextLabel = new Label("", skin);
         dialogueTextLabel.setWrap(true);
         dialogueTextLabel.setAlignment(Align.left);
         choicesTable = new Table(skin);
         choicesTable.left();
-        dialogueTable.add(dialogueTextLabel).expandX().fillX().left().padLeft(20).padRight(20);
-        dialogueTable.row();
-        dialogueTable.add(choicesTable).left().padTop(20).padLeft(20);
+        dialogueTable.add(speakerNameLabel).expandX().left().padTop(10).padLeft(15).row();
+        dialogueTable.add(dialogueTextLabel).expand().fill().left().pad(5, 15, 10, 15).row();
+        dialogueTable.add(choicesTable).expandX().left().padBottom(10).padLeft(15);
         dialogueTable.setVisible(false);
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+        uiStage.addActor(rootTable);
+        rootTable.add(dialogueTable).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.3f).bottom().padBottom(20);
+
         uiStage.addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
+            @Override public boolean keyDown(InputEvent event, int keycode) {
                 if (currentDialogueNode == null) return false;
-                if (keycode == Input.Keys.ENTER) {
+                if (keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {
                     if (charIndex < fullDialogueText.length()) {
                         charIndex = fullDialogueText.length();
                         dialogueTextLabel.setText(fullDialogueText);
@@ -4461,7 +4574,9 @@ public class DungeonScreen extends InputAdapter implements Screen {
                         processDialogueChoice(currentDialogueNode.choices[selectedChoiceIndex]);
                         return true;
                     }
-                    endDialogue();
+                    if (currentDialogueNode.endDialogue || currentDialogueNode.choices.length == 0) {
+                        endDialogue();
+                    }
                     return true;
                 }
                 if (choicesTable.getChildren().size > 0) {
@@ -4479,76 +4594,28 @@ public class DungeonScreen extends InputAdapter implements Screen {
                 return false;
             }
         });
+
         this.roomGraph = new RoomGraph();
         this.currentRoom = roomGraph.getStartingRoom();
-        this.player = new Rectangle(gameViewport.getWorldWidth() / 2f - PLAYER_SIZE / 2f, gameViewport.getWorldHeight() / 2f - PLAYER_SIZE / 2f, PLAYER_SIZE, PLAYER_SIZE);
+        this.player = new Rectangle(0, 0, PLAYER_SIZE, PLAYER_SIZE);
         Gdx.input.setInputProcessor(this);
     }
 
-    @Override
-    public void show() {
-        map = new TmxMapLoader().load(currentRoom.getTmxPath());
-        int mapWidthInPixels = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class);
-        this.mapScale = gameViewport.getWorldWidth() / mapWidthInPixels;
-        renderer = new OrthogonalTiledMapRenderer(map, this.mapScale);
-        parseCollisionLayer();
-        parseInteractablesLayer();
-
-        playerSpriteSheet = new Texture(Gdx.files.internal("Player.png"));
-        playerSpriteSheet = new Texture(Gdx.files.internal("player_walk_left.png"));
-
-
-        int FRAME_COLS = 8;
-        int FRAME_ROWS = 1;
-        int frameWidth = playerSpriteSheet.getWidth() / FRAME_COLS;
-        int frameHeight = playerSpriteSheet.getHeight() / FRAME_ROWS;
-
-        TextureRegion[][] tmp = TextureRegion.split(playerSpriteSheet, frameWidth, frameHeight);
-        TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-        int index = 0;
-        for (int i = 0; i < FRAME_ROWS; i++) {
-            for (int j = 0; j < FRAME_COLS; j++) {
-                walkFrames[index++] = tmp[i][j];
-            }
-        }
-
-        playerAnimation = new Animation<TextureRegion>(0.1f, walkFrames);
-        stateTime = 0f;
-        AudioManager.getInstance().playMusic("audio/proximity to the inevitable.mp3", true); // Play new main background music
-    }
-
-    private void clampCamera() {
-        // Dapatkan ukuran peta dalam satuan dunia (sudah diskalakan)
-        float mapWidth = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class) * this.mapScale;
-        float mapHeight = map.getProperties().get("height", Integer.class) * map.getProperties().get("tileheight", Integer.class) * this.mapScale;
-
-        // Dapatkan setengah dari lebar dan tinggi viewport kamera
-        float cameraHalfWidth = gameCamera.viewportWidth * 0.5f;
-        float cameraHalfHeight = gameCamera.viewportHeight * 0.5f;
-
-        // Batasi posisi x kamera
-        gameCamera.position.x = MathUtils.clamp(gameCamera.position.x, cameraHalfWidth, mapWidth - cameraHalfWidth);
-
-        // Batasi posisi y kamera
-        gameCamera.position.y = MathUtils.clamp(gameCamera.position.y, cameraHalfHeight, mapHeight - cameraHalfHeight);
-    }
+    // ... (rest of the constructor and other methods are unchanged) ...
 
     @Override
     public void render(float delta) {
-        // TAMBAHKAN BARIS INI di awal render
         stateTime += delta;
-
         if (currentDialogueNode == null) {
             handleMovement(delta);
         } else {
             updateTypingEffect(delta);
         }
-        // ... sisa kode sampai renderer.render() tidak berubah ...
+
         Color bgColor = currentRoom.getBackgroundColor();
         ScreenUtils.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
-        gameViewport.apply();
-        gameCamera.position.x = player.x + player.width / 2;
-        gameCamera.position.y = player.y + player.height / 2;
+
+        gameCamera.position.set(player.x + player.width / 2, player.y + player.height / 2, 0);
         clampCamera();
         gameCamera.update();
         gameViewport.apply();
@@ -4556,264 +4623,48 @@ public class DungeonScreen extends InputAdapter implements Screen {
         renderer.setView(gameCamera);
         renderer.render();
 
-        // Panggil renderGame() yang sudah dimodifikasi
-        renderGame();
+        renderGameObjects();
 
-        // Kode UI tidak berubah
-        spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        // --- NEW: Call the debug rendering method ---
+        renderDebugShapes();
+
+        // --- UI Rendering ---
+        if (dialogueTable.isVisible()) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            shapeRenderer.setProjectionMatrix(uiStage.getCamera().combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(0, 0, 0, 0.7f);
+            shapeRenderer.rect(dialogueTable.getX(), dialogueTable.getY(), dialogueTable.getWidth(), dialogueTable.getHeight());
+            shapeRenderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
+
+        uiStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         renderStaticUI();
         uiStage.act(delta);
         uiStage.draw();
     }
 
-    private void handleMovement(float delta) {
-        float moveAmount = PLAYER_SPEED * delta;
-        float oldX = player.x;
-        float oldY = player.y;
+    // --- NEW: Debug Rendering Method ---
+    private void renderDebugShapes() {
+        // Enable blending for transparency
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        if (moveLeft) {
-            player.x -= moveAmount;
-            isFacingRight = true; // Player menghadap kiri
-        }
-        if (moveRight) {
-            player.x += moveAmount;
-            isFacingRight = false; // Player menghadap kanan
-        }
+        debugRenderer.setProjectionMatrix(gameCamera.combined);
+        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        if (moveUp) player.y += moveAmount;
-        if (moveDown) player.y -= moveAmount;
-
+        // Draw DoorZones in a semi-transparent green
+        debugRenderer.setColor(0, 1, 0, 0.35f); // Green with 35% opacity
         for (DoorZone door : currentRoom.getDoorZones()) {
-            if (player.overlaps(door.bounds)) {
-                if (door.leadsTo.getRoomType() == RoomType.FINAL) {
-                    if (!awaitingFinalChoice) {
-                        presentFinalChoice();
-                    }
-                    return;
-                } else {
-                    changeRoom(door);
-                }
-                return;
-            }
+            debugRenderer.rect(door.bounds.x, door.bounds.y, door.bounds.width, door.bounds.height);
         }
 
-        // Cek tabrakan dengan tembok
-        if (player.x != oldX) {
-            for (Rectangle obstacle : currentRoom.getObstacles()) {
-                if (player.overlaps(obstacle)) {
-                    player.x = oldX; // Kembalikan ke posisi X semula jika nabrak
-                    break;
-                }
-            }
-        }
-        if (player.y != oldY) {
-            for (Rectangle obstacle : currentRoom.getObstacles()) {
-                if (player.overlaps(obstacle)) {
-                    player.y = oldY; // Kembalikan ke posisi Y semula jika nabrak
-                    break;
-                }
-            }
-        }
+        debugRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
-
-    private void changeRoom(DoorZone door) {
-        currentRoom = door.leadsTo;
-        if (map != null) {
-            map.dispose();
-        }
-
-        map = new TmxMapLoader().load(currentRoom.getTmxPath());
-        renderer.setMap(map);
-
-// PERBAIKAN 2: Panggil parseCollisionLayer setiap kali pindah ruangan
-        parseCollisionLayer();
-        parseInteractablesLayer();
-
-        if (dialogueTable.isVisible()) endDialogue();
-        switch (door.entryDirection) {
-            case LEFT: player.x = gameViewport.getWorldWidth() - player.width - 48f; player.y = gameViewport.getWorldHeight() / 2f; break;
-            case RIGHT: player.x = 48f; player.y = gameViewport.getWorldHeight() / 2f; break;
-            case TOP: player.x = gameViewport.getWorldWidth() / 2f; player.y = 48f; break;
-            case BOTTOM: player.x = gameViewport.getWorldWidth() / 2f; player.y = gameViewport.getWorldHeight() - player.height - 48f; break;
-        }
-    }
-
-    private void presentFinalChoice() {
-        awaitingFinalChoice = true;
-        DialogueNode end = new DialogueNode("...", new DialogueChoice[0], false, false, true);
-        DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
-        DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
-        DialogueChoice[] choices = new DialogueChoice[] {
-            new DialogueChoice("Give the final crystal", giveChoice),
-            new DialogueChoice("Keep it", keepChoice)
-        };
-        DialogueNode choiceNode = new DialogueNode("At the threshold, a choice: Will you give the final crystal, or keep it?", choices, false, false, false);
-        currentDialogueNode = choiceNode;
-        fullDialogueText = currentDialogueNode.text;
-        charIndex = 0;
-        dialogueTextLabel.setText("");
-        choicesTable.clear();
-        dialogueTable.setVisible(true);
-        Gdx.input.setInputProcessor(uiStage);
-        populateChoices();
-    }
-
-    private void parseCollisionLayer() {
-        currentRoom.getObstacles().clear();
-        if (map.getLayers().get("Collision") == null) return;
-
-        for (MapObject object : map.getLayers().get("Collision").getObjects()) {
-            if (object instanceof RectangleMapObject) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-                // Terapkan skala pada posisi dan ukuran objek kolisi
-                rect.x *= this.mapScale;
-                rect.y *= this.mapScale;
-                rect.width *= this.mapScale;
-                rect.height *= this.mapScale;
-
-                currentRoom.addObstacle(rect);
-            }
-        }
-    }
-
-    private void parseInteractablesLayer() {
-        puzzleTriggerBounds = null;
-        if (map.getLayers().get("Interactables") == null) return;
-        for (MapObject object : map.getLayers().get("Interactables").getObjects()) {
-            if (object instanceof RectangleMapObject) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                rect.x *= this.mapScale;
-                rect.y *= this.mapScale;
-                rect.width *= this.mapScale;
-                rect.height *= this.mapScale;
-                String name = object.getName();
-                if (name != null && name.equals("PuzzleTrigger")) {
-                    puzzleTriggerBounds = rect;
-                }
-            }
-        }
-    }
-
-    // ... (Sisa kode Anda sama dan tidak perlu diubah) ...
-    private void renderGame() {
-        // ... (kode shapeRenderer tetap sama) ...
-        shapeRenderer.end();
-
-        // Dapatkan frame animasi seperti biasa
-        TextureRegion currentFrame = playerAnimation.getKeyFrame(stateTime, true);
-
-        // --- LOGIKA MEMBALIK GAMBAR ---
-        // Jika player seharusnya hadap kiri TAPI gambarnya BELUM terbalik, maka balik gambarnya.
-        if (!isFacingRight && !currentFrame.isFlipX()) {
-            currentFrame.flip(true, false);
-        }
-        // Jika player seharusnya hadap kanan TAPI gambarnya TERLANJUR terbalik, maka balikkan lagi.
-        if (isFacingRight && currentFrame.isFlipX()) {
-            currentFrame.flip(true, false);
-        }
-        // ----------------------------
-
-        spriteBatch.setProjectionMatrix(gameCamera.combined);
-        spriteBatch.begin();
-        spriteBatch.draw(currentFrame, player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
-        spriteBatch.end();
-    }
-
-    private void renderStaticUI() { 
-        spriteBatch.begin(); 
-        BitmapFont font = skin.getFont("default-font"); 
-        font.setColor(Color.WHITE); 
-        font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10); 
-        font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 35); 
-        font.draw(spriteBatch, "Press [ESC] to pause", 10, Gdx.graphics.getHeight() - 60); 
-        spriteBatch.end(); 
-    }
-    @Override 
-    public boolean keyDown(int keycode) { 
-        switch (keycode) { 
-            case Input.Keys.W: moveUp = true; break; 
-            case Input.Keys.S: moveDown = true; break; 
-            case Input.Keys.A: moveLeft = true; break; 
-            case Input.Keys.D: moveRight = true; break; 
-            case Input.Keys.ESCAPE: 
-                game.setScreen(new PauseMenuScreen(game, this)); 
-                return true; 
-            case Input.Keys.SPACE: 
-                // Puzzle interaction
-                if (!isMemoryPuzzleSolved && puzzleTriggerBounds != null && player.overlaps(puzzleTriggerBounds)) {
-                    isMemoryPuzzleSolved = true;
-                    // Optionally show a message or effect here
-                    return true;
-                }
-                for (NPC npc : currentRoom.getNpcs()) { 
-                    if (isNear(npc)) { 
-                        startDialogue(npc); 
-                        break; 
-                    } 
-                } 
-                return true; 
-        } 
-        return false; 
-    }
-    @Override public boolean keyUp(int keycode) { switch (keycode) { case Input.Keys.W: moveUp = false; break; case Input.Keys.S: moveDown = false; break; case Input.Keys.A: moveLeft = false; break; case Input.Keys.D: moveRight = false; break; } return false; }
-    private void updateTypingEffect(float delta) { charTimer += delta; if (charIndex < fullDialogueText.length() && charTimer >= CHAR_DELAY) { charIndex++; dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex)); charTimer = 0; if (charIndex == fullDialogueText.length()) populateChoices(); } }
-    private void startDialogue(NPC npc) { moveUp = moveDown = moveLeft = moveRight = false; dialogueNPC = npc; currentDialogueNode = npc.getDialogue(game); fullDialogueText = currentDialogueNode.text; charIndex = 0; dialogueTextLabel.setText(""); choicesTable.clear(); dialogueTable.setVisible(true); Gdx.input.setInputProcessor(uiStage); if (charIndex < fullDialogueText.length()) dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex)); else populateChoices(); }
-    private void endDialogue() { dialogueTable.setVisible(false); uiStage.setKeyboardFocus(null); currentDialogueNode = null; dialogueNPC = null; Gdx.input.setInputProcessor(this); }
-    private boolean isNear(NPC npc) { return player.getCenter(new Vector2()).dst(npc.getBounds().getCenter(new Vector2())) < INTERACTION_RADIUS; }
-    private void updateChoiceHighlight() { for (int i = 0; i < choicesTable.getChildren().size; i++) { TextButton button = (TextButton) choicesTable.getChildren().get(i); button.setColor(i == selectedChoiceIndex ? Color.GOLD : Color.WHITE); } }
-    private void populateChoices() { choicesTable.clear(); if (currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) { for (final DialogueChoice choice : currentDialogueNode.choices) { TextButton choiceButton = new TextButton(choice.choiceText, skin); choiceButton.getLabel().setAlignment(Align.left); choiceButton.addListener(new ClickListener() { @Override public void clicked(InputEvent event, float x, float y) { processDialogueChoice(choice); } }); choicesTable.add(choiceButton).left().row(); } selectedChoiceIndex = 0; updateChoiceHighlight(); uiStage.setKeyboardFocus(choicesTable); } else { uiStage.setKeyboardFocus(null); } }
-    private void processDialogueChoice(DialogueChoice choice) {
-        choicesTable.clear();
-        uiStage.setKeyboardFocus(null);
-        // If this is the Stranger's 'Begin Battle' choice, start the battle
-        if (dialogueNPC != null && dialogueNPC.getName().equals("The Stranger") && choice.choiceText.equals("Begin Battle")) {
-            com.dimmingechoes.entities.Player player = new com.dimmingechoes.entities.Player("You", 30, 8, 3, null);
-            java.util.List<com.dimmingechoes.entities.Enemy> enemies = new java.util.ArrayList<>();
-            enemies.add(new com.dimmingechoes.entities.Enemy("The Stranger", 20, 6, 2, null));
-            game.setScreen(new BattleScreen(game, player, enemies));
-            return;
-        }
-        // Handle final choice
-        if (awaitingFinalChoice && (choice.choiceText.equals("Give the final crystal") || choice.choiceText.equals("Keep it"))) {
-            finalChoiceResult = choice.choiceText;
-            awaitingFinalChoice = false;
-            triggerEndingWithChoice(finalChoiceResult);
-            return;
-        }
-        currentDialogueNode = choice.next;
-        if (currentDialogueNode != null && currentDialogueNode.requiresCrystal) {
-            if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
-                if (!game.getCrystalInventory().useCrystal()) {
-                    endDialogue();
-                    return;
-                }
-                game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
-            }
-        }
-        if (currentDialogueNode != null) {
-            fullDialogueText = currentDialogueNode.text;
-            charIndex = 0;
-            dialogueTextLabel.setText("");
-        }
-    }
-
-    private void triggerEndingWithChoice(String choice) {
-        if (endingShown) return;
-        int crystalsUsed = game.getUsageLog().totalGiven();
-        String endingMessage;
-        if (crystalsUsed == 0) {
-            endingMessage = "Ending 1: You left the echoes to fade on their own.";
-        } else if (crystalsUsed >= 5) {
-            endingMessage = "Ending 2: You gave everything to restore the echoes, finding peace in sacrifice.";
-        } else {
-            endingMessage = "Ending 3: You helped who you could, but some echoes remain adrift.";
-        }
-        game.setScreen(new EndingScreen(endingMessage));
-        endingShown = true;
-    }
-    @Override public void resize(int width, int height) { gameViewport.update(width, height, true); uiStage.getViewport().update(width, height, true); dialogueTable.invalidateHierarchy(); }
     @Override
     public void dispose() {
         shapeRenderer.dispose();
@@ -4822,18 +4673,398 @@ public class DungeonScreen extends InputAdapter implements Screen {
         uiStage.dispose();
         if (map != null) map.dispose();
         if (renderer != null) renderer.dispose();
-
-        // --- TAMBAHKAN BARIS INI ---
-        playerSpriteSheet.dispose();
-    } @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void hide() {
-        AudioManager.getInstance().stopMusic();
-        // Not needed for this screen
+        if (playerSpriteSheet != null) playerSpriteSheet.dispose();
+        // --- NEW: Dispose the debug renderer ---
+        debugRenderer.dispose();
     }
 
-    // Add a getter for isMemoryPuzzleSolved
+    // --- All other methods remain unchanged ---
+
+    @Override
+    public void show() {
+        loadMap(currentRoom.getTmxPath());
+        playerSpriteSheet = new Texture(Gdx.files.internal("player_walk_left.png"));
+        int FRAME_COLS = 8, FRAME_ROWS = 1;
+        int frameWidth = playerSpriteSheet.getWidth() / FRAME_COLS;
+        int frameHeight = playerSpriteSheet.getHeight() / FRAME_ROWS;
+        TextureRegion[][] tmp = TextureRegion.split(playerSpriteSheet, frameWidth, frameHeight);
+        TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+        int index = 0;
+        for (int i = 0; i < FRAME_ROWS; i++) { for (int j = 0; j < FRAME_COLS; j++) { walkFrames[index++] = tmp[i][j]; } }
+        playerAnimation = new Animation<>(0.1f, walkFrames);
+        stateTime = 0f;
+        AudioManager.getInstance().playMusic("audio/proximity to the inevitable.mp3", true);
+    }
+
+    private void loadMap(String tmxPath) {
+        if (map != null) map.dispose();
+        map = new TmxMapLoader().load(tmxPath);
+        int mapWidthInPixels = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class);
+        this.mapScale = gameViewport.getWorldWidth() / mapWidthInPixels;
+        renderer = new OrthogonalTiledMapRenderer(map, this.mapScale);
+        parseTiledMapObjects();
+    }
+
+    private void parseTiledMapObjects() {
+        currentRoom.getObstacles().clear();
+        currentRoom.getNpcs().clear();
+        puzzleTriggerBounds = null;
+
+        if (map.getLayers().get("Collision") != null) {
+            for (MapObject object : map.getLayers().get("Collision").getObjects()) {
+                if (object instanceof RectangleMapObject) {
+                    Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                    currentRoom.addObstacle(new Rectangle(rect.x * mapScale, rect.y * mapScale, rect.width * mapScale, rect.height * mapScale));
+                }
+            }
+        }
+
+        for (MapLayer layer : map.getLayers()) {
+            if (layer.getObjects() == null) continue;
+            if (layer.getName().equalsIgnoreCase("Spawns")) continue;
+
+            for (MapObject object : layer.getObjects()) {
+                String type = object.getProperties().get("type", String.class);
+                if (type != null && type.equals("NPC")) {
+                    String name = object.getName();
+                    Integer gid = object.getProperties().get("gid", Integer.class);
+                    if (name == null || name.trim().isEmpty()) {
+                        Gdx.app.log("MAP_PARSER_ERROR", "Found an NPC-type object on layer '" + layer.getName() + "' that has no Name. Skipping.");
+                        continue;
+                    }
+                    if (gid == null) {
+                        Gdx.app.log("MAP_PARSER_ERROR", "NPC '" + name + "' is a RECTANGLE/SHAPE object, not a TILE object. It has no image (GID). Please delete it in Tiled and replace it by stamping a tile from your tileset. Skipping.");
+                        continue;
+                    }
+                    float x = object.getProperties().get("x", Float.class) * mapScale;
+                    float y = object.getProperties().get("y", Float.class) * mapScale;
+                    currentRoom.addNPC(new NPC(name, currentRoom.getRoomType(), x, y, gid));
+                }
+            }
+        }
+
+        boolean playerSpawned = false;
+        if (map.getLayers().get("Spawns") != null) {
+            for (MapObject object : map.getLayers().get("Spawns").getObjects()) {
+                String type = object.getProperties().get("type", String.class);
+                if (type != null && type.equals("Player")) {
+                    float x = object.getProperties().get("x", Float.class) * mapScale;
+                    float y = object.getProperties().get("y", Float.class) * mapScale;
+                    player.setPosition(x, y);
+                    playerSpawned = true;
+                    break;
+                }
+            }
+        }
+
+        if (map.getLayers().get("Interactables") != null) {
+            for (MapObject object : map.getLayers().get("Interactables").getObjects()) {
+                if (object.getName() != null && object.getName().equals("PuzzleTrigger")) {
+                    if (object instanceof RectangleMapObject) {
+                        Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                        puzzleTriggerBounds = new Rectangle(rect.x * mapScale, rect.y * mapScale, rect.width * mapScale, rect.height * mapScale);
+                    }
+                }
+            }
+        }
+
+        if (!playerSpawned) {
+            player.setPosition(gameViewport.getWorldWidth() / 2f - PLAYER_SIZE / 2, gameViewport.getWorldHeight() / 2f - PLAYER_SIZE / 2);
+            Gdx.app.log("DungeonScreen", "Warning: No 'Player' spawn object found in 'Spawns' layer. Spawning at center.");
+        }
+    }
+
+    private void renderGameObjects() {
+        spriteBatch.setProjectionMatrix(gameCamera.combined);
+        spriteBatch.begin();
+
+        for (NPC npc : currentRoom.getNpcs()) {
+            TiledMapTile tile = map.getTileSets().getTile(npc.gid);
+            if (tile != null) {
+                TextureRegion region = tile.getTextureRegion();
+                float tileWidth = region.getRegionWidth() * mapScale;
+                float tileHeight = region.getRegionHeight() * mapScale;
+                spriteBatch.draw(region, npc.getX(), npc.getY(), tileWidth, tileHeight);
+            }
+        }
+
+        TextureRegion currentFrame = playerAnimation.getKeyFrame(stateTime, true);
+        if (isFacingRight && !currentFrame.isFlipX()) {
+            currentFrame.flip(true, false);
+        } else if (!isFacingRight && currentFrame.isFlipX()) {
+            currentFrame.flip(true, false);
+        }
+        spriteBatch.draw(currentFrame, player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+
+        spriteBatch.end();
+    }
+
+    private void renderStaticUI() {
+        spriteBatch.setProjectionMatrix(uiStage.getCamera().combined);
+        spriteBatch.begin();
+        BitmapFont font = skin.getFont("default-font");
+        font.setColor(Color.WHITE);
+        font.draw(spriteBatch, "Crystals: " + game.getCrystalInventory().getCrystals(), 10, Gdx.graphics.getHeight() - 10);
+        font.draw(spriteBatch, "Press [SPACE] to interact", 10, Gdx.graphics.getHeight() - 35);
+        font.draw(spriteBatch, "Press [ESC] to pause", 10, Gdx.graphics.getHeight() - 60);
+        spriteBatch.end();
+    }
+
+    private void handleMovement(float delta) {
+        float moveAmount = PLAYER_SPEED * delta;
+        float oldX = player.x;
+        float oldY = player.y;
+
+        if (moveLeft) { player.x -= moveAmount; isFacingRight = false; }
+        if (moveRight) { player.x += moveAmount; isFacingRight = true; }
+        if (moveUp) player.y += moveAmount;
+        if (moveDown) player.y -= moveAmount;
+
+        for (DoorZone door : currentRoom.getDoorZones()) {
+            if (player.overlaps(door.bounds)) {
+                changeRoom(door);
+                return;
+            }
+        }
+
+        if (player.x != oldX) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.x = oldX;
+                    break;
+                }
+            }
+        }
+        if (player.y != oldY) {
+            for (Rectangle obstacle : currentRoom.getObstacles()) {
+                if (player.overlaps(obstacle)) {
+                    player.y = oldY;
+                    break;
+                }
+            }
+        }
+    }
+
+    private void changeRoom(DoorZone door) {
+        currentRoom = door.leadsTo;
+        if (dialogueTable.isVisible()) endDialogue();
+
+        if (currentRoom.getTmxPath() == null || currentRoom.getTmxPath().isEmpty()) {
+            if (currentRoom.getRoomType() == RoomType.FINAL && !awaitingFinalChoice) {
+                presentFinalChoice();
+            }
+            return;
+        }
+
+        loadMap(currentRoom.getTmxPath());
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (currentDialogueNode != null) return false;
+        switch (keycode) {
+            case Input.Keys.W: case Input.Keys.UP: moveUp = true; break;
+            case Input.Keys.S: case Input.Keys.DOWN: moveDown = true; break;
+            case Input.Keys.A: case Input.Keys.LEFT: moveLeft = true; break;
+            case Input.Keys.D: case Input.Keys.RIGHT: moveRight = true; break;
+            case Input.Keys.ESCAPE: game.setScreen(new PauseMenuScreen(game, this)); return true;
+            case Input.Keys.SPACE:
+                if (!isMemoryPuzzleSolved && puzzleTriggerBounds != null && player.overlaps(puzzleTriggerBounds)) {
+                    isMemoryPuzzleSolved = true;
+                    return true;
+                }
+                for (NPC npc : currentRoom.getNpcs()) {
+                    if (isNear(npc)) {
+                        startDialogue(npc);
+                        return true;
+                    }
+                }
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        switch (keycode) {
+            case Input.Keys.W: case Input.Keys.UP: moveUp = false; break;
+            case Input.Keys.S: case Input.Keys.DOWN: moveDown = false; break;
+            case Input.Keys.A: case Input.Keys.LEFT: moveLeft = false; break;
+            case Input.Keys.D: case Input.Keys.RIGHT: moveRight = false; break;
+        }
+        return false;
+    }
+
+    private void startDialogue(NPC npc) {
+        moveUp = moveDown = moveLeft = moveRight = false;
+        dialogueNPC = npc;
+        currentDialogueNode = npc.getDialogue(game);
+        speakerNameLabel.setText(npc.getName());
+        fullDialogueText = currentDialogueNode.text;
+        charIndex = 0;
+        dialogueTextLabel.setText("");
+        choicesTable.clear();
+        dialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(uiStage);
+        if (charIndex < fullDialogueText.length()) {
+            dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+        } else {
+            populateChoices();
+        }
+    }
+
+    private void endDialogue() {
+        dialogueTable.setVisible(false);
+        speakerNameLabel.setText("");
+        uiStage.setKeyboardFocus(null);
+        currentDialogueNode = null;
+        dialogueNPC = null;
+        Gdx.input.setInputProcessor(this);
+    }
+
+    private void processDialogueChoice(DialogueChoice choice) {
+        choicesTable.clear();
+        uiStage.setKeyboardFocus(null);
+
+        // Launch WordleScreen if the Laughing Girl's riddle is attempted
+        if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl") && choice.choiceText.equals("[Attempt the riddle]")) {
+            endDialogue();
+            game.setScreen(new WordleScreen(game, this));
+            return;
+        }
+
+        if (dialogueNPC != null && dialogueNPC.getName().equals("The Stranger") && choice.choiceText.equals("Begin Battle")) {
+            com.dimmingechoes.entities.Player playerEntity = new com.dimmingechoes.entities.Player("You", 30, 8, 3, null);
+            java.util.List<com.dimmingechoes.entities.Enemy> enemies = new java.util.ArrayList<>();
+            enemies.add(new com.dimmingechoes.entities.Enemy("The Stranger", 20, 6, 2, null));
+            game.setScreen(new BattleScreen(game, playerEntity, enemies));
+            return;
+        }
+
+        if (awaitingFinalChoice) {
+            finalChoiceResult = choice.choiceText;
+            awaitingFinalChoice = false;
+            endDialogue();
+            triggerEndingWithChoice(finalChoiceResult);
+            return;
+        }
+
+        if (choice.next != null) {
+            currentDialogueNode = choice.next;
+            if (currentDialogueNode.requiresCrystal) {
+                if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
+                    if (game.getCrystalInventory().useCrystal()) {
+                        game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+                    } else {
+                        endDialogue();
+                        return;
+                    }
+                }
+            }
+            fullDialogueText = currentDialogueNode.text;
+            charIndex = 0;
+            dialogueTextLabel.setText("");
+            if (currentDialogueNode.endDialogue) {
+                populateChoices();
+            }
+        } else {
+            endDialogue();
+        }
+    }
+
+    private void populateChoices() {
+        choicesTable.clear();
+        if (currentDialogueNode != null && currentDialogueNode.choices != null && currentDialogueNode.choices.length > 0) {
+            for (final DialogueChoice choice : currentDialogueNode.choices) {
+                TextButton choiceButton = new TextButton(choice.choiceText, skin);
+                choiceButton.getLabel().setAlignment(Align.left);
+                choiceButton.addListener(new ClickListener() { @Override public void clicked(InputEvent event, float x, float y) { processDialogueChoice(choice); } });
+                choicesTable.add(choiceButton).left().row();
+            }
+            selectedChoiceIndex = 0;
+            updateChoiceHighlight();
+            uiStage.setKeyboardFocus(choicesTable);
+        } else {
+            uiStage.setKeyboardFocus(null);
+        }
+    }
+
+    private void presentFinalChoice() {
+        awaitingFinalChoice = true;
+        DialogueNode end = new DialogueNode("...", null, false, false, true);
+        DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
+        DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
+        DialogueChoice[] choices = { new DialogueChoice("Give the final crystal", giveChoice), new DialogueChoice("Keep it", keepChoice) };
+        startDialogue(new NPC("FinalChoice", RoomType.FINAL, 0, 0, 0) {
+            @Override public DialogueNode getDialogue(TheDimmingEcho game) { return new DialogueNode("At the threshold, a choice: Will you give the final crystal, or keep it?", choices, false, false, false); }
+            @Override public String getName() { return "???"; }
+        });
+    }
+
+    private void triggerEndingWithChoice(String choice) {
+        if (endingShown) return;
+        if (game.getCrystalsLostToFailure() > 0) {
+            String endingMessage = "You let the echoes take part of you.";
+            game.setScreen(new EndingScreen(endingMessage));
+            endingShown = true;
+            return;
+        }
+        int crystalsUsed = game.getUsageLog().totalGiven();
+        if (choice.equals("Give the final crystal")) crystalsUsed++;
+        String endingMessage;
+        if (crystalsUsed == 0) { endingMessage = "Ending 1: You left the echoes to fade on their own.";
+        } else if (crystalsUsed >= 3) { endingMessage = "Ending 2: You gave everything to restore the echoes, finding peace in sacrifice.";
+        } else { endingMessage = "Ending 3: You helped who you could, but some echoes remain adrift."; }
+        game.setScreen(new EndingScreen(endingMessage));
+        endingShown = true;
+    }
+
+    private void updateChoiceHighlight() {
+        for (int i = 0; i < choicesTable.getChildren().size; i++) {
+            TextButton button = (TextButton) choicesTable.getChildren().get(i);
+            button.getLabel().setColor(i == selectedChoiceIndex ? Color.GOLD : Color.WHITE);
+        }
+    }
+
+    private void clampCamera() {
+        float mapWidth = map.getProperties().get("width", Integer.class) * map.getProperties().get("tilewidth", Integer.class) * this.mapScale;
+        float mapHeight = map.getProperties().get("height", Integer.class) * map.getProperties().get("tileheight", Integer.class) * this.mapScale;
+        float cameraHalfWidth = gameCamera.viewportWidth * 0.5f;
+        float cameraHalfHeight = gameCamera.viewportHeight * 0.5f;
+        gameCamera.position.x = MathUtils.clamp(gameCamera.position.x, cameraHalfWidth, mapWidth - cameraHalfWidth);
+        gameCamera.position.y = MathUtils.clamp(gameCamera.position.y, cameraHalfHeight, mapHeight - cameraHalfHeight);
+    }
+
+    private void updateTypingEffect(float delta) {
+        charTimer += delta;
+        if (charIndex < fullDialogueText.length() && charTimer >= CHAR_DELAY) {
+            charIndex++;
+            dialogueTextLabel.setText(fullDialogueText.substring(0, charIndex));
+            charTimer = 0;
+            if (charIndex == fullDialogueText.length()) populateChoices();
+        }
+    }
+
+    private boolean isNear(NPC npc) {
+        return player.getCenter(new Vector2()).dst(npc.getBounds().getCenter(new Vector2())) < INTERACTION_RADIUS;
+    }
+
     public boolean isMemoryPuzzleSolved() { return isMemoryPuzzleSolved; }
+
+    // Called by WordleScreen when the puzzle is completed
+    public void puzzleCompleted(boolean success) {
+        isMemoryPuzzleSolved = success;
+    }
+
+    @Override public void resize(int width, int height) {
+        gameViewport.update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
+        dialogueTable.invalidateHierarchy();
+    }
+
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() { AudioManager.getInstance().stopMusic(); }
 }
 
 ================================================================================
@@ -4851,48 +5082,88 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Align;
 import com.dimmingechoes.manager.AudioManager;
+import com.badlogic.gdx.Input;
+import com.dimmingechoes.TheDimmingEcho;
 
 public class EndingScreen implements Screen {
     private final String endingMessage;
     private final SpriteBatch batch;
     private final BitmapFont font;
+    private BitmapFont promptFont;
+    private float fadeAlpha = 0f;
+    private float fadeTimer = 0f;
+    private static final float FADE_IN_DURATION = 2.0f;
+    private float timeOnScreen = 0f;
+    private int clickCount = 0;
+    private boolean showReturnPrompt = false;
+    private final TheDimmingEcho game;
 
     public EndingScreen(String endingMessage) {
+        this(endingMessage, null);
+    }
+    public EndingScreen(String endingMessage, TheDimmingEcho game) {
         this.endingMessage = endingMessage;
         this.batch = new SpriteBatch();
-
-        // Menggunakan font yang lebih baik, sama seperti di DungeonScreen
+        this.game = game;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 28; // Ukuran font bisa disesuaikan
+        parameter.size = 28;
         parameter.color = Color.WHITE;
         parameter.shadowColor = new Color(0, 0, 0, 0.75f);
         parameter.shadowOffsetX = 2;
         parameter.shadowOffsetY = 2;
         this.font = generator.generateFont(parameter);
+        // Prompt font
+        FreeTypeFontGenerator.FreeTypeFontParameter promptParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        promptParam.size = 22;
+        promptParam.color = Color.LIGHT_GRAY;
+        promptParam.shadowColor = new Color(0, 0, 0, 0.75f);
+        promptParam.shadowOffsetX = 2;
+        promptParam.shadowOffsetY = 2;
+        this.promptFont = generator.generateFont(promptParam);
         generator.dispose();
     }
 
     public void dispose() {
         batch.dispose();
         font.dispose();
+        if (promptFont != null) promptFont.dispose();
     }
 
     @Override
     public void show() {
+        fadeAlpha = 0f;
+        fadeTimer = 0f;
+        timeOnScreen = 0f;
+        clickCount = 0;
+        showReturnPrompt = false;
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        fadeTimer += delta;
+        timeOnScreen += delta;
+        if (fadeAlpha < 1f) {
+            fadeAlpha = Math.min(1f, fadeTimer / FADE_IN_DURATION);
+        }
+        if (Gdx.input.justTouched()) {
+            clickCount++;
+        }
+        if (timeOnScreen > 20f || clickCount >= 2) {
+            showReturnPrompt = true;
+        }
         batch.begin();
+        font.setColor(1, 1, 1, fadeAlpha);
         font.draw(batch, endingMessage, 0, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth(), Align.center, true);
+        if (showReturnPrompt) {
+            promptFont.setColor(1, 1, 1, fadeAlpha);
+            promptFont.draw(batch, "Press ENTER to return to Main Menu", 0, 60, Gdx.graphics.getWidth(), Align.center, true);
+        }
         batch.end();
-
-        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
+        if (showReturnPrompt && Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && game != null) {
+            game.setScreen(new MainMenuScreen(game));
         }
     }
 
@@ -5142,10 +5413,10 @@ public class MainMenuScreen implements Screen {
         // Create skin for UI
         this.skin = new Skin();
         skin.add("default-font", menuFont);
-        
+
         Label.LabelStyle labelStyle = new Label.LabelStyle(menuFont, Color.WHITE);
         skin.add("default", labelStyle);
-        
+
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = menuFont;
         buttonStyle.fontColor = Color.WHITE;
@@ -5162,7 +5433,7 @@ public class MainMenuScreen implements Screen {
         mainTable.center();
 
         // Title
-        Label titleLabel = new Label("DIMming Echoes", skin);
+        Label titleLabel = new Label("Dimming Echoes", skin);
         titleLabel.setFontScale(1.5f);
         mainTable.add(titleLabel).padBottom(50).row();
 
@@ -5171,7 +5442,8 @@ public class MainMenuScreen implements Screen {
         newGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new DungeonScreen(game));
+                game.resetGame();
+                game.setScreen(new PrologueScreen(game));
             }
         });
         mainTable.add(newGameButton).width(300).height(60).padBottom(20).row();
@@ -5212,10 +5484,10 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        
+
         // Try to load background image
         try {
-            backgroundTexture = new Texture(Gdx.files.internal("menu_bg.png"));
+            backgroundTexture = new Texture(Gdx.files.internal("menu+bg.png"));
             backgroundLoaded = true;
         } catch (Exception e) {
             Gdx.app.log("MainMenuScreen", "Background image not found: menu_bg.png");
@@ -5239,16 +5511,16 @@ public class MainMenuScreen implements Screen {
             float screenHeight = Gdx.graphics.getHeight();
             float bgWidth = backgroundTexture.getWidth();
             float bgHeight = backgroundTexture.getHeight();
-            
+
             float scaleX = screenWidth / bgWidth;
             float scaleY = screenHeight / bgHeight;
             float scale = Math.max(scaleX, scaleY);
-            
+
             float scaledWidth = bgWidth * scale;
             float scaledHeight = bgHeight * scale;
             float x = (screenWidth - scaledWidth) / 2f;
             float y = (screenHeight - scaledHeight) / 2f;
-            
+
             batch.draw(backgroundTexture, x, y, scaledWidth, scaledHeight);
         }
 
@@ -5291,7 +5563,8 @@ public class MainMenuScreen implements Screen {
             backgroundTexture.dispose();
         }
     }
-} 
+}
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\PauseMenuScreen.java ---
@@ -5548,7 +5821,7 @@ public class PauseMenuScreen implements Screen {
 } 
 ================================================================================
 
---- File: .\core\src\main\java\com\dimmingechoes\screens\TitleScreen.java ---
+--- File: .\core\src\main\java\com\dimmingechoes\screens\PrologueScreen.java ---
 package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -5556,90 +5829,112 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.utils.Align;
 import com.dimmingechoes.TheDimmingEcho;
-import com.dimmingechoes.manager.AudioManager;
+import com.badlogic.gdx.utils.Align;
 
-public class TitleScreen implements Screen {
+public class PrologueScreen implements Screen {
     private final TheDimmingEcho game;
     private final SpriteBatch batch;
-    private final BitmapFont titleFont;
-    private final BitmapFont subtitleFont;
-    private float fadeTimer = 0f;
-    private float alpha = 0f;
-    private boolean fadeInComplete = false;
-    private static final float FADE_DURATION = 2.0f;
-    private static final float DISPLAY_DURATION = 3.0f;
-    private float displayTimer = 0f;
-    private boolean shouldTransition = false;
+    private final BitmapFont font;
+    private final String[] prologueTexts = new String[] {
+        "To escape the pain of grief, a soul can build its own prison.",
+        "It is done. The silence you purchased.\nThe peace you built from the dust of your own heart.",
+        "You sealed this place. But now you walk it again.",
+        "The dungeon is not a place.\nIt is the echo of a soul trying to remember why it broke.",
+        "Take the first step. See if it is worth the cost."
+    };
+    private int currentChunk = 0;
+    private float chunkTimer = 0f;
+    private float fadeAlpha = 0f;
+    private float typewriterProgress = 0f;
+    private boolean fadingIn = true;
+    private boolean fadingOut = false;
+    private boolean finished = false;
+    private static final float FADE_DURATION = 1.0f;
+    private static final float TYPEWRITER_SPEED = 40f; // chars/sec
+    private static final float CHUNK_DISPLAY_TIME = 2.0f; // seconds after typewriter
+    private static final float FADE_OUT_DELAY = 0.5f;
+    private float postTypewriterTimer = 0f;
 
-    public TitleScreen(TheDimmingEcho game) {
+    public PrologueScreen(TheDimmingEcho game) {
         this.game = game;
         this.batch = new SpriteBatch();
-
-        // Load pixelated font for title
-        FreeTypeFontGenerator titleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter titleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        titleParameter.size = 48;
-        titleParameter.color = Color.WHITE;
-        titleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
-        titleParameter.shadowOffsetX = 2;
-        titleParameter.shadowOffsetY = 2;
-        this.titleFont = titleGenerator.generateFont(titleParameter);
-        titleGenerator.dispose();
-
-        // Load subtitle font
-        FreeTypeFontGenerator subtitleGenerator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter subtitleParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        subtitleParameter.size = 24;
-        subtitleParameter.color = Color.WHITE;
-        subtitleParameter.shadowColor = new Color(0, 0, 0, 0.75f);
-        subtitleParameter.shadowOffsetX = 1;
-        subtitleParameter.shadowOffsetY = 1;
-        this.subtitleFont = subtitleGenerator.generateFont(subtitleParameter);
-        subtitleGenerator.dispose();
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 32;
+        parameter.color = Color.WHITE;
+        parameter.shadowColor = new Color(0, 0, 0, 0.75f);
+        parameter.shadowOffsetX = 2;
+        parameter.shadowOffsetY = 2;
+        this.font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     @Override
     public void show() {
-        fadeTimer = 0f;
-        alpha = 0f;
-        fadeInComplete = false;
-        displayTimer = 0f;
-        shouldTransition = false;
-        AudioManager.getInstance().playMusic("audio/title_theme.mp3", true);
+        currentChunk = 0;
+        chunkTimer = 0f;
+        fadeAlpha = 0f;
+        typewriterProgress = 0f;
+        fadingIn = true;
+        fadingOut = false;
+        finished = false;
+        postTypewriterTimer = 0f;
     }
 
     @Override
     public void render(float delta) {
-        // Update fade timer
-        if (!fadeInComplete) {
-            fadeTimer += delta;
-            alpha = Math.min(1.0f, fadeTimer / FADE_DURATION);
-            if (alpha >= 1.0f) {
-                fadeInComplete = true;
-                fadeTimer = 0f;
+        if (finished) {
+            game.setScreen(new DungeonScreen(game));
+            return;
+        }
+
+        // Handle input to skip
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
+            finished = true;
+            return;
+        }
+
+        String chunk = prologueTexts[currentChunk];
+        int totalChars = chunk.length();
+
+        // Fade in
+        if (fadingIn) {
+            fadeAlpha += delta / FADE_DURATION;
+            if (fadeAlpha >= 1f) {
+                fadeAlpha = 1f;
+                fadingIn = false;
+            }
+        } else if (!fadingOut) {
+            // Typewriter effect
+            if (typewriterProgress < totalChars) {
+                typewriterProgress += TYPEWRITER_SPEED * delta;
+                if (typewriterProgress > totalChars) typewriterProgress = totalChars;
+            } else {
+                postTypewriterTimer += delta;
+                if (postTypewriterTimer >= CHUNK_DISPLAY_TIME) {
+                    fadingOut = true;
+                    postTypewriterTimer = 0f;
+                }
             }
         } else {
-            displayTimer += delta;
-            if (displayTimer >= DISPLAY_DURATION) {
-                shouldTransition = true;
+            // Fade out
+            fadeAlpha -= delta / FADE_DURATION;
+            if (fadeAlpha <= 0f) {
+                fadeAlpha = 0f;
+                fadingOut = false;
+                currentChunk++;
+                if (currentChunk >= prologueTexts.length) {
+                    finished = true;
+                } else {
+                    // Reset for next chunk
+                    typewriterProgress = 0f;
+                    fadingIn = true;
+                }
             }
-        }
-
-        // Check for input to skip or transition
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
-            shouldTransition = true;
-        }
-
-        // Transition to main menu
-        if (shouldTransition) {
-            game.setScreen(new MainMenuScreen(game));
-            return;
         }
 
         // Clear screen
@@ -5647,61 +5942,260 @@ public class TitleScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-
-        // Set alpha for fade effect
-        titleFont.setColor(1, 1, 1, alpha);
-        subtitleFont.setColor(1, 1, 1, alpha);
-
-        // Draw title
-        String title = "DIMming Echoes";
-        float titleWidth = titleFont.draw(batch, title, 0, 0).width;
-        float titleX = (Gdx.graphics.getWidth() - titleWidth) / 2f;
-        float titleY = Gdx.graphics.getHeight() / 2f + 50;
-        titleFont.draw(batch, title, titleX, titleY);
-
-        // Draw subtitle with blinking effect
-        if (fadeInComplete) {
-            String subtitle = "Click to continue...";
-            float subtitleWidth = subtitleFont.draw(batch, subtitle, 0, 0).width;
-            float subtitleX = (Gdx.graphics.getWidth() - subtitleWidth) / 2f;
-            float subtitleY = titleY - 100;
-            
-            // Blinking effect
-            float blinkAlpha = (float) Math.abs(Math.sin(displayTimer * 3)) * alpha;
-            subtitleFont.setColor(1, 1, 1, blinkAlpha);
-            subtitleFont.draw(batch, subtitle, subtitleX, subtitleY);
-        }
-
+        font.setColor(1, 1, 1, fadeAlpha);
+        String toDraw = chunk.substring(0, Math.min((int)typewriterProgress, chunk.length()));
+        float width = Gdx.graphics.getWidth() * 0.8f;
+        float x = (Gdx.graphics.getWidth() - width) / 2f;
+        float y = Gdx.graphics.getHeight() / 2f + 40;
+        font.draw(batch, toDraw, x, y, width, Align.center, true);
         batch.end();
     }
 
     @Override
-    public void resize(int width, int height) {
-        // Not needed for this screen
-    }
-
+    public void resize(int width, int height) {}
     @Override
-    public void pause() {
-        // Not needed for this screen
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-        // Not needed for this screen
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-        AudioManager.getInstance().stopMusic();
-        // Not needed for this screen
-    }
-
+    public void hide() {}
     @Override
     public void dispose() {
         batch.dispose();
-        titleFont.dispose();
-        subtitleFont.dispose();
+        font.dispose();
     }
+} 
+================================================================================
+
+--- File: .\core\src\main\java\com\dimmingechoes\screens\WordleScreen.java ---
+package com.dimmingechoes.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.dimmingechoes.TheDimmingEcho;
+
+public class WordleScreen implements Screen {
+    private static final String TARGET_WORD = "BOOK";
+    private static final int WORD_LENGTH = 4;
+    private static final int MAX_GUESSES = 5;
+
+    private final TheDimmingEcho game;
+    private final DungeonScreen dungeonScreen;
+    private final SpriteBatch batch;
+    private final Stage stage;
+    private final Skin skin;
+    private final BitmapFont font;
+    private final StringBuilder currentGuess = new StringBuilder();
+    private final String[] guesses = new String[MAX_GUESSES];
+    private final int[][] feedback = new int[MAX_GUESSES][WORD_LENGTH]; // 0: gray, 1: yellow, 2: green
+    private int guessCount = 0;
+    private boolean puzzleOver = false;
+    private boolean puzzleWon = false;
+    private Label infoLabel;
+    private float transitionTimer = 0f;
+    private static final float TRANSITION_DELAY = 2.0f;
+
+    public WordleScreen(TheDimmingEcho game, DungeonScreen dungeonScreen) {
+        this.game = game;
+        this.dungeonScreen = dungeonScreen;
+        this.batch = new SpriteBatch();
+        this.stage = new Stage(new ScreenViewport());
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("DawnLike/GUI/SDS_8x8.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 32;
+        parameter.color = Color.WHITE;
+        this.font = generator.generateFont(parameter);
+        generator.dispose();
+        this.skin = new Skin();
+        skin.add("default-font", font);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        skin.add("default", labelStyle);
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.font = font;
+        skin.add("default", buttonStyle);
+        setupUI();
+    }
+
+    private void setupUI() {
+        Table root = new Table();
+        root.setFillParent(true);
+        root.center();
+        infoLabel = new Label("Guess the 4-letter word!", skin);
+        root.add(infoLabel).padBottom(30).row();
+        // Add guess grid
+        for (int i = 0; i < MAX_GUESSES; i++) {
+            Table row = new Table();
+            for (int j = 0; j < WORD_LENGTH; j++) {
+                Label cell = new Label("", skin);
+                cell.setName("cell-" + i + "-" + j);
+                cell.setAlignment(Align.center);
+                cell.setColor(Color.LIGHT_GRAY);
+                row.add(cell).width(60).height(60).pad(5);
+            }
+            root.add(row).row();
+        }
+        // Add on-screen keyboard (A-Z)
+        Table keyboard = new Table();
+        String keys = "QWERTYUIOPASDFGHJKLZXCVBNM";
+        for (char c : keys.toCharArray()) {
+            TextButton btn = new TextButton(String.valueOf(c), skin);
+            btn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                    if (puzzleOver) return;
+                    if (currentGuess.length() < WORD_LENGTH) {
+                        currentGuess.append(btn.getText().toString());
+                        updateGrid();
+                    }
+                }
+            });
+            keyboard.add(btn).width(50).height(50).pad(2);
+            if (btn.getText().toString().equals("P") || btn.getText().toString().equals("L") || btn.getText().toString().equals("M"))
+                keyboard.row();
+        }
+        // Add backspace and enter
+        TextButton backBtn = new TextButton("<", skin);
+        backBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                if (puzzleOver) return;
+                if (currentGuess.length() > 0) {
+                    currentGuess.deleteCharAt(currentGuess.length() - 1);
+                    updateGrid();
+                }
+            }
+        });
+        keyboard.add(backBtn).width(50).height(50).pad(2);
+        TextButton enterBtn = new TextButton("ENTER", skin);
+        enterBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                if (puzzleOver) return;
+                if (currentGuess.length() == WORD_LENGTH) {
+                    submitGuess();
+                }
+            }
+        });
+        keyboard.add(enterBtn).width(100).height(50).pad(2);
+        root.add(keyboard).colspan(1).padTop(20).row();
+        stage.addActor(root);
+    }
+
+    private void updateGrid() {
+        for (int i = 0; i < MAX_GUESSES; i++) {
+            for (int j = 0; j < WORD_LENGTH; j++) {
+                Label cell = stage.getRoot().findActor("cell-" + i + "-" + j);
+                if (cell != null) {
+                    if (i < guessCount) {
+                        char c = guesses[i].charAt(j);
+                        cell.setText(String.valueOf(c));
+                        if (feedback[i][j] == 2) cell.setColor(Color.GREEN);
+                        else if (feedback[i][j] == 1) cell.setColor(Color.GOLD);
+                        else cell.setColor(Color.DARK_GRAY);
+                    } else if (i == guessCount && j < currentGuess.length()) {
+                        cell.setText(String.valueOf(currentGuess.charAt(j)));
+                        cell.setColor(Color.LIGHT_GRAY);
+                    } else {
+                        cell.setText("");
+                        cell.setColor(Color.LIGHT_GRAY);
+                    }
+                }
+            }
+        }
+    }
+
+    private void submitGuess() {
+        String guess = currentGuess.toString();
+        guesses[guessCount] = guess;
+        // Feedback logic
+        boolean[] used = new boolean[WORD_LENGTH];
+        for (int j = 0; j < WORD_LENGTH; j++) {
+            if (guess.charAt(j) == TARGET_WORD.charAt(j)) {
+                feedback[guessCount][j] = 2; // green
+                used[j] = true;
+            }
+        }
+        for (int j = 0; j < WORD_LENGTH; j++) {
+            if (feedback[guessCount][j] == 0) {
+                for (int k = 0; k < WORD_LENGTH; k++) {
+                    if (!used[k] && guess.charAt(j) == TARGET_WORD.charAt(k)) {
+                        feedback[guessCount][j] = 1; // yellow
+                        used[k] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        updateGrid();
+        if (guess.equals(TARGET_WORD)) {
+            puzzleOver = true;
+            puzzleWon = true;
+            infoLabel.setText("Correct! It was BOOK.");
+            transitionTimer = TRANSITION_DELAY;
+            return;
+        }
+        guessCount++;
+        currentGuess.setLength(0);
+        if (guessCount >= MAX_GUESSES) {
+            puzzleOver = true;
+            puzzleWon = false;
+            infoLabel.setText("Out of guesses! The answer was BOOK.");
+            Gdx.app.postRunnable(() -> {
+                game.logFailure();
+                game.getCrystalInventory().useCrystal();
+                dungeonScreen.puzzleCompleted(false);
+                game.setScreen(dungeonScreen);
+            });
+        }
+    }
+
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+        updateGrid();
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        batch.end();
+        stage.act(delta);
+        stage.draw();
+        if (puzzleWon && puzzleOver && transitionTimer > 0) {
+            transitionTimer -= delta;
+            if (transitionTimer <= 0) {
+                dungeonScreen.puzzleCompleted(true);
+                game.setScreen(dungeonScreen);
+            }
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) { stage.getViewport().update(width, height, true); }
+    @Override
+    public void pause() {}
+    @Override
+    public void resume() {}
+    @Override
+    public void hide() {}
+    @Override
+    public void dispose() { batch.dispose(); font.dispose(); stage.dispose(); }
 } 
 ================================================================================
 
@@ -5972,6 +6466,46 @@ project(":lwjgl3") {
     )
   }
 }
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\assets.txt ---
+libgdx.png
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\libgdx.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\libgdx128.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\libgdx16.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\libgdx32.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\libgdx64.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\com\dimmingechoes\lwjgl3\Lwjgl3Launcher.class ---
+*** Non-text file detected (.class). Content not displayed. ***
+
+================================================================================
+
+--- File: .\lwjgl3\bin\main\com\dimmingechoes\lwjgl3\StartupHelper.class ---
+*** Non-text file detected (.class). Content not displayed. ***
 
 ================================================================================
 

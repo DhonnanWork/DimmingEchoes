@@ -170,6 +170,12 @@ public class BattleScreen implements Screen {
         }
         if (battleManager.isBattleOver()) {
             if (battleManager.getPlayer().getHealth() <= 0) {
+                game.logFailure();
+                game.getCrystalInventory().useCrystal();
+                if (game.getCrystalInventory().getCrystals() <= 0) {
+                    game.setScreen(new EndingScreen("Your echoes have faded completely. The silence is now absolute."));
+                    return;
+                }
                 showingGameOver = true;
                 victoryTimer = 0f;
                 victoryAlpha = 0f;

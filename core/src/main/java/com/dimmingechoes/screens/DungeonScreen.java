@@ -181,7 +181,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
         this.roomGraph = new RoomGraph();
         this.currentRoom = roomGraph.getStartingRoom();
         this.player = new Rectangle(0, 0, PLAYER_SIZE, PLAYER_SIZE);
-        Gdx.input.setInputProcessor(this);
     }
 
     // ... (rest of the constructor and other methods are unchanged) ...
@@ -265,6 +264,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(this);
         loadMap(currentRoom.getTmxPath());
         playerSpriteSheet = new Texture(Gdx.files.internal("player_walk_left.png"));
         int FRAME_COLS = 8, FRAME_ROWS = 1;
@@ -509,6 +509,13 @@ public class DungeonScreen extends InputAdapter implements Screen {
         choicesTable.clear();
         uiStage.setKeyboardFocus(null);
 
+        // Launch WordleScreen if the Laughing Girl's riddle is attempted
+        if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl") && choice.choiceText.equals("[Attempt the riddle]")) {
+            endDialogue();
+            game.setScreen(new WordleScreen(game, this));
+            return;
+        }
+
         if (dialogueNPC != null && dialogueNPC.getName().equals("The Stranger") && choice.choiceText.equals("Begin Battle")) {
             com.dimmingechoes.entities.Player playerEntity = new com.dimmingechoes.entities.Player("You", 30, 8, 3, null);
             java.util.List<com.dimmingechoes.entities.Enemy> enemies = new java.util.ArrayList<>();
@@ -579,6 +586,12 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
+        if (game.getCrystalsLostToFailure() > 0) {
+            String endingMessage = "You let the echoes take part of you.";
+            game.setScreen(new EndingScreen(endingMessage));
+            endingShown = true;
+            return;
+        }
         int crystalsUsed = game.getUsageLog().totalGiven();
         if (choice.equals("Give the final crystal")) crystalsUsed++;
         String endingMessage;
@@ -620,6 +633,11 @@ public class DungeonScreen extends InputAdapter implements Screen {
     }
 
     public boolean isMemoryPuzzleSolved() { return isMemoryPuzzleSolved; }
+
+    // Called by WordleScreen when the puzzle is completed
+    public void puzzleCompleted(boolean success) {
+        isMemoryPuzzleSolved = success;
+    }
 
     @Override public void resize(int width, int height) {
         gameViewport.update(width, height, true);
