@@ -230,15 +230,17 @@ public class WordleScreen implements Screen {
         batch.end();
         stage.act(delta);
         stage.draw();
-        if (puzzleOver && transitionTimer > 0) {
+        if (puzzleOver) {
             transitionTimer -= delta;
             if (transitionTimer <= 0) {
                 if (!puzzleWon) {
                     game.logFailure();
-                    game.getCrystalInventory().useCrystal();
+                    game.setScreen(new EndingScreen(game, "FAILURE"));
+                    return;
+                } else {
+                    dungeonScreen.puzzleCompleted(true);
+                    game.setScreen(dungeonScreen);
                 }
-                dungeonScreen.puzzleCompleted(puzzleWon);
-                game.setScreen(dungeonScreen);
             }
         }
     }

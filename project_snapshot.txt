@@ -3600,17 +3600,7 @@ public class NPC {
             return getFinalDialogue(game);
         }
 
-        if (name.equals("The Laughing Girl")) {
-            try {
-                com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
-                if (ds != null && ds.isMemoryPuzzleSolved()) {
-                    return new DialogueNode("You solved it! It was a book! I remember now... thank you!", new DialogueChoice[0], false, false, true);
-                }
-            } catch (ClassCastException e) {
-                // Ignore if not on DungeonScreen
-            }
-        }
-
+        // Inter-NPC conditional dialogue before initial conversation
         if (!hasHadInitialConversation) {
             if (name.equals("The Laughing Girl") && game.getUsageLog().hasGivenCrystal("The Stranger")) {
                 hasHadInitialConversation = true;
@@ -3619,6 +3609,18 @@ public class NPC {
             if (name.equals("The Stranger") && game.getUsageLog().hasGivenCrystal("The Laughing Girl")) {
                 hasHadInitialConversation = true;
                 return new DialogueNode("I hear laughter on the wind. It's... faint. But it's there. What have you done?", new DialogueChoice[0], false, false, true);
+            }
+        }
+
+        // The Laughing Girl reacts to memory puzzle
+        if (name.equals("The Laughing Girl")) {
+            try {
+                com.dimmingechoes.screens.DungeonScreen ds = (com.dimmingechoes.screens.DungeonScreen) game.getScreen();
+                if (ds != null && ds.isMemoryPuzzleSolved()) {
+                    return new DialogueNode("You solved it! It was a book! I remember now... thank you!", new DialogueChoice[0], false, false, true);
+                }
+            } catch (ClassCastException e) {
+                // Ignore if not on DungeonScreen
             }
         }
 
@@ -3635,32 +3637,58 @@ public class NPC {
         DialogueNode giveCrystal = new DialogueNode("You offer the crystal...", new DialogueChoice[]{ new DialogueChoice("...", end) }, true, true, false);
 
         switch (name) {
-            case "The Laughing One":
-                DialogueNode askAboutPlace = new DialogueNode("This place is a reflection of what was lost. To remember, you must give a part of yourself.", new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
-                return new DialogueNode("You have returned to the place of echoes. What will you do?",
+            case "The Laughing One": {
+                DialogueNode askAboutPlace = new DialogueNode(
+                    "This place is a reflection of what was lost. To remember, you must give a part of yourself.",
+                    new DialogueChoice[]{new DialogueChoice("I see.", end)}, false, false, false);
+                DialogueNode askAboutOthers = new DialogueNode(
+                    "The others are echoes, too. Joy, sorrow, and silence. Each a piece of what you left behind.",
+                    new DialogueChoice[]{new DialogueChoice("I understand.", end)}, false, false, false);
+                return new DialogueNode(
+                    "You have returned to the place of echoes. What will you do?",
                     new DialogueChoice[]{
                         new DialogueChoice("Ask about this place.", askAboutPlace),
+                        new DialogueChoice("Ask about the others.", askAboutOthers),
                         new DialogueChoice("[Give a Crystal] Restore an echo.", giveCrystal),
-                        new DialogueChoice("Say nothing.", end) }, false, false, false);
-            case "The Laughing Girl":
+                        new DialogueChoice("Say nothing.", end)
+                    }, false, false, false);
+            }
+            case "The Laughing Girl": {
+                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
+                String riddle = "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... What is it?";
+                if (strangerHelped) {
+                    riddle += "\nThat angry man... he seems different now. Did you help him?";
+                }
                 return new DialogueNode(
-                    "Hee hee... I remember... something. It has leaves, but it's not a tree. It has a spine, but no bones... What is it?",
+                    riddle,
                     new DialogueChoice[]{
                         new DialogueChoice("I will look for it.", end),
                         new DialogueChoice("[Attempt the riddle]", null)
-                    },
-                    false, false, false
-                );
-            case "The Stranger":
+                    }, false, false, false);
+            }
+            case "The Stranger": {
+                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
                 DialogueNode askAngry = new DialogueNode("You weren't there. You didn't see. Some things are better left buried.", new DialogueChoice[]{new DialogueChoice("I will find out.", end)}, false, false, false);
-                return new DialogueNode("You again. What do you want?",
+                String intro = "You again. What do you want?";
+                if (girlHelped) {
+                    intro += "\nI hear laughter on the wind. It's... faint. But it's there. What have you done?";
+                }
+                return new DialogueNode(intro,
                     new DialogueChoice[]{
                         new DialogueChoice("Why are you so angry?", askAngry),
                         new DialogueChoice("[Give a Crystal] Quell his anger.", giveCrystal),
                         new DialogueChoice("Fight", new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false)),
-                        new DialogueChoice("Leave.", end) }, false, false, false);
-            case "The Whisper":
+                        new DialogueChoice("Leave.", end)
+                    }, false, false, false);
+            }
+            case "The Whisper": {
+                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
+                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
+                if (girlHelped && strangerHelped) {
+                    return new DialogueNode("...the time is almost right... come back when you are ready...", new DialogueChoice[0], false, false, true);
+                }
                 return new DialogueNode("...hush... not yet...", new DialogueChoice[0], false, false, true);
+            }
         }
         return end;
     }
@@ -3671,20 +3699,51 @@ public class NPC {
 
         switch (name) {
             case "The Laughing One":
-                return new DialogueNode("Still you linger in the dust of what was.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Leave.", end) }, false, false, false);
-            case "The Laughing Girl":
-                return new DialogueNode("Hee hee... still can't remember? Find the thing with leaves but no tree...", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Not yet.", end) }, false, false, false);
-            case "The Stranger":
+                return new DialogueNode(
+                    "Still you linger in the dust of what was. The truth is not always kind.",
+                    new DialogueChoice[]{
+                        new DialogueChoice("[Give Crystal]", giveCrystal),
+                        new DialogueChoice("Leave.", end)
+                    }, false, false, false);
+            case "The Laughing Girl": {
+                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
+                String msg = "Hee hee... still can't remember? Find the thing with leaves but no tree...";
+                if (strangerHelped) {
+                    msg += "\nHe seems less angry now. Did you talk to him?";
+                }
+                return new DialogueNode(msg,
+                    new DialogueChoice[]{
+                        new DialogueChoice("[Give Crystal]", giveCrystal),
+                        new DialogueChoice("Not yet.", end)
+                    }, false, false, false);
+            }
+            case "The Stranger": {
+                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
                 DialogueNode fightNode2 = new DialogueNode("You want to fight? Fine. Let's settle this.", new DialogueChoice[]{ new DialogueChoice("Begin Battle", null) }, false, false, false);
-                return new DialogueNode("Still here? State your business or leave.", new DialogueChoice[]{ new DialogueChoice("[Give Crystal]", giveCrystal), new DialogueChoice("Fight", fightNode2), new DialogueChoice("Leaving.", end) }, false, false, false);
-            case "The Whisper":
+                String msg = "Still here? State your business or leave.";
+                if (girlHelped) {
+                    msg += "\nThe laughter... it's not so far away now.";
+                }
+                return new DialogueNode(msg,
+                    new DialogueChoice[]{
+                        new DialogueChoice("[Give Crystal]", giveCrystal),
+                        new DialogueChoice("Fight", fightNode2),
+                        new DialogueChoice("Leaving.", end)
+                    }, false, false, false);
+            }
+            case "The Whisper": {
                 boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
                 boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
                 if (girlHelped && strangerHelped) {
-                    return new DialogueNode("You have pieced together the joy and the sorrow... Are you ready for the truth?",
-                        new DialogueChoice[]{ new DialogueChoice("[Give the Final Crystal] Learn the truth.", giveCrystal), new DialogueChoice("I'm not ready.", end) }, false, false, false);
+                    return new DialogueNode(
+                        "You have pieced together the joy and the sorrow... Are you ready for the truth?",
+                        new DialogueChoice[]{
+                            new DialogueChoice("[Give the Final Crystal] Learn the truth.", giveCrystal),
+                            new DialogueChoice("I'm not ready.", end)
+                        }, false, false, false);
                 }
                 return new DialogueNode("...the echoes are not yet settled...", new DialogueChoice[0], false, false, true);
+            }
         }
         return end;
     }
@@ -3692,13 +3751,29 @@ public class NPC {
     private DialogueNode getFinalDialogue(TheDimmingEcho game) {
         switch (name) {
             case "The Laughing One":
-                return new DialogueNode("The echo you restored in me is quiet. It is at peace. Thank you.", new DialogueChoice[0], false, false, true);
+                return new DialogueNode(
+                    "The echo you restored in me is quiet. But the dust still stirs. Some mysteries are not meant to be solved. Thank you... or perhaps, I'm sorry.",
+                    new DialogueChoice[0], false, false, true);
             case "The Laughing Girl":
-                return new DialogueNode("...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.", new DialogueChoice[0], false, false, true);
+                return new DialogueNode(
+                    "...we were in a garden. You promised we'd come back. Was it sunny that day? I think it was.",
+                    new DialogueChoice[0], false, false, true);
             case "The Stranger":
-                return new DialogueNode("It was my fault. I... I couldn't protect her. The laughter stopped because of me. But now, I feel... at peace.", new DialogueChoice[0], false, false, true);
-            case "The Whisper":
-                return new DialogueNode("This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.", new DialogueChoice[0], false, false, true);
+                return new DialogueNode(
+                    "It was my fault. I... I couldn't protect her. The laughter stopped because of me. But now, I feel... at peace.",
+                    new DialogueChoice[0], false, false, true);
+            case "The Whisper": {
+                boolean girlHelped = game.getUsageLog().hasGivenCrystal("The Laughing Girl");
+                boolean strangerHelped = game.getUsageLog().hasGivenCrystal("The Stranger");
+                if (girlHelped && strangerHelped) {
+                    return new DialogueNode(
+                        "This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend. Take the final crystal, and remember.",
+                        new DialogueChoice[0], false, false, true);
+                }
+                return new DialogueNode(
+                    "This was never the memory of a place. It is the memory of a person. You. This is your own shattered heart, struggling to mend.",
+                    new DialogueChoice[0], false, false, true);
+            }
         }
         return new DialogueNode("...", new DialogueChoice[0], false, false, true);
     }
@@ -4108,8 +4183,6 @@ public class BattleScreen implements Screen {
     private float victoryTimer = 0f;
     private float victoryAlpha = 0f;
     private boolean showingVictory = false;
-    private boolean showingGameOver = false;
-    private static final float VICTORY_FADE_DURATION = 2.0f;
     
     // Attack delay
     private float attackDelay = 0f;
@@ -4120,6 +4193,7 @@ public class BattleScreen implements Screen {
     private Random random = new Random();
     private boolean strongAttackMode = false;
     private static final float STRONG_ATTACK_CHANCE = 0.3f; // 30% chance
+    private static final float VICTORY_FADE_DURATION = 2.0f;
 
     public BattleScreen(TheDimmingEcho game, Player player, List<Enemy> enemies) {
         this.game = game;
@@ -4237,14 +4311,8 @@ public class BattleScreen implements Screen {
         if (battleManager.isBattleOver()) {
             if (battleManager.getPlayer().getHealth() <= 0) {
                 game.logFailure();
-                game.getCrystalInventory().useCrystal();
-                if (game.getCrystalInventory().getCrystals() <= 0) {
-                    game.setScreen(new EndingScreen("Your echoes have faded completely. The silence is now absolute."));
-                    return;
-                }
-                showingGameOver = true;
-                victoryTimer = 0f;
-                victoryAlpha = 0f;
+                game.setScreen(new EndingScreen(game, "FAILURE"));
+                return;
             } else {
                 showingVictory = true;
                 victoryTimer = 0f;
@@ -4278,7 +4346,7 @@ public class BattleScreen implements Screen {
         }
 
         // Update victory/game over effects
-        if (showingVictory || showingGameOver) {
+        if (showingVictory) {
             victoryTimer += delta;
             victoryAlpha = Math.min(1.0f, victoryTimer / VICTORY_FADE_DURATION);
             
@@ -4352,17 +4420,15 @@ public class BattleScreen implements Screen {
         }
 
         // Draw victory/game over screen
-        if (showingVictory || showingGameOver) {
+        if (showingVictory) {
             batch.begin();
             font.setColor(1, 1, 1, victoryAlpha);
-            String text = showingVictory ? "VICTORY!" : "GAME OVER";
+            String text = "VICTORY!";
             float textWidth = font.draw(batch, text, 0, 0).width;
             float textX = (Gdx.graphics.getWidth() - textWidth) / 2f;
             float textY = Gdx.graphics.getHeight() / 2f + 50;
             // Draw sparkles for victory
-            if (showingVictory) {
-                drawSparkles(textX, textY, victoryAlpha);
-            }
+            drawSparkles(textX, textY, victoryAlpha);
             font.draw(batch, text, textX, textY);
             font.setColor(Color.WHITE);
             batch.end();
@@ -4598,7 +4664,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
         this.roomGraph = new RoomGraph();
         this.currentRoom = roomGraph.getStartingRoom();
         this.player = new Rectangle(0, 0, PLAYER_SIZE, PLAYER_SIZE);
-        Gdx.input.setInputProcessor(this);
     }
 
     // ... (rest of the constructor and other methods are unchanged) ...
@@ -4682,6 +4747,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(this);
         loadMap(currentRoom.getTmxPath());
         playerSpriteSheet = new Texture(Gdx.files.internal("player_walk_left.png"));
         int FRAME_COLS = 8, FRAME_ROWS = 1;
@@ -4851,6 +4917,12 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
         if (currentRoom.getTmxPath() == null || currentRoom.getTmxPath().isEmpty()) {
             if (currentRoom.getRoomType() == RoomType.FINAL && !awaitingFinalChoice) {
+                // Check for 'A Place That No Longer Exists' ending
+                if (game.getUsageLog().totalGiven() == 0 && game.getCrystalsLostToFailure() == 0) {
+                    game.setScreen(new EndingScreen(game, "NOMATTER"));
+                    endingShown = true;
+                    return;
+                }
                 presentFinalChoice();
             }
             return;
@@ -5003,19 +5075,31 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
-        if (game.getCrystalsLostToFailure() > 0) {
-            String endingMessage = "You let the echoes take part of you.";
-            game.setScreen(new EndingScreen(endingMessage));
+        int crystalsUsed = game.getUsageLog().totalGiven();
+        int crystalsLostToFailure = game.getCrystalsLostToFailure();
+        if (crystalsLostToFailure > 0) {
+            game.setScreen(new EndingScreen(game, "FAILURE"));
             endingShown = true;
             return;
         }
-        int crystalsUsed = game.getUsageLog().totalGiven();
-        if (choice.equals("Give the final crystal")) crystalsUsed++;
-        String endingMessage;
-        if (crystalsUsed == 0) { endingMessage = "Ending 1: You left the echoes to fade on their own.";
-        } else if (crystalsUsed >= 3) { endingMessage = "Ending 2: You gave everything to restore the echoes, finding peace in sacrifice.";
-        } else { endingMessage = "Ending 3: You helped who you could, but some echoes remain adrift."; }
-        game.setScreen(new EndingScreen(endingMessage));
+        if (choice.equals("Give the final crystal")) {
+            crystalsUsed++;
+            if (crystalsUsed == 5) {
+                game.setScreen(new EndingScreen(game, "VOID"));
+                endingShown = true;
+                return;
+            } else {
+                game.setScreen(new EndingScreen(game, "FADE"));
+                endingShown = true;
+                return;
+            }
+        } else if (choice.equals("Keep it")) {
+            game.setScreen(new EndingScreen(game, "STONE"));
+            endingShown = true;
+            return;
+        }
+        // Fallback
+        game.setScreen(new EndingScreen(game, "FAILURE"));
         endingShown = true;
     }
 
@@ -5086,7 +5170,10 @@ import com.badlogic.gdx.Input;
 import com.dimmingechoes.TheDimmingEcho;
 
 public class EndingScreen implements Screen {
-    private final String endingMessage;
+    private final TheDimmingEcho game;
+    private final String endingID;
+    private String narrationText;
+    private String finalLineText;
     private final SpriteBatch batch;
     private final BitmapFont font;
     private BitmapFont promptFont;
@@ -5094,17 +5181,16 @@ public class EndingScreen implements Screen {
     private float fadeTimer = 0f;
     private static final float FADE_IN_DURATION = 2.0f;
     private float timeOnScreen = 0f;
-    private int clickCount = 0;
     private boolean showReturnPrompt = false;
-    private final TheDimmingEcho game;
+    private float typewriterProgress = 0f;
+    private static final float TYPEWRITER_SPEED = 40f; // chars/sec
+    private boolean narrationDone = false;
+    private static final float PROMPT_DELAY = 1.5f;
 
-    public EndingScreen(String endingMessage) {
-        this(endingMessage, null);
-    }
-    public EndingScreen(String endingMessage, TheDimmingEcho game) {
-        this.endingMessage = endingMessage;
-        this.batch = new SpriteBatch();
+    public EndingScreen(TheDimmingEcho game, String endingID) {
         this.game = game;
+        this.endingID = endingID;
+        this.batch = new SpriteBatch();
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 28;
@@ -5122,6 +5208,35 @@ public class EndingScreen implements Screen {
         promptParam.shadowOffsetY = 2;
         this.promptFont = generator.generateFont(promptParam);
         generator.dispose();
+        selectEndingText(endingID);
+    }
+
+    private void selectEndingText(String id) {
+        switch (id) {
+            case "FADE":
+                narrationText = "You gave everything you could. The echoes fade, but peace settles in the silence. The world is lighter, if only for a moment.";
+                finalLineText = "Ending: Petals in the Void";
+                break;
+            case "STONE":
+                narrationText = "You kept the last piece for yourself. The echoes remain, unresolved. The world outside is unchanged, but you carry the weight within.";
+                finalLineText = "Ending: The Keeper Becomes Stone";
+                break;
+            case "VOID":
+                narrationText = "You gave until there was nothing left. The echoes vanish, and so do you. In the void, there is neither pain nor memory.";
+                finalLineText = "Ending: The Memory That Fades";
+                break;
+            case "NOMATTER":
+                narrationText = "You walked these halls untouched, never giving nor losing. The world remains as it was, and so do you. Some stories end before they begin.";
+                finalLineText = "Ending: A Place That No Longer Exists";
+                break;
+            case "FAILURE":
+                narrationText = "You faltered, and the echoes slipped away. Some things cannot be reclaimed. The silence is absolute.";
+                finalLineText = "Ending: Lost to Silence";
+                break;
+            default:
+                narrationText = "The story ends, but the echoes remain.";
+                finalLineText = "Ending: Unknown";
+        }
     }
 
     public void dispose() {
@@ -5135,7 +5250,8 @@ public class EndingScreen implements Screen {
         fadeAlpha = 0f;
         fadeTimer = 0f;
         timeOnScreen = 0f;
-        clickCount = 0;
+        typewriterProgress = 0f;
+        narrationDone = false;
         showReturnPrompt = false;
     }
 
@@ -5148,15 +5264,24 @@ public class EndingScreen implements Screen {
         if (fadeAlpha < 1f) {
             fadeAlpha = Math.min(1f, fadeTimer / FADE_IN_DURATION);
         }
-        if (Gdx.input.justTouched()) {
-            clickCount++;
+        // Typewriter effect
+        if (!narrationDone) {
+            typewriterProgress += TYPEWRITER_SPEED * delta;
+            if (typewriterProgress >= narrationText.length()) {
+                typewriterProgress = narrationText.length();
+                narrationDone = true;
+            }
         }
-        if (timeOnScreen > 20f || clickCount >= 2) {
+        if (narrationDone && timeOnScreen > PROMPT_DELAY + (narrationText.length() / TYPEWRITER_SPEED)) {
             showReturnPrompt = true;
         }
         batch.begin();
         font.setColor(1, 1, 1, fadeAlpha);
-        font.draw(batch, endingMessage, 0, Gdx.graphics.getHeight() / 2f, Gdx.graphics.getWidth(), Align.center, true);
+        String toShow = narrationText.substring(0, Math.min((int)typewriterProgress, narrationText.length()));
+        font.draw(batch, toShow, 0, Gdx.graphics.getHeight() / 2f + 40, Gdx.graphics.getWidth(), Align.center, true);
+        if (narrationDone) {
+            font.draw(batch, finalLineText, 0, Gdx.graphics.getHeight() / 2f - 40, Gdx.graphics.getWidth(), Align.center, true);
+        }
         if (showReturnPrompt) {
             promptFont.setColor(1, 1, 1, fadeAlpha);
             promptFont.draw(batch, "Press ENTER to return to Main Menu", 0, 60, Gdx.graphics.getWidth(), Align.center, true);
@@ -6093,6 +6218,34 @@ public class WordleScreen implements Screen {
         keyboard.add(enterBtn).width(100).height(50).pad(2);
         root.add(keyboard).colspan(1).padTop(20).row();
         stage.addActor(root);
+        // Add physical keyboard controls
+        stage.addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
+            @Override
+            public boolean keyTyped(com.badlogic.gdx.scenes.scene2d.InputEvent event, char character) {
+                if (puzzleOver) return false;
+                if (Character.isLetter(character) && currentGuess.length() < WORD_LENGTH) {
+                    currentGuess.append(Character.toUpperCase(character));
+                    updateGrid();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean keyDown(com.badlogic.gdx.scenes.scene2d.InputEvent event, int keycode) {
+                if (puzzleOver) return false;
+                if (keycode == Input.Keys.ENTER && currentGuess.length() == WORD_LENGTH) {
+                    submitGuess();
+                    return true;
+                }
+                if (keycode == Input.Keys.BACKSPACE && currentGuess.length() > 0) {
+                    currentGuess.deleteCharAt(currentGuess.length() - 1);
+                    updateGrid();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void updateGrid() {
@@ -6154,12 +6307,7 @@ public class WordleScreen implements Screen {
             puzzleOver = true;
             puzzleWon = false;
             infoLabel.setText("Out of guesses! The answer was BOOK.");
-            Gdx.app.postRunnable(() -> {
-                game.logFailure();
-                game.getCrystalInventory().useCrystal();
-                dungeonScreen.puzzleCompleted(false);
-                game.setScreen(dungeonScreen);
-            });
+            transitionTimer = TRANSITION_DELAY;
         }
     }
 
@@ -6177,11 +6325,17 @@ public class WordleScreen implements Screen {
         batch.end();
         stage.act(delta);
         stage.draw();
-        if (puzzleWon && puzzleOver && transitionTimer > 0) {
+        if (puzzleOver) {
             transitionTimer -= delta;
             if (transitionTimer <= 0) {
-                dungeonScreen.puzzleCompleted(true);
-                game.setScreen(dungeonScreen);
+                if (!puzzleWon) {
+                    game.logFailure();
+                    game.setScreen(new EndingScreen(game, "FAILURE"));
+                    return;
+                } else {
+                    dungeonScreen.puzzleCompleted(true);
+                    game.setScreen(dungeonScreen);
+                }
             }
         }
     }

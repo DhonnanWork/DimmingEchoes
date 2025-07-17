@@ -434,6 +434,12 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
         if (currentRoom.getTmxPath() == null || currentRoom.getTmxPath().isEmpty()) {
             if (currentRoom.getRoomType() == RoomType.FINAL && !awaitingFinalChoice) {
+                // Check for 'A Place That No Longer Exists' ending
+                if (game.getUsageLog().totalGiven() == 0 && game.getCrystalsLostToFailure() == 0) {
+                    game.setScreen(new EndingScreen(game, "NOMATTER"));
+                    endingShown = true;
+                    return;
+                }
                 presentFinalChoice();
             }
             return;
@@ -586,19 +592,31 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
-        if (game.getCrystalsLostToFailure() > 0) {
-            String endingMessage = "You let the echoes take part of you.";
-            game.setScreen(new EndingScreen(endingMessage));
+        int crystalsUsed = game.getUsageLog().totalGiven();
+        int crystalsLostToFailure = game.getCrystalsLostToFailure();
+        if (crystalsLostToFailure > 0) {
+            game.setScreen(new EndingScreen(game, "FAILURE"));
             endingShown = true;
             return;
         }
-        int crystalsUsed = game.getUsageLog().totalGiven();
-        if (choice.equals("Give the final crystal")) crystalsUsed++;
-        String endingMessage;
-        if (crystalsUsed == 0) { endingMessage = "Ending 1: You left the echoes to fade on their own.";
-        } else if (crystalsUsed >= 3) { endingMessage = "Ending 2: You gave everything to restore the echoes, finding peace in sacrifice.";
-        } else { endingMessage = "Ending 3: You helped who you could, but some echoes remain adrift."; }
-        game.setScreen(new EndingScreen(endingMessage));
+        if (choice.equals("Give the final crystal")) {
+            crystalsUsed++;
+            if (crystalsUsed == 5) {
+                game.setScreen(new EndingScreen(game, "VOID"));
+                endingShown = true;
+                return;
+            } else {
+                game.setScreen(new EndingScreen(game, "FADE"));
+                endingShown = true;
+                return;
+            }
+        } else if (choice.equals("Keep it")) {
+            game.setScreen(new EndingScreen(game, "STONE"));
+            endingShown = true;
+            return;
+        }
+        // Fallback
+        game.setScreen(new EndingScreen(game, "FAILURE"));
         endingShown = true;
     }
 

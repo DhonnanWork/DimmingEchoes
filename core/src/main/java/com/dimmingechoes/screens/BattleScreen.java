@@ -42,8 +42,6 @@ public class BattleScreen implements Screen {
     private float victoryTimer = 0f;
     private float victoryAlpha = 0f;
     private boolean showingVictory = false;
-    private boolean showingGameOver = false;
-    private static final float VICTORY_FADE_DURATION = 2.0f;
     
     // Attack delay
     private float attackDelay = 0f;
@@ -54,6 +52,7 @@ public class BattleScreen implements Screen {
     private Random random = new Random();
     private boolean strongAttackMode = false;
     private static final float STRONG_ATTACK_CHANCE = 0.3f; // 30% chance
+    private static final float VICTORY_FADE_DURATION = 2.0f;
 
     public BattleScreen(TheDimmingEcho game, Player player, List<Enemy> enemies) {
         this.game = game;
@@ -171,14 +170,8 @@ public class BattleScreen implements Screen {
         if (battleManager.isBattleOver()) {
             if (battleManager.getPlayer().getHealth() <= 0) {
                 game.logFailure();
-                game.getCrystalInventory().useCrystal();
-                if (game.getCrystalInventory().getCrystals() <= 0) {
-                    game.setScreen(new EndingScreen("Your echoes have faded completely. The silence is now absolute."));
-                    return;
-                }
-                showingGameOver = true;
-                victoryTimer = 0f;
-                victoryAlpha = 0f;
+                game.setScreen(new EndingScreen(game, "FAILURE"));
+                return;
             } else {
                 showingVictory = true;
                 victoryTimer = 0f;
@@ -212,7 +205,7 @@ public class BattleScreen implements Screen {
         }
 
         // Update victory/game over effects
-        if (showingVictory || showingGameOver) {
+        if (showingVictory) {
             victoryTimer += delta;
             victoryAlpha = Math.min(1.0f, victoryTimer / VICTORY_FADE_DURATION);
             
@@ -286,17 +279,15 @@ public class BattleScreen implements Screen {
         }
 
         // Draw victory/game over screen
-        if (showingVictory || showingGameOver) {
+        if (showingVictory) {
             batch.begin();
             font.setColor(1, 1, 1, victoryAlpha);
-            String text = showingVictory ? "VICTORY!" : "GAME OVER";
+            String text = "VICTORY!";
             float textWidth = font.draw(batch, text, 0, 0).width;
             float textX = (Gdx.graphics.getWidth() - textWidth) / 2f;
             float textY = Gdx.graphics.getHeight() / 2f + 50;
             // Draw sparkles for victory
-            if (showingVictory) {
-                drawSparkles(textX, textY, victoryAlpha);
-            }
+            drawSparkles(textX, textY, victoryAlpha);
             font.draw(batch, text, textX, textY);
             font.setColor(Color.WHITE);
             batch.end();
