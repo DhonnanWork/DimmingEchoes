@@ -141,7 +141,7 @@ public class MainMenuScreen implements Screen {
             Gdx.app.log("MainMenuScreen", "Background image not found: menu_bg.png");
             backgroundLoaded = false;
         }
-        AudioManager.getInstance().playMusic("audio/menu_theme.mp3", true);
+        AudioManager.getInstance().playMusic("mainmenu.mp3", true);
     }
 
     @Override

@@ -179,6 +179,13 @@ public class DungeonScreen extends InputAdapter implements Screen {
         this.player = new Rectangle(0, 0, PLAYER_SIZE, PLAYER_SIZE);
     }
 
+    public Rectangle getPlayer() {
+        return player;
+    }
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+
     // ... (rest of the constructor and other methods are unchanged) ...
 
     @Override
@@ -273,6 +280,14 @@ public class DungeonScreen extends InputAdapter implements Screen {
         playerAnimation = new Animation<>(0.1f, walkFrames);
         stateTime = 0f;
         AudioManager.getInstance().playMusic("audio/proximity to the inevitable.mp3", true);
+        if (game.getNextPlayerPosition() != null) {
+            Room loadedRoom = roomGraph.findRoomByTmxPath(game.getNextRoomTmxPath());
+            if (loadedRoom != null) {
+                this.currentRoom = loadedRoom;
+            }
+            player.setPosition(game.getNextPlayerPosition().x, game.getNextPlayerPosition().y);
+            game.clearNextSpawnPoint();
+        }
     }
 
     private void loadMap(String tmxPath) {

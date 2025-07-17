@@ -8,6 +8,7 @@ import com.dimmingechoes.save.SaveManager;
 import com.dimmingechoes.logic.CrystalInventory;
 import com.dimmingechoes.logic.UsageLog;
 import com.dimmingechoes.screens.MainMenuScreen;
+import com.badlogic.gdx.math.Vector2;
 
 public class TheDimmingEcho extends Game {
 
@@ -17,6 +18,8 @@ public class TheDimmingEcho extends Game {
     private boolean puzzleWordleSolved = false;
     private boolean puzzleWordLadderSolved = false;
     private boolean puzzleFibonacciSolved = false;
+    private Vector2 nextPlayerPosition = null;
+    private String nextRoomTmxPath = null;
 
     @Override
     public void create() {
@@ -42,13 +45,28 @@ public class TheDimmingEcho extends Game {
     public boolean isPuzzleFibonacciSolved() { return puzzleFibonacciSolved; }
     public void setPuzzleFibonacciSolved(boolean puzzleFibonacciSolved) { this.puzzleFibonacciSolved = puzzleFibonacciSolved; }
 
-    public void saveGame(int slot) {
+    public Vector2 getNextPlayerPosition() {
+        return nextPlayerPosition;
+    }
+    public String getNextRoomTmxPath() {
+        return nextRoomTmxPath;
+    }
+    public void clearNextSpawnPoint() {
+        this.nextPlayerPosition = null;
+        this.nextRoomTmxPath = null;
+    }
+
+    // Change saveGame to accept DungeonScreen
+    public void saveGame(int slot, DungeonScreen dungeonScreen) {
         SaveData data = new SaveData();
         data.crystalCount = crystalInventory.getCrystals();
         data.crystalRecipients = usageLog.getAllRecipients();
         data.puzzleWordleSolved = this.puzzleWordleSolved;
         data.puzzleWordLadderSolved = this.puzzleWordLadderSolved;
         data.puzzleFibonacciSolved = this.puzzleFibonacciSolved;
+        data.playerX = dungeonScreen.getPlayer().x;
+        data.playerY = dungeonScreen.getPlayer().y;
+        data.currentRoomTmxPath = dungeonScreen.getCurrentRoom().getTmxPath();
         SaveManager.save(data, slot);
     }
 
@@ -63,12 +81,14 @@ public class TheDimmingEcho extends Game {
             this.puzzleWordleSolved = data.puzzleWordleSolved;
             this.puzzleWordLadderSolved = data.puzzleWordLadderSolved;
             this.puzzleFibonacciSolved = data.puzzleFibonacciSolved;
+            this.nextPlayerPosition = new Vector2(data.playerX, data.playerY);
+            this.nextRoomTmxPath = data.currentRoomTmxPath;
         }
     }
 
     // Legacy method for backward compatibility
     public void saveGame() {
-        saveGame(1);
+        saveGame(1, (DungeonScreen) getScreen());
     }
 
     // Legacy method for backward compatibility
@@ -90,5 +110,6 @@ public class TheDimmingEcho extends Game {
         puzzleWordleSolved = false;
         puzzleWordLadderSolved = false;
         puzzleFibonacciSolved = false;
+        clearNextSpawnPoint();
     }
 }

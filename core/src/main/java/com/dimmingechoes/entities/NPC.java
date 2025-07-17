@@ -78,7 +78,7 @@ public class NPC {
         }
         puzzleChoices.add(new DialogueChoice("I'll come back later.", new DialogueNode("...", new DialogueChoice[]{}, false, false, true)));
 
-        String hint = "(Hint for word puzzle: It has leaves, but it's not a tree. It has a spine, but no bones.)";
+        String hint = "i have leaves but no tree, i have spine but not living";
         String baseText = "Hee hee... I remember bits and pieces, like games! Which one do you want to play?";
         if (!game.isPuzzleWordleSolved()) {
             baseText += "\n" + hint;

@@ -177,7 +177,20 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   │   ├── ds vu.mp3
 │   │   ├── proximity to the inevitable.mp3
 │   │   └── shaping.mp3
+│   ├── ending1.jpeg
+│   ├── ending1.mp3
+│   ├── ending2.jpeg
+│   ├── ending2.mp3
+│   ├── ending3.jpeg
+│   ├── ending3.mp3
+│   ├── ending4.jpeg
+│   ├── ending4.mp3
+│   ├── ending4.png
+│   ├── ending5.mp3
+│   ├── ending5.png
+│   ├── endingFail.jpeg
 │   ├── libgdx.png
+│   ├── mainmenu.mp3
 │   ├── memorythatfades.png
 │   ├── menu+bg.png
 │   ├── menu-animation.png
@@ -186,6 +199,9 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   ├── player_walk_left.png
 │   ├── savegame.json
 │   ├── savegame1.json
+│   ├── shaders
+│   │   ├── blur.frag
+│   │   └── blur.vert
 │   ├── uiskin.atlas
 │   ├── uiskin.json
 │   └── uiskin.png
@@ -1176,7 +1192,20 @@ audio/Acceptance of hopelessness.mp3
 audio/ds vu.mp3
 audio/proximity to the inevitable.mp3
 audio/shaping.mp3
+ending1.jpeg
+ending1.mp3
+ending2.jpeg
+ending2.mp3
+ending3.jpeg
+ending3.mp3
+ending4.jpeg
+ending4.mp3
+ending4.png
+ending5.mp3
+ending5.png
+endingFail.jpeg
 libgdx.png
+mainmenu.mp3
 memorythatfades.png
 menu+bg.png
 menu-animation.png
@@ -1185,14 +1214,81 @@ menu_bg.png
 player_walk_left.png
 savegame.json
 savegame1.json
+shaders/blur.frag
+shaders/blur.vert
 uiskin.atlas
 uiskin.json
 uiskin.png
 
 ================================================================================
 
+--- File: .\assets\ending1.jpeg ---
+*** Non-text file detected (.jpeg). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending1.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending2.jpeg ---
+*** Non-text file detected (.jpeg). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending2.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending3.jpeg ---
+*** Non-text file detected (.jpeg). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending3.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending4.jpeg ---
+*** Non-text file detected (.jpeg). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending4.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending4.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending5.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\ending5.png ---
+*** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\endingFail.jpeg ---
+*** Non-text file detected (.jpeg). Content not displayed. ***
+
+================================================================================
+
 --- File: .\assets\libgdx.png ---
 *** Non-text file detected (.png). Content not displayed. ***
+
+================================================================================
+
+--- File: .\assets\mainmenu.mp3 ---
+*** Non-text file detected (.mp3). Content not displayed. ***
 
 ================================================================================
 
@@ -2422,6 +2518,58 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
 
 ================================================================================
 
+--- File: .\assets\shaders\blur.frag ---
+#ifdef GL_ES
+    precision mediump float;
+#endif
+
+varying vec4 v_color;
+varying vec2 v_texCoords;
+
+uniform sampler2D u_texture;
+uniform vec2 u_resolution;
+uniform float u_radius;
+uniform vec2 u_dir;
+
+void main() {
+    vec4 sum = vec4(0.0);
+    vec2 tc = v_texCoords;
+    float blur = u_radius / u_resolution.x;
+
+    float hstep = u_dir.x;
+    float vstep = u_dir.y;
+
+    sum += texture2D(u_texture, vec2(tc.x - 4.0*blur*hstep, tc.y - 4.0*blur*vstep)) * 0.05;
+    sum += texture2D(u_texture, vec2(tc.x - 3.0*blur*hstep, tc.y - 3.0*blur*vstep)) * 0.09;
+    sum += texture2D(u_texture, vec2(tc.x - 2.0*blur*hstep, tc.y - 2.0*blur*vstep)) * 0.12;
+    sum += texture2D(u_texture, vec2(tc.x - 1.0*blur*hstep, tc.y - 1.0*blur*vstep)) * 0.15;
+    sum += texture2D(u_texture, vec2(tc.x, tc.y)) * 0.16;
+    sum += texture2D(u_texture, vec2(tc.x + 1.0*blur*hstep, tc.y + 1.0*blur*vstep)) * 0.15;
+    sum += texture2D(u_texture, vec2(tc.x + 2.0*blur*hstep, tc.y + 2.0*blur*vstep)) * 0.12;
+    sum += texture2D(u_texture, vec2(tc.x + 3.0*blur*hstep, tc.y + 3.0*blur*vstep)) * 0.09;
+    sum += texture2D(u_texture, vec2(tc.x + 4.0*blur*hstep, tc.y + 4.0*blur*vstep)) * 0.05;
+
+    gl_FragColor = sum * v_color;
+} 
+================================================================================
+
+--- File: .\assets\shaders\blur.vert ---
+attribute vec4 a_position;
+attribute vec4 a_color;
+attribute vec2 a_texCoord0;
+
+uniform mat4 u_projTrans;
+
+varying vec4 v_color;
+varying vec2 v_texCoords;
+
+void main() {
+    v_color = a_color;
+    v_texCoords = a_texCoord0;
+    gl_Position = u_projTrans * a_position;
+} 
+================================================================================
+
 --- File: .\assets\Tiled\Cat0A.tsx ---
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.11.2" name="Cat0A" tilewidth="16" tileheight="16" tilecount="40" columns="8">
@@ -3223,6 +3371,7 @@ import com.dimmingechoes.save.SaveManager;
 import com.dimmingechoes.logic.CrystalInventory;
 import com.dimmingechoes.logic.UsageLog;
 import com.dimmingechoes.screens.MainMenuScreen;
+import com.badlogic.gdx.math.Vector2;
 
 public class TheDimmingEcho extends Game {
 
@@ -3232,6 +3381,8 @@ public class TheDimmingEcho extends Game {
     private boolean puzzleWordleSolved = false;
     private boolean puzzleWordLadderSolved = false;
     private boolean puzzleFibonacciSolved = false;
+    private Vector2 nextPlayerPosition = null;
+    private String nextRoomTmxPath = null;
 
     @Override
     public void create() {
@@ -3257,13 +3408,28 @@ public class TheDimmingEcho extends Game {
     public boolean isPuzzleFibonacciSolved() { return puzzleFibonacciSolved; }
     public void setPuzzleFibonacciSolved(boolean puzzleFibonacciSolved) { this.puzzleFibonacciSolved = puzzleFibonacciSolved; }
 
-    public void saveGame(int slot) {
+    public Vector2 getNextPlayerPosition() {
+        return nextPlayerPosition;
+    }
+    public String getNextRoomTmxPath() {
+        return nextRoomTmxPath;
+    }
+    public void clearNextSpawnPoint() {
+        this.nextPlayerPosition = null;
+        this.nextRoomTmxPath = null;
+    }
+
+    // Change saveGame to accept DungeonScreen
+    public void saveGame(int slot, DungeonScreen dungeonScreen) {
         SaveData data = new SaveData();
         data.crystalCount = crystalInventory.getCrystals();
         data.crystalRecipients = usageLog.getAllRecipients();
         data.puzzleWordleSolved = this.puzzleWordleSolved;
         data.puzzleWordLadderSolved = this.puzzleWordLadderSolved;
         data.puzzleFibonacciSolved = this.puzzleFibonacciSolved;
+        data.playerX = dungeonScreen.getPlayer().x;
+        data.playerY = dungeonScreen.getPlayer().y;
+        data.currentRoomTmxPath = dungeonScreen.getCurrentRoom().getTmxPath();
         SaveManager.save(data, slot);
     }
 
@@ -3278,12 +3444,14 @@ public class TheDimmingEcho extends Game {
             this.puzzleWordleSolved = data.puzzleWordleSolved;
             this.puzzleWordLadderSolved = data.puzzleWordLadderSolved;
             this.puzzleFibonacciSolved = data.puzzleFibonacciSolved;
+            this.nextPlayerPosition = new Vector2(data.playerX, data.playerY);
+            this.nextRoomTmxPath = data.currentRoomTmxPath;
         }
     }
 
     // Legacy method for backward compatibility
     public void saveGame() {
-        saveGame(1);
+        saveGame(1, (DungeonScreen) getScreen());
     }
 
     // Legacy method for backward compatibility
@@ -3305,6 +3473,7 @@ public class TheDimmingEcho extends Game {
         puzzleWordleSolved = false;
         puzzleWordLadderSolved = false;
         puzzleFibonacciSolved = false;
+        clearNextSpawnPoint();
     }
 }
 
@@ -3469,6 +3638,8 @@ package com.dimmingechoes.dungeon;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoomGraph {
 
@@ -3480,6 +3651,8 @@ public class RoomGraph {
     private static final float WALL_THICKNESS = 32;
     private static final float DOOR_WIDTH = 120;
     private static final float DOOR_THICKNESS = 32;
+
+    private List<Room> rooms = new ArrayList<>();
 
     public RoomGraph() {
         generateRooms();
@@ -3496,6 +3669,13 @@ public class RoomGraph {
         Room battle = new Room("Tiled/Kanan.tmx", RoomType.EMPTY, new Color(0.3f, 0.1f, 0.1f, 1));
         Room finalRoomTrigger = new Room("", RoomType.FINAL, new Color(0.1f, 0.1f, 0.1f, 1));
 
+        // When creating a Room, add it to the list
+        // Example: rooms.add(newRoom);
+        rooms.add(start);
+        rooms.add(memory);
+        rooms.add(battle);
+        rooms.add(finalRoomTrigger);
+
         // Step 2: Define the connections (DoorZones) between rooms.
         start.addDoorZone(new DoorZone(new Rectangle(0, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), memory, DoorZone.Direction.LEFT));
         start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), battle, DoorZone.Direction.RIGHT));
@@ -3507,6 +3687,15 @@ public class RoomGraph {
         // The TMX file is now the single source of truth for NPC placement.
 
         this.startingRoom = start;
+    }
+
+    public Room findRoomByTmxPath(String tmxPath) {
+        for (Room room : rooms) {
+            if (room.getTmxPath().equals(tmxPath)) {
+                return room;
+            }
+        }
+        return null;
     }
 }
 
@@ -3660,7 +3849,7 @@ public class NPC {
         }
         puzzleChoices.add(new DialogueChoice("I'll come back later.", new DialogueNode("...", new DialogueChoice[]{}, false, false, true)));
 
-        String hint = "(Hint for word puzzle: It has leaves, but it's not a tree. It has a spine, but no bones.)";
+        String hint = "i have leaves but no tree, i have spine but not living";
         String baseText = "Hee hee... I remember bits and pieces, like games! Which one do you want to play?";
         if (!game.isPuzzleWordleSolved()) {
             baseText += "\n" + hint;
@@ -4047,6 +4236,9 @@ public class SaveData {
     public boolean puzzleWordleSolved = false;
     public boolean puzzleWordLadderSolved = false;
     public boolean puzzleFibonacciSolved = false;
+    public float playerX;
+    public float playerY;
+    public String currentRoomTmxPath;
     
     public SaveData() {
         this.saveTimestamp = System.currentTimeMillis();
@@ -4652,6 +4844,13 @@ public class DungeonScreen extends InputAdapter implements Screen {
         this.player = new Rectangle(0, 0, PLAYER_SIZE, PLAYER_SIZE);
     }
 
+    public Rectangle getPlayer() {
+        return player;
+    }
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+
     // ... (rest of the constructor and other methods are unchanged) ...
 
     @Override
@@ -4746,6 +4945,14 @@ public class DungeonScreen extends InputAdapter implements Screen {
         playerAnimation = new Animation<>(0.1f, walkFrames);
         stateTime = 0f;
         AudioManager.getInstance().playMusic("audio/proximity to the inevitable.mp3", true);
+        if (game.getNextPlayerPosition() != null) {
+            Room loadedRoom = roomGraph.findRoomByTmxPath(game.getNextRoomTmxPath());
+            if (loadedRoom != null) {
+                this.currentRoom = loadedRoom;
+            }
+            player.setPosition(game.getNextPlayerPosition().x, game.getNextPlayerPosition().y);
+            game.clearNextSpawnPoint();
+        }
     }
 
     private void loadMap(String tmxPath) {
@@ -5114,17 +5321,23 @@ public class DungeonScreen extends InputAdapter implements Screen {
 package com.dimmingechoes.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Align;
-import com.dimmingechoes.manager.AudioManager;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.AudioManager;
 
 public class EndingScreen implements Screen {
     private final TheDimmingEcho game;
@@ -5134,20 +5347,35 @@ public class EndingScreen implements Screen {
     private final SpriteBatch batch;
     private final BitmapFont font;
     private BitmapFont promptFont;
-    private float fadeAlpha = 0f;
-    private float fadeTimer = 0f;
-    private static final float FADE_IN_DURATION = 2.0f;
-    private float timeOnScreen = 0f;
+
+    private Texture endingTexture;
+    private OrthographicCamera camera;
+    private Viewport viewport;
+
+    private float imageFadeAlpha = 0f;
+    private float textFadeAlpha = 0f;
+    private float timer = 0f;
+
+    private static final float IMAGE_FADE_IN_DURATION = 2.0f;
+    private static final float TEXT_FADE_IN_DELAY = IMAGE_FADE_IN_DURATION + 1.0f;
+    private static final float TEXT_FADE_IN_DURATION = 1.5f;
+    private static final float PROMPT_DELAY = TEXT_FADE_IN_DELAY + TEXT_FADE_IN_DURATION + 1.0f;
+
+    private boolean imageFadeInDone = false;
+    private boolean textFadeInDone = false;
     private boolean showReturnPrompt = false;
+
     private float typewriterProgress = 0f;
     private static final float TYPEWRITER_SPEED = 40f; // chars/sec
-    private boolean narrationDone = false;
-    private static final float PROMPT_DELAY = 1.5f;
 
     public EndingScreen(TheDimmingEcho game, String endingID) {
         this.game = game;
         this.endingID = endingID;
         this.batch = new SpriteBatch();
+
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("LibertinusMono-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 28;
@@ -5156,7 +5384,7 @@ public class EndingScreen implements Screen {
         parameter.shadowOffsetX = 2;
         parameter.shadowOffsetY = 2;
         this.font = generator.generateFont(parameter);
-        // Prompt font
+
         FreeTypeFontGenerator.FreeTypeFontParameter promptParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
         promptParam.size = 22;
         promptParam.color = Color.LIGHT_GRAY;
@@ -5165,95 +5393,150 @@ public class EndingScreen implements Screen {
         promptParam.shadowOffsetY = 2;
         this.promptFont = generator.generateFont(promptParam);
         generator.dispose();
-        selectEndingText(endingID);
     }
 
-    private void selectEndingText(String id) {
+    private void setupEnding(String id) {
+        String imagePath = "";
+        String musicPath = "";
         switch (id) {
             case "FADE":
                 narrationText = "You gave everything you could. The echoes fade, but peace settles in the silence. The world is lighter, if only for a moment.";
                 finalLineText = "Ending: The Fading Light";
+                imagePath = "ending1.jpeg";
+                musicPath = "ending1.mp3";
                 break;
             case "STONE":
                 narrationText = "You kept the last piece for yourself. The echoes remain, unresolved. The world outside is unchanged, but you carry the weight within.";
                 finalLineText = "Ending: The Stone Heart";
+                imagePath = "ending2.jpeg";
+                musicPath = "ending2.mp3";
                 break;
             case "VOID":
                 narrationText = "You gave until there was nothing left. The echoes vanish, and so do you. In the void, there is neither pain nor memory.";
                 finalLineText = "Ending: The Vanishing";
+                imagePath = "ending3.jpeg";
+                musicPath = "ending3.mp3";
                 break;
             case "NOMATTER":
                 narrationText = "You walked these halls untouched, never giving nor losing. The world remains as it was, and so do you. Some stories end before they begin.";
                 finalLineText = "Ending: A Place That No Longer Exists";
+                imagePath = "ending4.jpeg";
+                musicPath = "ending4.mp3";
+                break;
+            case "PARTIAL":
+                narrationText = "You restored some, but not all, of the echoes of yourself. You are no longer whole, but you are not entirely empty. The pain of some memories has returned, but with it, flickers of warmth. The dungeon of your soul does not crumble, nor does it bloom. It remains, a quiet, broken monument to what was lost and what was reclaimed. You find a fragile peace in the twilight of your memories, forever caught between the sorrow of forgetting and the pain of remembering.";
+                finalLineText = "Ending: The Echoes That Linger";
+                imagePath = "ending5.png";
+                musicPath = "ending5.mp3";
                 break;
             case "FAILURE":
                 narrationText = "You faltered, and the echoes slipped away. Some things cannot be reclaimed. The silence is absolute.";
                 finalLineText = "Ending: Lost to Silence";
+                imagePath = "endingFail.jpeg";
+                musicPath = "endingFail.mp3";
                 break;
             default:
                 narrationText = "The story ends, but the echoes remain.";
                 finalLineText = "Ending: Unknown";
+                imagePath = "endingFail.jpeg";
+                musicPath = "endingFail.mp3";
         }
-    }
-
-    public void dispose() {
-        batch.dispose();
-        font.dispose();
-        if (promptFont != null) promptFont.dispose();
+        if (!imagePath.isEmpty()) {
+            endingTexture = new Texture(Gdx.files.internal(imagePath));
+        }
+        if (!musicPath.isEmpty()) {
+            AudioManager.getInstance().playMusic("audio/" + musicPath, false);
+        }
     }
 
     @Override
     public void show() {
-        fadeAlpha = 0f;
-        fadeTimer = 0f;
-        timeOnScreen = 0f;
-        typewriterProgress = 0f;
-        narrationDone = false;
-        showReturnPrompt = false;
+        setupEnding(this.endingID);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        fadeTimer += delta;
-        timeOnScreen += delta;
-        if (fadeAlpha < 1f) {
-            fadeAlpha = Math.min(1f, fadeTimer / FADE_IN_DURATION);
+        timer += delta;
+
+        // Update animations
+        if (!imageFadeInDone) {
+            imageFadeAlpha = Math.min(1f, timer / IMAGE_FADE_IN_DURATION);
+            if (imageFadeAlpha >= 1f) imageFadeInDone = true;
         }
-        // Typewriter effect
-        if (!narrationDone) {
-            typewriterProgress += TYPEWRITER_SPEED * delta;
-            if (typewriterProgress >= narrationText.length()) {
-                typewriterProgress = narrationText.length();
-                narrationDone = true;
-            }
+        if (imageFadeInDone && !textFadeInDone) {
+            float textProgress = (timer - TEXT_FADE_IN_DELAY) / TEXT_FADE_IN_DURATION;
+            textFadeAlpha = Math.min(1f, textProgress);
+            if (textFadeAlpha >= 1f) textFadeInDone = true;
         }
-        if (narrationDone && timeOnScreen > PROMPT_DELAY + (narrationText.length() / TYPEWRITER_SPEED)) {
+        if (textFadeInDone && timer >= PROMPT_DELAY) {
             showReturnPrompt = true;
         }
+
+        // --- Rendering Logic ---
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.setProjectionMatrix(camera.combined);
+
+        // Remove all blurShader, fboA, fboB, and blurRadius logic. Only use a fade-in for the image.
         batch.begin();
-        font.setColor(1, 1, 1, fadeAlpha);
-        String toShow = narrationText.substring(0, Math.min((int)typewriterProgress, narrationText.length()));
-        font.draw(batch, toShow, 0, Gdx.graphics.getHeight() / 2f + 40, Gdx.graphics.getWidth(), Align.center, true);
-        if (narrationDone) {
-            font.draw(batch, finalLineText, 0, Gdx.graphics.getHeight() / 2f - 40, Gdx.graphics.getWidth(), Align.center, true);
+        batch.setColor(1, 1, 1, imageFadeAlpha);
+        if (endingTexture != null) {
+            batch.draw(endingTexture, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
         }
+        batch.setColor(Color.WHITE);
+        batch.end();
+
+        // --- Text Rendering ---
+        batch.begin();
+        if (textFadeInDone) {
+            int charsToShow = Math.min((int)typewriterProgress, narrationText.length());
+            font.setColor(1, 1, 1, textFadeAlpha);
+            font.draw(batch, narrationText.substring(0, charsToShow), 0, Gdx.graphics.getHeight() / 2f + 60, Gdx.graphics.getWidth(), Align.center, true);
+            if (charsToShow == narrationText.length()) {
+                font.draw(batch, finalLineText, 0, Gdx.graphics.getHeight() / 2f - 60, Gdx.graphics.getWidth(), Align.center, true);
+            }
+        }
+
         if (showReturnPrompt) {
-            promptFont.setColor(1, 1, 1, fadeAlpha);
-            promptFont.draw(batch, "Press ENTER to return to Main Menu", 0, 60, Gdx.graphics.getWidth(), Align.center, true);
+            promptFont.setColor(1, 1, 1, 1);
+            promptFont.draw(batch, "Press ENTER to return to Main Menu", 0, 80, Gdx.graphics.getWidth(), Align.center, true);
         }
         batch.end();
+
         if (showReturnPrompt && Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && game != null) {
             game.setScreen(new MainMenuScreen(game));
         }
+
+        if (textFadeInDone && typewriterProgress < narrationText.length()) {
+            typewriterProgress += TYPEWRITER_SPEED * delta;
+        }
     }
 
-    @Override public void resize(int width, int height) {}
-    @Override public void hide() {}
-    @Override public void pause() {}
-    @Override public void resume() {}
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+    }
 
+    @Override
+    public void hide() {
+        dispose();
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        font.dispose();
+        if (promptFont != null) promptFont.dispose();
+        if (endingTexture != null) endingTexture.dispose();
+        AudioManager.getInstance().stopMusic();
+    }
+
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
 }
 
 ================================================================================
@@ -5712,7 +5995,7 @@ public class MainMenuScreen implements Screen {
             Gdx.app.log("MainMenuScreen", "Background image not found: menu_bg.png");
             backgroundLoaded = false;
         }
-        AudioManager.getInstance().playMusic("audio/menu_theme.mp3", true);
+        AudioManager.getInstance().playMusic("mainmenu.mp3", true);
     }
 
     @Override
@@ -5937,7 +6220,7 @@ public class PauseMenuScreen implements Screen {
             slotButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    game.saveGame(slot);
+                    game.saveGame(slot, dungeonScreen);
                     showMainMenu();
                 }
             });

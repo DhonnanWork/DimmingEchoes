@@ -4,6 +4,8 @@ package com.dimmingechoes.dungeon;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoomGraph {
 
@@ -15,6 +17,8 @@ public class RoomGraph {
     private static final float WALL_THICKNESS = 32;
     private static final float DOOR_WIDTH = 120;
     private static final float DOOR_THICKNESS = 32;
+
+    private List<Room> rooms = new ArrayList<>();
 
     public RoomGraph() {
         generateRooms();
@@ -31,6 +35,13 @@ public class RoomGraph {
         Room battle = new Room("Tiled/Kanan.tmx", RoomType.EMPTY, new Color(0.3f, 0.1f, 0.1f, 1));
         Room finalRoomTrigger = new Room("", RoomType.FINAL, new Color(0.1f, 0.1f, 0.1f, 1));
 
+        // When creating a Room, add it to the list
+        // Example: rooms.add(newRoom);
+        rooms.add(start);
+        rooms.add(memory);
+        rooms.add(battle);
+        rooms.add(finalRoomTrigger);
+
         // Step 2: Define the connections (DoorZones) between rooms.
         start.addDoorZone(new DoorZone(new Rectangle(0, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), memory, DoorZone.Direction.LEFT));
         start.addDoorZone(new DoorZone(new Rectangle(WORLD_WIDTH - DOOR_THICKNESS, (WORLD_HEIGHT / 2 - DOOR_WIDTH / 2) + 60, DOOR_THICKNESS, DOOR_WIDTH), battle, DoorZone.Direction.RIGHT));
@@ -42,5 +53,14 @@ public class RoomGraph {
         // The TMX file is now the single source of truth for NPC placement.
 
         this.startingRoom = start;
+    }
+
+    public Room findRoomByTmxPath(String tmxPath) {
+        for (Room room : rooms) {
+            if (room.getTmxPath().equals(tmxPath)) {
+                return room;
+            }
+        }
+        return null;
     }
 }

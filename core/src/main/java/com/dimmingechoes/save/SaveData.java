@@ -10,6 +10,9 @@ public class SaveData {
     public boolean puzzleWordleSolved = false;
     public boolean puzzleWordLadderSolved = false;
     public boolean puzzleFibonacciSolved = false;
+    public float playerX;
+    public float playerY;
+    public String currentRoomTmxPath;
     
     public SaveData() {
         this.saveTimestamp = System.currentTimeMillis();

@@ -148,7 +148,7 @@ public class PauseMenuScreen implements Screen {
             slotButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    game.saveGame(slot);
+                    game.saveGame(slot, dungeonScreen);
                     showMainMenu();
                 }
             });
