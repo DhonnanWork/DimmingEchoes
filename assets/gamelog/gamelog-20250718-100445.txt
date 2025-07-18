@@ -1,0 +1,7 @@
+[2025-07-18 10:04:45] Game application started.
+[2025-07-18 10:04:45] Loading game from slot: 1
+[2025-07-18 10:04:47] New game started.
+[2025-07-18 10:04:49] Player started dialogue with 'The Laughing One'.
+[2025-07-18 10:04:50] Player chose dialogue option: 'Ask about this place.'
+[2025-07-18 10:04:50] Player chose dialogue option: 'I see.'
+[2025-07-18 10:04:52] Player started dialogue with 'The Whisper'.

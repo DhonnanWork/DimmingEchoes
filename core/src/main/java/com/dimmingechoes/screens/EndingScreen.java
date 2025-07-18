@@ -41,6 +41,9 @@ public class EndingScreen implements Screen {
     private boolean allChunksDone = false;
     private boolean showReturnPrompt = false;
 
+    // Add a mapping for ending labels
+    private String endingLabel = "";
+
     public EndingScreen(TheDimmingEcho game, String endingID) {
         this.game = game;
         this.endingID = endingID;
@@ -80,6 +83,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "The Keeper is gone, but the love that broke their heart is finally free to heal.";
                 imagePath = "ending1.jpeg";
                 musicPath = "ending1.mp3";
+                endingLabel = "Ending 1: The Memory That Fades";
                 break;
             case "STONE": // The Keeper Becomes Stone
                 narrationChunks = new String[]{
@@ -90,6 +94,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "In the heart of the ruin, you stand eternal—a monument to the fear of feeling.";
                 imagePath = "ending2.jpeg";
                 musicPath = "ending2.mp3";
+                endingLabel = "Ending 2: The Keeper Becomes Stone";
                 break;
             case "NOMATTER": // A Place That No Longer Exists
                 narrationChunks = new String[]{
@@ -100,6 +105,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "You have become the answer to a question no one can feel.";
                 imagePath = "ending3.jpeg";
                 musicPath = "ending3.mp3";
+                endingLabel = "Ending 3: A Place That No Longer Exists";
                 break;
             case "VOID": // Petals in the Void
                 narrationChunks = new String[]{
@@ -110,6 +116,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "The dungeon is no longer a place of sorrow, but a garden of memory, tended by the ghost of the one who gave everything to let it grow.";
                 imagePath = "ending4.jpeg";
                 musicPath = "ending4.mp3";
+                endingLabel = "Ending 4: Petals in the Void";
                 break;
             case "PARTIAL": // The Echoes That Linger
                 narrationChunks = new String[]{
@@ -119,6 +126,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "You find a fragile peace in the twilight of your memories, forever caught between the sorrow of forgetting and the pain of remembering.";
                 imagePath = "ending5.jpeg";
                 musicPath = "ending5.mp3";
+                endingLabel = "Ending 5: The Echoes That Linger";
                 break;
             case "FAILURE": // The Echoes Take Their Toll
                 narrationChunks = new String[]{
@@ -129,12 +137,14 @@ public class EndingScreen implements Screen {
                 finalLineText = "You came to heal a broken soul, and instead became just another one of its scars.";
                 imagePath = "endingFail.jpeg";
                 musicPath = "audio/ds vu.mp3";
+                endingLabel = "Ending X: The Echoes Take Their Toll";
                 break;
             default:
                 narrationChunks = new String[]{"The story ends, but the echoes remain."};
                 finalLineText = "Ending: Unknown";
                 imagePath = "endingFail.jpeg";
                 musicPath = "audio/ds vu.mp3";
+                endingLabel = "Ending: Unknown";
                 break;
         }
         if (!imagePath.isEmpty()) {
@@ -222,6 +232,12 @@ public class EndingScreen implements Screen {
              promptFont.draw(batch, "Press any key to continue...", 0, 80, viewport.getWorldWidth(), Align.center, true);
         }
 
+        batch.end();
+        // Draw ending label at the bottom 5% of the screen
+        batch.begin();
+        font.setColor(1, 1, 1, fadeAlpha);
+        float labelY = viewport.getWorldHeight() * 0.05f + font.getCapHeight();
+        font.draw(batch, endingLabel, 0, labelY, viewport.getWorldWidth(), Align.center, false);
         batch.end();
     }
 

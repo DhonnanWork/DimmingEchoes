@@ -91,6 +91,12 @@ public class DungeonScreen extends InputAdapter implements Screen {
     // --- NEW: ShapeRenderer for Debugging ---
     private final ShapeRenderer debugRenderer;
 
+    // --- Add fields for the custom ending choice UI ---
+    private boolean showEndingChoiceOverlay = false;
+    private String[] endingChoices = {"Keep the final crystal", "Give the final crystal", "Ignore the voices and keep walking ahead"};
+    private int endingChoiceIndex = 0;
+    private DoorZone lastTriggeredTopDoor = null;
+
     public DungeonScreen(TheDimmingEcho game) {
         this.game = game;
         shapeRenderer = new ShapeRenderer();
@@ -192,9 +198,9 @@ public class DungeonScreen extends InputAdapter implements Screen {
     @Override
     public void render(float delta) {
         stateTime += delta;
-        if (currentDialogueNode == null) {
+        if (currentDialogueNode == null && !showEndingChoiceOverlay) {
             handleMovement(delta);
-        } else {
+        } else if (currentDialogueNode != null) {
             updateTypingEffect(delta);
         }
 
@@ -224,6 +230,28 @@ public class DungeonScreen extends InputAdapter implements Screen {
             shapeRenderer.rect(dialogueTable.getX(), dialogueTable.getY(), dialogueTable.getWidth(), dialogueTable.getHeight());
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
+
+        // Draw ending choice overlay if needed
+        if (showEndingChoiceOverlay) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            shapeRenderer.setProjectionMatrix(gameCamera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(0, 0, 0, 0.95f);
+            shapeRenderer.rect(0, 0, gameViewport.getWorldWidth(), gameViewport.getWorldHeight());
+            shapeRenderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+            spriteBatch.setProjectionMatrix(gameCamera.combined);
+            spriteBatch.begin();
+            BitmapFont font = skin.getFont("default-font");
+            float yStart = gameViewport.getWorldHeight() / 2f + 40;
+            for (int i = 0; i < endingChoices.length; i++) {
+                font.setColor(i == endingChoiceIndex ? Color.GOLD : Color.LIGHT_GRAY);
+                font.draw(spriteBatch, endingChoices[i], 0, yStart - i * 40, gameViewport.getWorldWidth(), Align.center, false);
+            }
+            font.setColor(Color.WHITE);
+            font.draw(spriteBatch, "Use UP/DOWN and ENTER to choose", 0, 80, gameViewport.getWorldWidth(), Align.center, false);
+            spriteBatch.end();
         }
 
         uiStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
@@ -394,6 +422,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
     }
 
     private void handleMovement(float delta) {
+        if (showEndingChoiceOverlay) return; // Prevent movement while overlay is up
         float moveAmount = PLAYER_SPEED * delta;
         float oldX = player.x;
         float oldY = player.y;
@@ -403,8 +432,15 @@ public class DungeonScreen extends InputAdapter implements Screen {
         if (moveUp) player.y += moveAmount;
         if (moveDown) player.y -= moveAmount;
 
+        // Intercept top door in the middle room
         for (DoorZone door : currentRoom.getDoorZones()) {
             if (player.overlaps(door.bounds)) {
+                if (currentRoom.getRoomType() == RoomType.START && door.entryDirection == DoorZone.Direction.TOP && !showEndingChoiceOverlay) {
+                    showEndingChoiceOverlay = true;
+                    endingChoiceIndex = 0;
+                    lastTriggeredTopDoor = door;
+                    return;
+                }
                 changeRoom(door);
                 return;
             }
@@ -455,6 +491,28 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (showEndingChoiceOverlay) {
+            if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+                endingChoiceIndex = (endingChoiceIndex - 1 + endingChoices.length) % endingChoices.length;
+                return true;
+            }
+            if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
+                endingChoiceIndex = (endingChoiceIndex + 1) % endingChoices.length;
+                return true;
+            }
+            if (keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {
+                showEndingChoiceOverlay = false;
+                if (endingChoices[endingChoiceIndex].equals("Keep the final crystal")) {
+                    triggerEndingWithChoice("Keep it");
+                } else if (endingChoices[endingChoiceIndex].equals("Give the final crystal")) {
+                    triggerEndingWithChoice("Give the final crystal");
+                } else {
+                    triggerEndingWithChoice("Ignore the voices and keep walking ahead");
+                }
+                return true;
+            }
+            return true;
+        }
         if (currentDialogueNode != null) return false;
         switch (keycode) {
             case Input.Keys.W: case Input.Keys.UP: moveUp = true; break;
@@ -622,33 +680,46 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
-
         int crystalsUsed = game.getUsageLog().totalGiven();
         int crystalsLost = game.getCrystalsLostToFailure();
-
+        // Failure ending
         if (crystalsLost > 0) {
             game.setScreen(new EndingScreen(game, "FAILURE"));
             endingShown = true;
             return;
         }
-
+        // Skip/Ignore logic
+        if (choice.equals("Ignore the voices and keep walking ahead")) {
+            if (crystalsUsed == 0) {
+                game.setScreen(new EndingScreen(game, "NOMATTER"));
+            } else {
+                game.setScreen(new EndingScreen(game, "PARTIAL"));
+            }
+            endingShown = true;
+            return;
+        }
+        // Keep logic
+        if (choice.equals("Keep it")) {
+            if (crystalsUsed == 0) {
+                game.setScreen(new EndingScreen(game, "STONE"));
+            } else {
+                game.setScreen(new EndingScreen(game, "PARTIAL"));
+            }
+            endingShown = true;
+            return;
+        }
+        // Give logic
         if (choice.equals("Give the final crystal")) {
-            if (crystalsUsed == 3) { // Helped all NPCs
-                game.setScreen(new EndingScreen(game, "VOID")); // Petals in the Void
-            } else if (crystalsUsed == 0) { // Helped no NPCs
-                game.setScreen(new EndingScreen(game, "FADE")); // The Memory That Fades
-            } else { // Helped some NPCs (1 or 2)
-                // This is a selfless act, but incomplete. Let's make it a more hopeful partial ending.
+            if (crystalsUsed == 4) {
+                game.setScreen(new EndingScreen(game, "VOID"));
+            } else if (crystalsUsed > 0 && crystalsUsed < 4) {
+                game.setScreen(new EndingScreen(game, "PARTIAL"));
+            } else if (crystalsUsed == 0) {
                 game.setScreen(new EndingScreen(game, "FADE"));
             }
-        } else { // "Keep it" was chosen
-            if (crystalsUsed == 0) { // Helped no NPCs
-                game.setScreen(new EndingScreen(game, "STONE")); // The Keeper Becomes Stone
-            } else { // Helped 1 or 2 NPCs
-                game.setScreen(new EndingScreen(game, "PARTIAL")); // The Echoes That Linger
-            }
+            endingShown = true;
+            return;
         }
-        endingShown = true;
     }
 
     private void updateChoiceHighlight() {
