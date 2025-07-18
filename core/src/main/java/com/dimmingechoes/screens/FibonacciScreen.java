@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.GameLogger;
 
 public class FibonacciScreen implements Screen {
     private final TheDimmingEcho game;
@@ -29,6 +30,8 @@ public class FibonacciScreen implements Screen {
     private boolean puzzleOver = false;
     private float transitionTimer = 0f;
     private static final float TRANSITION_DELAY = 2.0f;
+    private int incorrectAttempts = 0;
+    private static final int MAX_ATTEMPTS = 3;
 
     public FibonacciScreen(TheDimmingEcho game, DungeonScreen dungeonScreen) {
         this.game = game;
@@ -87,7 +90,17 @@ public class FibonacciScreen implements Screen {
                 infoLabel.setText("Correct!");
                 puzzleOver = true;
                 transitionTimer = TRANSITION_DELAY;
+                GameLogger.getInstance().log("Player solved the Fibonacci puzzle.");
             } else {
+                incorrectAttempts++;
+                if (incorrectAttempts >= MAX_ATTEMPTS) {
+                    infoLabel.setText("Too many wrong guesses.");
+                    puzzleOver = true;
+                    transitionTimer = TRANSITION_DELAY;
+                    game.logFailure();
+                    GameLogger.getInstance().log("Player failed Fibonacci puzzle (too many attempts).");
+                    return;
+                }
                 infoLabel.setText("That's not it. Try again.");
                 answerField.setText("");
             }

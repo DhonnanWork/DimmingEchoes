@@ -49,6 +49,7 @@ import com.dimmingechoes.dungeon.RoomType;
 import com.dimmingechoes.entities.NPC;
 import com.badlogic.gdx.math.MathUtils;
 import com.dimmingechoes.manager.AudioManager;
+import com.dimmingechoes.manager.GameLogger;
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
@@ -439,12 +440,17 @@ public class DungeonScreen extends InputAdapter implements Screen {
                     endingShown = true;
                     return;
                 }
+                // If dialogue is not visible, force ending (limbo fix)
+                if (!dialogueTable.isVisible()) {
+                    triggerEndingWithChoice(getFinalChoiceMade());
+                    return;
+                }
                 presentFinalChoice();
             }
             return;
         }
-
         loadMap(currentRoom.getTmxPath());
+        GameLogger.getInstance().log("Player entered room: " + currentRoom.getTmxPath());
     }
 
     @Override
@@ -455,7 +461,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
             case Input.Keys.S: case Input.Keys.DOWN: moveDown = true; break;
             case Input.Keys.A: case Input.Keys.LEFT: moveLeft = true; break;
             case Input.Keys.D: case Input.Keys.RIGHT: moveRight = true; break;
-            case Input.Keys.ESCAPE: game.setScreen(new PauseMenuScreen(game, this)); return true;
+            case Input.Keys.ESCAPE:
+                GameLogger.getInstance().log("Game paused.");
+                game.setScreen(new PauseMenuScreen(game, this));
+                return true;
             case Input.Keys.SPACE:
                 for (NPC npc : currentRoom.getNpcs()) {
                     if (isNear(npc)) {
@@ -495,6 +504,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         } else {
             populateChoices();
         }
+        GameLogger.getInstance().log("Player started dialogue with '" + npc.getName() + "'.");
     }
 
     private void endDialogue() {
@@ -509,20 +519,40 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private void processDialogueChoice(DialogueChoice choice) {
         choicesTable.clear();
         uiStage.setKeyboardFocus(null);
+        GameLogger.getInstance().log("Player chose dialogue option: '" + choice.choiceText + "'");
+
+        if (dialogueNPC != null && dialogueNPC.getName().equals("FinalChoice")) {
+            if (choice.choiceText.equals("Give the final crystal") || choice.choiceText.equals("Keep it")) {
+                finalChoiceMade = choice.choiceText;
+            }
+            // If player chooses skip at any point, immediately trigger ending
+            if (choice.choiceText.equals("[Skip to Ending]")) {
+                triggerEndingWithChoice(getFinalChoiceMade());
+                return;
+            }
+            // If this is the final '...' node, trigger ending
+            if (choice.choiceText.equals("...")) {
+                triggerEndingWithChoice(getFinalChoiceMade());
+                return;
+            }
+        }
 
         if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl")) {
             if (choice.choiceText.equals("[Attempt the word puzzle]")) {
                 endDialogue();
+                GameLogger.getInstance().log("Player is attempting the Wordle puzzle.");
                 game.setScreen(new WordleScreen(game, this));
                 return;
             }
             if (choice.choiceText.equals("[Attempt the ladder puzzle]")) {
                 endDialogue();
+                GameLogger.getInstance().log("Player is attempting the Word Ladder puzzle.");
                 game.setScreen(new WordLadderScreen(game, this));
                 return;
             }
             if (choice.choiceText.equals("[Attempt the number puzzle]")) {
                 endDialogue();
+                GameLogger.getInstance().log("Player is attempting the Fibonacci puzzle.");
                 game.setScreen(new FibonacciScreen(game, this));
                 return;
             }
@@ -534,6 +564,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
                 if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
                     if (game.getCrystalInventory().useCrystal()) {
                         game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+                        GameLogger.getInstance().log("Player gave a crystal to '" + dialogueNPC.getName() + "'.");
                     } else {
                         endDialogue();
                         return;
@@ -570,9 +601,19 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void presentFinalChoice() {
         DialogueNode end = new DialogueNode("...", null, false, false, true);
-        DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
-        DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{ new DialogueChoice("...", end) }, false, false, true);
-        DialogueChoice[] choices = { new DialogueChoice("Give the final crystal", giveChoice), new DialogueChoice("Keep it", keepChoice) };
+        DialogueNode giveChoice = new DialogueNode("You offer the final crystal. The echoes grow silent...", new DialogueChoice[]{
+            new DialogueChoice("...", end),
+            new DialogueChoice("[Skip to Ending]", null)
+        }, false, false, true);
+        DialogueNode keepChoice = new DialogueNode("You keep the final crystal. The silence lingers.", new DialogueChoice[]{
+            new DialogueChoice("...", end),
+            new DialogueChoice("[Skip to Ending]", null)
+        }, false, false, true);
+        DialogueChoice[] choices = {
+            new DialogueChoice("Give the final crystal", giveChoice),
+            new DialogueChoice("Keep it", keepChoice),
+            new DialogueChoice("[Skip to Ending]", null)
+        };
         startDialogue(new NPC("FinalChoice", RoomType.FINAL, 0, 0, 0) {
             @Override public DialogueNode getDialogue(TheDimmingEcho game) { return new DialogueNode("At the threshold, a choice: Will you give the final crystal, or keep it?", choices, false, false, false); }
             @Override public String getName() { return "???"; }
@@ -581,31 +622,32 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
+
         int crystalsUsed = game.getUsageLog().totalGiven();
-        int crystalsLostToFailure = game.getCrystalsLostToFailure();
-        if (crystalsLostToFailure > 0) {
+        int crystalsLost = game.getCrystalsLostToFailure();
+
+        if (crystalsLost > 0) {
             game.setScreen(new EndingScreen(game, "FAILURE"));
             endingShown = true;
             return;
         }
+
         if (choice.equals("Give the final crystal")) {
-            crystalsUsed++;
-            if (crystalsUsed == 5) {
-                game.setScreen(new EndingScreen(game, "VOID"));
-                endingShown = true;
-                return;
-            } else {
+            if (crystalsUsed == 3) { // Helped all NPCs
+                game.setScreen(new EndingScreen(game, "VOID")); // Petals in the Void
+            } else if (crystalsUsed == 0) { // Helped no NPCs
+                game.setScreen(new EndingScreen(game, "FADE")); // The Memory That Fades
+            } else { // Helped some NPCs (1 or 2)
+                // This is a selfless act, but incomplete. Let's make it a more hopeful partial ending.
                 game.setScreen(new EndingScreen(game, "FADE"));
-                endingShown = true;
-                return;
             }
-        } else if (choice.equals("Keep it")) {
-            game.setScreen(new EndingScreen(game, "STONE"));
-            endingShown = true;
-            return;
+        } else { // "Keep it" was chosen
+            if (crystalsUsed == 0) { // Helped no NPCs
+                game.setScreen(new EndingScreen(game, "STONE")); // The Keeper Becomes Stone
+            } else { // Helped 1 or 2 NPCs
+                game.setScreen(new EndingScreen(game, "PARTIAL")); // The Echoes That Linger
+            }
         }
-        // Fallback
-        game.setScreen(new EndingScreen(game, "FAILURE"));
         endingShown = true;
     }
 
@@ -648,4 +690,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() { AudioManager.getInstance().stopMusic(); }
+
+    // Helper to remember which final choice was made (Give or Keep)
+    private String finalChoiceMade = null;
+    private String getFinalChoiceMade() {
+        return finalChoiceMade != null ? finalChoiceMade : "Give the final crystal";
+    }
 }

@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.GameLogger;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -179,10 +180,13 @@ public class WordLadderScreen implements Screen {
             infoLabel.setText("You solved it!");
             puzzleOver = true;
             transitionTimer = TRANSITION_DELAY;
+            GameLogger.getInstance().log("Player solved the Word Ladder puzzle.");
         } else if (steps == MAX_STEPS) {
             infoLabel.setText("Game Over! Too many steps.");
             gameOver = true;
             transitionTimer = TRANSITION_DELAY;
+            GameLogger.getInstance().log("Player failed the Word Ladder puzzle (too many steps).");
+            game.logFailure();
         }
     }
 

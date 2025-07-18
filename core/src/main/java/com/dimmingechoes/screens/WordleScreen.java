@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.GameLogger;
 
 public class WordleScreen implements Screen {
     private static final String TARGET_WORD = "BOOK";
@@ -198,22 +199,21 @@ public class WordleScreen implements Screen {
                 }
             }
         }
-        updateGrid();
         if (guess.equals(TARGET_WORD)) {
+            infoLabel.setText("You solved it!");
             puzzleOver = true;
             puzzleWon = true;
-            infoLabel.setText("Correct! It was BOOK.");
-            game.setPuzzleWordleSolved(true);
             transitionTimer = TRANSITION_DELAY;
-            return;
-        }
-        guessCount++;
-        currentGuess.setLength(0);
-        if (guessCount >= MAX_GUESSES) {
+            GameLogger.getInstance().log("Player solved the Wordle puzzle.");
+        } else if (++guessCount >= MAX_GUESSES) {
+            infoLabel.setText("Game Over! The word was: " + TARGET_WORD);
             puzzleOver = true;
             puzzleWon = false;
-            infoLabel.setText("Out of guesses! The answer was BOOK.");
             transitionTimer = TRANSITION_DELAY;
+            GameLogger.getInstance().log("Player failed the Wordle puzzle.");
+        } else {
+            currentGuess.setLength(0);
+            updateGrid();
         }
     }
 

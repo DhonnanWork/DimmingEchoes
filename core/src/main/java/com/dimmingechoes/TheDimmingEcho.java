@@ -9,6 +9,7 @@ import com.dimmingechoes.logic.CrystalInventory;
 import com.dimmingechoes.logic.UsageLog;
 import com.dimmingechoes.screens.MainMenuScreen;
 import com.badlogic.gdx.math.Vector2;
+import com.dimmingechoes.manager.GameLogger;
 
 public class TheDimmingEcho extends Game {
 
@@ -23,6 +24,8 @@ public class TheDimmingEcho extends Game {
 
     @Override
     public void create() {
+        GameLogger.getInstance().init();
+        GameLogger.getInstance().log("Game application started.");
         crystalInventory = new CrystalInventory(5);
         usageLog = new UsageLog();
 
@@ -68,6 +71,7 @@ public class TheDimmingEcho extends Game {
         data.playerY = dungeonScreen.getPlayer().y;
         data.currentRoomTmxPath = dungeonScreen.getCurrentRoom().getTmxPath();
         SaveManager.save(data, slot);
+        GameLogger.getInstance().log("Saved game to slot: " + slot);
     }
 
     public void loadGame(int slot) {
@@ -83,6 +87,7 @@ public class TheDimmingEcho extends Game {
             this.puzzleFibonacciSolved = data.puzzleFibonacciSolved;
             this.nextPlayerPosition = new Vector2(data.playerX, data.playerY);
             this.nextRoomTmxPath = data.currentRoomTmxPath;
+            GameLogger.getInstance().log("Loading game from slot: " + slot);
         }
     }
 
@@ -111,5 +116,12 @@ public class TheDimmingEcho extends Game {
         puzzleWordLadderSolved = false;
         puzzleFibonacciSolved = false;
         clearNextSpawnPoint();
+        GameLogger.getInstance().log("New game started.");
+    }
+
+    @Override
+    public void dispose() {
+        GameLogger.getInstance().dispose();
+        super.dispose();
     }
 }

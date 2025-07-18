@@ -185,9 +185,8 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   ├── ending3.mp3
 │   ├── ending4.jpeg
 │   ├── ending4.mp3
-│   ├── ending4.png
+│   ├── ending5.jpeg
 │   ├── ending5.mp3
-│   ├── ending5.png
 │   ├── endingFail.jpeg
 │   ├── libgdx.png
 │   ├── mainmenu.mp3
@@ -238,7 +237,8 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │                       │   └── UsageLog.java
 │                       ├── manager
 │                       │   ├── AudioManager.java
-│                       │   └── BattleManager.java
+│                       │   ├── BattleManager.java
+│                       │   └── GameLogger.java
 │                       ├── save
 │                       │   ├── SaveData.java
 │                       │   └── SaveManager.java
@@ -253,6 +253,8 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │                           ├── PrologueScreen.java
 │                           ├── WordLadderScreen.java
 │                           └── WordleScreen.java
+├── gamelog
+│   └── gamelog.txt
 ├── gradle
 │   ├── gradle-daemon-jvm.properties
 │   └── wrapper
@@ -262,6 +264,17 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 ├── gradlew
 ├── gradlew.bat
 ├── lwjgl3
+│   ├── assets
+│   │   ├── DawnLike
+│   │   │   ├── Characters
+│   │   │   ├── Commissions
+│   │   │   ├── Examples
+│   │   │   ├── GUI
+│   │   │   ├── Items
+│   │   │   └── Objects
+│   │   ├── Tiled
+│   │   ├── audio
+│   │   └── shaders
 │   ├── bin
 │   │   └── main
 │   │       ├── assets.txt
@@ -1262,18 +1275,13 @@ uiskin.png
 
 ================================================================================
 
---- File: .\assets\ending4.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+--- File: .\assets\ending5.jpeg ---
+*** Non-text file detected (.jpeg). Content not displayed. ***
 
 ================================================================================
 
 --- File: .\assets\ending5.mp3 ---
 *** Non-text file detected (.mp3). Content not displayed. ***
-
-================================================================================
-
---- File: .\assets\ending5.png ---
-*** Non-text file detected (.png). Content not displayed. ***
 
 ================================================================================
 
@@ -1330,8 +1338,17 @@ crystalCount: 5
 
 --- File: .\assets\savegame1.json ---
 {
-crystalCount: 5
-saveTimestamp: 1752720247270
+crystalCount: 4
+crystalRecipients: {
+	class: java.util.HashSet
+	items: [
+		The Laughing One
+	]
+}
+saveTimestamp: 1752764308284
+playerX: 451.3206
+playerY: 502.1176
+currentRoomTmxPath: Tiled/Tengah.tmx
 }
 ================================================================================
 
@@ -3372,6 +3389,7 @@ import com.dimmingechoes.logic.CrystalInventory;
 import com.dimmingechoes.logic.UsageLog;
 import com.dimmingechoes.screens.MainMenuScreen;
 import com.badlogic.gdx.math.Vector2;
+import com.dimmingechoes.manager.GameLogger;
 
 public class TheDimmingEcho extends Game {
 
@@ -3386,6 +3404,8 @@ public class TheDimmingEcho extends Game {
 
     @Override
     public void create() {
+        GameLogger.getInstance().init();
+        GameLogger.getInstance().log("Game application started.");
         crystalInventory = new CrystalInventory(5);
         usageLog = new UsageLog();
 
@@ -3431,6 +3451,7 @@ public class TheDimmingEcho extends Game {
         data.playerY = dungeonScreen.getPlayer().y;
         data.currentRoomTmxPath = dungeonScreen.getCurrentRoom().getTmxPath();
         SaveManager.save(data, slot);
+        GameLogger.getInstance().log("Saved game to slot: " + slot);
     }
 
     public void loadGame(int slot) {
@@ -3446,6 +3467,7 @@ public class TheDimmingEcho extends Game {
             this.puzzleFibonacciSolved = data.puzzleFibonacciSolved;
             this.nextPlayerPosition = new Vector2(data.playerX, data.playerY);
             this.nextRoomTmxPath = data.currentRoomTmxPath;
+            GameLogger.getInstance().log("Loading game from slot: " + slot);
         }
     }
 
@@ -3474,6 +3496,13 @@ public class TheDimmingEcho extends Game {
         puzzleWordLadderSolved = false;
         puzzleFibonacciSolved = false;
         clearNextSpawnPoint();
+        GameLogger.getInstance().log("New game started.");
+    }
+
+    @Override
+    public void dispose() {
+        GameLogger.getInstance().dispose();
+        super.dispose();
     }
 }
 
@@ -4223,6 +4252,49 @@ public class BattleManager {
 } 
 ================================================================================
 
+--- File: .\core\src\main\java\com\dimmingechoes\manager\GameLogger.java ---
+package com.dimmingechoes.manager;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class GameLogger {
+    private static GameLogger instance;
+    private FileHandle logFile;
+    private static final String LOG_FILE_PATH = "gamelog/gamelog.txt";
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private GameLogger() {}
+
+    public static GameLogger getInstance() {
+        if (instance == null) {
+            instance = new GameLogger();
+        }
+        return instance;
+    }
+
+    public void init() {
+        // Ensure the gamelog directory exists
+        java.io.File dir = new java.io.File("gamelog");
+        if (!dir.exists()) dir.mkdirs();
+        logFile = com.badlogic.gdx.Gdx.files.absolute(LOG_FILE_PATH);
+        logFile.writeString("", false); // Clear log on start
+    }
+
+    public void log(String message) {
+        if (logFile == null) return;
+        String timestamp = DATE_FORMAT.format(new Date());
+        logFile.writeString("[" + timestamp + "] " + message + "\n", true);
+    }
+
+    public void dispose() {
+        // No explicit cleanup needed for FileHandle appends
+    }
+} 
+================================================================================
+
 --- File: .\core\src\main\java\com\dimmingechoes\save\SaveData.java ---
 package com.dimmingechoes.save;
 
@@ -4714,6 +4786,7 @@ import com.dimmingechoes.dungeon.RoomType;
 import com.dimmingechoes.entities.NPC;
 import com.badlogic.gdx.math.MathUtils;
 import com.dimmingechoes.manager.AudioManager;
+import com.dimmingechoes.manager.GameLogger;
 
 public class DungeonScreen extends InputAdapter implements Screen {
 
@@ -5110,6 +5183,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         }
 
         loadMap(currentRoom.getTmxPath());
+        GameLogger.getInstance().log("Player entered room: " + currentRoom.getTmxPath());
     }
 
     @Override
@@ -5120,7 +5194,10 @@ public class DungeonScreen extends InputAdapter implements Screen {
             case Input.Keys.S: case Input.Keys.DOWN: moveDown = true; break;
             case Input.Keys.A: case Input.Keys.LEFT: moveLeft = true; break;
             case Input.Keys.D: case Input.Keys.RIGHT: moveRight = true; break;
-            case Input.Keys.ESCAPE: game.setScreen(new PauseMenuScreen(game, this)); return true;
+            case Input.Keys.ESCAPE:
+                GameLogger.getInstance().log("Game paused.");
+                game.setScreen(new PauseMenuScreen(game, this));
+                return true;
             case Input.Keys.SPACE:
                 for (NPC npc : currentRoom.getNpcs()) {
                     if (isNear(npc)) {
@@ -5160,6 +5237,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
         } else {
             populateChoices();
         }
+        GameLogger.getInstance().log("Player started dialogue with '" + npc.getName() + "'.");
     }
 
     private void endDialogue() {
@@ -5174,20 +5252,24 @@ public class DungeonScreen extends InputAdapter implements Screen {
     private void processDialogueChoice(DialogueChoice choice) {
         choicesTable.clear();
         uiStage.setKeyboardFocus(null);
+        GameLogger.getInstance().log("Player chose dialogue option: '" + choice.choiceText + "'");
 
         if (dialogueNPC != null && dialogueNPC.getName().equals("The Laughing Girl")) {
             if (choice.choiceText.equals("[Attempt the word puzzle]")) {
                 endDialogue();
+                GameLogger.getInstance().log("Player is attempting the Wordle puzzle.");
                 game.setScreen(new WordleScreen(game, this));
                 return;
             }
             if (choice.choiceText.equals("[Attempt the ladder puzzle]")) {
                 endDialogue();
+                GameLogger.getInstance().log("Player is attempting the Word Ladder puzzle.");
                 game.setScreen(new WordLadderScreen(game, this));
                 return;
             }
             if (choice.choiceText.equals("[Attempt the number puzzle]")) {
                 endDialogue();
+                GameLogger.getInstance().log("Player is attempting the Fibonacci puzzle.");
                 game.setScreen(new FibonacciScreen(game, this));
                 return;
             }
@@ -5199,6 +5281,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
                 if (dialogueNPC != null && !dialogueNPC.hasReceivedCrystal(game)) {
                     if (game.getCrystalInventory().useCrystal()) {
                         game.getUsageLog().logCrystalGiven(dialogueNPC.getName());
+                        GameLogger.getInstance().log("Player gave a crystal to '" + dialogueNPC.getName() + "'.");
                     } else {
                         endDialogue();
                         return;
@@ -5559,6 +5642,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.GameLogger;
 
 public class FibonacciScreen implements Screen {
     private final TheDimmingEcho game;
@@ -5573,6 +5657,8 @@ public class FibonacciScreen implements Screen {
     private boolean puzzleOver = false;
     private float transitionTimer = 0f;
     private static final float TRANSITION_DELAY = 2.0f;
+    private int incorrectAttempts = 0;
+    private static final int MAX_ATTEMPTS = 3;
 
     public FibonacciScreen(TheDimmingEcho game, DungeonScreen dungeonScreen) {
         this.game = game;
@@ -5631,7 +5717,17 @@ public class FibonacciScreen implements Screen {
                 infoLabel.setText("Correct!");
                 puzzleOver = true;
                 transitionTimer = TRANSITION_DELAY;
+                GameLogger.getInstance().log("Player solved the Fibonacci puzzle.");
             } else {
+                incorrectAttempts++;
+                if (incorrectAttempts >= MAX_ATTEMPTS) {
+                    infoLabel.setText("Too many wrong guesses.");
+                    puzzleOver = true;
+                    transitionTimer = TRANSITION_DELAY;
+                    game.logFailure();
+                    GameLogger.getInstance().log("Player failed Fibonacci puzzle (too many attempts).");
+                    return;
+                }
                 infoLabel.setText("That's not it. Try again.");
                 answerField.setText("");
             }
@@ -6489,6 +6585,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.GameLogger;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -6651,10 +6748,13 @@ public class WordLadderScreen implements Screen {
             infoLabel.setText("You solved it!");
             puzzleOver = true;
             transitionTimer = TRANSITION_DELAY;
+            GameLogger.getInstance().log("Player solved the Word Ladder puzzle.");
         } else if (steps == MAX_STEPS) {
             infoLabel.setText("Game Over! Too many steps.");
             gameOver = true;
             transitionTimer = TRANSITION_DELAY;
+            GameLogger.getInstance().log("Player failed the Word Ladder puzzle (too many steps).");
+            game.logFailure();
         }
     }
 
@@ -6722,6 +6822,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.dimmingechoes.TheDimmingEcho;
+import com.dimmingechoes.manager.GameLogger;
 
 public class WordleScreen implements Screen {
     private static final String TARGET_WORD = "BOOK";
@@ -6903,22 +7004,21 @@ public class WordleScreen implements Screen {
                 }
             }
         }
-        updateGrid();
         if (guess.equals(TARGET_WORD)) {
+            infoLabel.setText("You solved it!");
             puzzleOver = true;
             puzzleWon = true;
-            infoLabel.setText("Correct! It was BOOK.");
-            game.setPuzzleWordleSolved(true);
             transitionTimer = TRANSITION_DELAY;
-            return;
-        }
-        guessCount++;
-        currentGuess.setLength(0);
-        if (guessCount >= MAX_GUESSES) {
+            GameLogger.getInstance().log("Player solved the Wordle puzzle.");
+        } else if (++guessCount >= MAX_GUESSES) {
+            infoLabel.setText("Game Over! The word was: " + TARGET_WORD);
             puzzleOver = true;
             puzzleWon = false;
-            infoLabel.setText("Out of guesses! The answer was BOOK.");
             transitionTimer = TRANSITION_DELAY;
+            GameLogger.getInstance().log("Player failed the Wordle puzzle.");
+        } else {
+            currentGuess.setLength(0);
+            updateGrid();
         }
     }
 
@@ -6962,6 +7062,21 @@ public class WordleScreen implements Screen {
     @Override
     public void dispose() { batch.dispose(); font.dispose(); stage.dispose(); }
 } 
+================================================================================
+
+--- File: .\gamelog\gamelog.txt ---
+[2025-07-18 08:21:35] Game application started.
+[2025-07-18 08:21:35] Loading game from slot: 1
+[2025-07-18 08:21:40] New game started.
+[2025-07-18 08:21:42] Player started dialogue with 'The Laughing One'.
+[2025-07-18 08:21:44] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
+[2025-07-18 08:21:44] Player gave a crystal to 'The Laughing One'.
+[2025-07-18 08:21:44] Player chose dialogue option: '...'
+[2025-07-18 08:21:46] Player started dialogue with '???'.
+[2025-07-18 08:21:47] Player chose dialogue option: 'Give the final crystal'
+[2025-07-18 08:21:51] Player chose dialogue option: '...'
+[2025-07-18 08:22:01] Game paused.
+
 ================================================================================
 
 --- File: .\gradle\gradle-daemon-jvm.properties ---
