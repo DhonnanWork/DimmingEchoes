@@ -1,0 +1,20 @@
+[2025-07-21 10:42:11] Game application started.
+[2025-07-21 10:42:11] Loading game from slot: 1
+[2025-07-21 10:42:14] New game started.
+[2025-07-21 10:42:18] Player started dialogue with 'The Laughing One'.
+[2025-07-21 10:42:19] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
+[2025-07-21 10:42:19] Player gave a crystal to 'The Laughing One'.
+[2025-07-21 10:42:20] Player chose dialogue option: '...'
+[2025-07-21 10:42:20] Player started dialogue with 'The Laughing One'.
+[2025-07-21 10:42:25] Player entered room: Tiled/Kanan.tmx
+[2025-07-21 10:42:27] Player started dialogue with 'The Stranger'.
+[2025-07-21 10:42:28] Player chose dialogue option: '[Give a Crystal] Quell his anger.'
+[2025-07-21 10:42:28] Player gave a crystal to 'The Stranger'.
+[2025-07-21 10:42:29] Player chose dialogue option: '...'
+[2025-07-21 10:42:30] Player started dialogue with 'The Stranger'.
+[2025-07-21 10:42:33] Player entered room: Tiled/Tengah.tmx
+[2025-07-21 10:42:43] New game started.
+[2025-07-21 10:42:55] New game started.
+[2025-07-21 10:42:58] Player started dialogue with 'The Laughing One'.
+[2025-07-21 10:43:00] Player chose dialogue option: 'Say nothing.'
+[2025-07-21 10:43:12] New game started.

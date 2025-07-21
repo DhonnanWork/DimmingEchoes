@@ -1,13 +1,10 @@
---- Project File Structure ---
+--- Project Snapshot of directory: F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes ---
 
-F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
-├── .editorconfig
-├── .gitattributes
-├── .gitignore
+--- Project Tree ---
+DimmingEchoes/
 ├── Map
 │   ├── Map-1.tiled-project
 │   └── Map-1.tiled-session
-├── README.md
 ├── assets
 │   ├── DawnLike
 │   │   ├── Characters
@@ -138,8 +135,6 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   │   │   ├── Tree1.png
 │   │   │   └── Wall.png
 │   │   └── README.txt
-│   ├── LibertinusMono-Regular.ttf
-│   ├── Player.png
 │   ├── Tiled
 │   │   ├── Cat0A.tsx
 │   │   ├── Cat1A.tsx
@@ -171,12 +166,21 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   │   ├── Tree0A.tsx
 │   │   ├── Tree1A.tsx
 │   │   └── WallA.tsx
-│   ├── assets.txt
 │   ├── audio
 │   │   ├── Acceptance of hopelessness.mp3
 │   │   ├── ds vu.mp3
 │   │   ├── proximity to the inevitable.mp3
 │   │   └── shaping.mp3
+│   ├── gamelog
+│   │   ├── gamelog-20250718-100445.txt
+│   │   ├── gamelog-20250718-101057.txt
+│   │   └── gamelog-20250721-104211.txt
+│   ├── shaders
+│   │   ├── blur.frag
+│   │   └── blur.vert
+│   ├── LibertinusMono-Regular.ttf
+│   ├── Player.png
+│   ├── assets.txt
 │   ├── ending1.jpeg
 │   ├── ending1.mp3
 │   ├── ending2.jpeg
@@ -188,8 +192,6 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   ├── ending5.jpeg
 │   ├── ending5.mp3
 │   ├── endingFail.jpeg
-│   ├── gamelog
-│   │   └── gamelog.txt
 │   ├── libgdx.png
 │   ├── mainmenu.mp3
 │   ├── memorythatfades.png
@@ -200,70 +202,62 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   ├── player_walk_left.png
 │   ├── savegame.json
 │   ├── savegame1.json
-│   ├── shaders
-│   │   ├── blur.frag
-│   │   └── blur.vert
 │   ├── uiskin.atlas
 │   ├── uiskin.json
 │   └── uiskin.png
-├── build.gradle
 ├── core
 │   ├── bin
 │   │   └── main
 │   │       └── com
 │   │           └── dimmingechoes
 │   │               └── Main.class
-│   ├── build.gradle
-│   └── src
-│       └── main
-│           └── java
-│               └── com
-│                   └── dimmingechoes
-│                       ├── TheDimmingEcho.java
-│                       ├── dialogue
-│                       │   ├── DialogueChoice.java
-│                       │   └── DialogueNode.java
-│                       ├── dungeon
-│                       │   ├── DoorZone.java
-│                       │   ├── GridBuilder.java
-│                       │   ├── Room.java
-│                       │   ├── RoomGraph.java
-│                       │   └── RoomType.java
-│                       ├── entities
-│                       │   ├── Enemy.java
-│                       │   ├── NPC.java
-│                       │   └── Player.java
-│                       ├── logic
-│                       │   ├── CrystalInventory.java
-│                       │   ├── DialogueManager.java
-│                       │   └── UsageLog.java
-│                       ├── manager
-│                       │   ├── AudioManager.java
-│                       │   ├── BattleManager.java
-│                       │   └── GameLogger.java
-│                       ├── save
-│                       │   ├── SaveData.java
-│                       │   └── SaveManager.java
-│                       └── screens
-│                           ├── BattleScreen.java
-│                           ├── DungeonScreen.java
-│                           ├── EndingScreen.java
-│                           ├── FibonacciScreen.java
-│                           ├── LoadGameScreen.java
-│                           ├── MainMenuScreen.java
-│                           ├── PauseMenuScreen.java
-│                           ├── PrologueScreen.java
-│                           ├── WordLadderScreen.java
-│                           └── WordleScreen.java
-├── gamelog
+│   ├── src
+│   │   └── main
+│   │       └── java
+│   │           └── com
+│   │               └── dimmingechoes
+│   │                   ├── dialogue
+│   │                   │   ├── DialogueChoice.java
+│   │                   │   └── DialogueNode.java
+│   │                   ├── dungeon
+│   │                   │   ├── DoorZone.java
+│   │                   │   ├── GridBuilder.java
+│   │                   │   ├── Room.java
+│   │                   │   ├── RoomGraph.java
+│   │                   │   └── RoomType.java
+│   │                   ├── entities
+│   │                   │   ├── Enemy.java
+│   │                   │   ├── NPC.java
+│   │                   │   └── Player.java
+│   │                   ├── logic
+│   │                   │   ├── CrystalInventory.java
+│   │                   │   ├── DialogueManager.java
+│   │                   │   └── UsageLog.java
+│   │                   ├── manager
+│   │                   │   ├── AudioManager.java
+│   │                   │   ├── BattleManager.java
+│   │                   │   └── GameLogger.java
+│   │                   ├── save
+│   │                   │   ├── SaveData.java
+│   │                   │   └── SaveManager.java
+│   │                   ├── screens
+│   │                   │   ├── BattleScreen.java
+│   │                   │   ├── DungeonScreen.java
+│   │                   │   ├── EndingScreen.java
+│   │                   │   ├── FibonacciScreen.java
+│   │                   │   ├── LoadGameScreen.java
+│   │                   │   ├── MainMenuScreen.java
+│   │                   │   ├── PauseMenuScreen.java
+│   │                   │   ├── PrologueScreen.java
+│   │                   │   ├── WordLadderScreen.java
+│   │                   │   └── WordleScreen.java
+│   │                   └── TheDimmingEcho.java
+│   └── build.gradle
 ├── gradle
-│   ├── gradle-daemon-jvm.properties
-│   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
-├── gradle.properties
-├── gradlew
-├── gradlew.bat
+│   ├── wrapper
+│   │   ├── gradle-wrapper.jar
+│   │   └── gradle-wrapper.properties
+│   └── gradle-daemon-jvm.properties
 ├── lwjgl3
 │   ├── assets
 │   │   ├── DawnLike
@@ -278,41 +272,47 @@ F:\Apps\Sublime Text (4152)\b\Sem 2\DimmingEchoes\DimmingEchoes
 │   │   └── shaders
 │   ├── bin
 │   │   └── main
-│   │       ├── assets.txt
 │   │       ├── com
 │   │       │   └── dimmingechoes
 │   │       │       └── lwjgl3
 │   │       │           ├── Lwjgl3Launcher.class
 │   │       │           └── StartupHelper.class
+│   │       ├── assets.txt
 │   │       ├── libgdx.png
 │   │       ├── libgdx128.png
 │   │       ├── libgdx16.png
 │   │       ├── libgdx32.png
 │   │       └── libgdx64.png
-│   ├── build.gradle
 │   ├── icons
 │   │   ├── logo.icns
 │   │   ├── logo.ico
 │   │   └── logo.png
-│   ├── nativeimage.gradle
-│   └── src
-│       └── main
-│           ├── java
-│           │   └── com
-│           │       └── dimmingechoes
-│           │           └── lwjgl3
-│           │               ├── Lwjgl3Launcher.java
-│           │               └── StartupHelper.java
-│           └── resources
-│               ├── libgdx128.png
-│               ├── libgdx16.png
-│               ├── libgdx32.png
-│               └── libgdx64.png
+│   ├── src
+│   │   └── main
+│   │       ├── java
+│   │       │   └── com
+│   │       │       └── dimmingechoes
+│   │       │           └── lwjgl3
+│   │       │               ├── Lwjgl3Launcher.java
+│   │       │               └── StartupHelper.java
+│   │       └── resources
+│   │           ├── libgdx128.png
+│   │           ├── libgdx16.png
+│   │           ├── libgdx32.png
+│   │           └── libgdx64.png
+│   ├── build.gradle
+│   └── nativeimage.gradle
+├── .editorconfig
+├── .gitattributes
+├── .gitignore
+├── README.md
+├── build.gradle
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
 └── settings.gradle
 
 ================================================================================
-
---- File Contents ---
 
 --- File: .\.editorconfig ---
 # https://editorconfig.org
@@ -334,11 +334,13 @@ indent_size = 2
 [*.md]
 trim_trailing_whitespace = false
 
+
 ================================================================================
 
 --- File: .\.gitattributes ---
 * text=auto eol=lf
 *.bat text=auto eol=crlf
+
 
 ================================================================================
 
@@ -508,6 +510,7 @@ Thumbs.db
 ## You should delete or comment out the next line if you have configuration in a different resource-config.json .
 **/resource-config.json
 
+
 ================================================================================
 
 --- File: .\README.md ---
@@ -544,6 +547,7 @@ Useful Gradle tasks and flags:
 
 Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
 For example, `core:clean` removes `build` folder only from the `core` project.
+
 
 ================================================================================
 
@@ -646,6 +650,7 @@ project(":lwjgl3") {
   }
 }
 
+
 ================================================================================
 
 --- File: .\gradle.properties ---
@@ -668,6 +673,7 @@ graalHelperVersion=2.0.1
 enableGraalNative=false
 gdxVersion=1.13.1
 projectVersion=1.0.0
+
 
 
 ================================================================================
@@ -925,6 +931,7 @@ eval "set -- $(
 
 exec "$JAVACMD" "$@"
 
+
 ================================================================================
 
 --- File: .\gradlew.bat ---
@@ -1023,6 +1030,7 @@ if "%OS%"=="Windows_NT" endlocal
 
 :omega
 
+
 ================================================================================
 
 --- File: .\settings.gradle ---
@@ -1035,15 +1043,18 @@ plugins {
 // if you want to temporarily disable a subproject.
 include 'lwjgl3', 'core'
 
+
 ================================================================================
 
 --- File: .\assets\LibertinusMono-Regular.ttf ---
-*** Non-text file detected (.ttf). Content not displayed. ***
+*** Binary file (.ttf extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Player.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
@@ -1217,7 +1228,8 @@ ending4.mp3
 ending5.jpeg
 ending5.mp3
 endingFail.jpeg
-gamelog/gamelog.txt
+gamelog/gamelog-20250718-100445.txt
+gamelog/gamelog-20250718-101057.txt
 libgdx.png
 mainmenu.mp3
 memorythatfades.png
@@ -1234,177 +1246,174 @@ uiskin.atlas
 uiskin.json
 uiskin.png
 
+
 ================================================================================
 
 --- File: .\assets\ending1.jpeg ---
-*** Non-text file detected (.jpeg). Content not displayed. ***
+*** Binary file (.jpeg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending1.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending2.jpeg ---
-*** Non-text file detected (.jpeg). Content not displayed. ***
+*** Binary file (.jpeg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending2.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending3.jpeg ---
-*** Non-text file detected (.jpeg). Content not displayed. ***
+*** Binary file (.jpeg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending3.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending4.jpeg ---
-*** Non-text file detected (.jpeg). Content not displayed. ***
+*** Binary file (.jpeg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending4.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending5.jpeg ---
-*** Non-text file detected (.jpeg). Content not displayed. ***
+*** Binary file (.jpeg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\ending5.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\endingFail.jpeg ---
-*** Non-text file detected (.jpeg). Content not displayed. ***
+*** Binary file (.jpeg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\libgdx.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\mainmenu.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\memorythatfades.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\menu+bg.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\menu-animation.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\menu-bg.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\menu_bg.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\player_walk_left.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\savegame.json ---
-{
-crystalCount: 5
-}
+*** Binary file (.json extension). Content not included. ***
+
+
 ================================================================================
 
 --- File: .\assets\savegame1.json ---
-{
-crystalCount: 4
-crystalRecipients: {
-	class: java.util.HashSet
-	items: [
-		The Laughing One
-	]
-}
-saveTimestamp: 1752764308284
-playerX: 451.3206
-playerY: 502.1176
-currentRoomTmxPath: Tiled/Tengah.tmx
-}
+*** Binary file (.json extension). Content not included. ***
+
+
 ================================================================================
 
 --- File: .\assets\uiskin.atlas ---
-uiskin.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
+*** Binary file (.atlas extension). Content not included. ***
+
+
 ================================================================================
 
 --- File: .\assets\uiskin.json ---
-{
-  "com.badlogic.gdx.graphics.Color": {
-    "white": { "r": 1, "g": 1, "b": 1, "a": 1 },
-    "black": { "r": 0, "g": 0, "b": 0, "a": 1 },
-    "gray": { "r": 0.3, "g": 0.3, "b": 0.3, "a": 1 },
-    "gold": { "r": 1, "g": 0.84, "b": 0, "a": 1 }
-  },
-  "com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator": {
-    "generator": { "font": "LibertinusMono-Regular.ttf" }
-  },
-  "com.badlogic.gdx.graphics.g2d.BitmapFont": {
-    "default-font": { "generator": "generator", "size": 20 }
-  },
-  "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
-    "default": { "font": "default-font", "fontColor": "white" }
-  },
-  "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
-    "default": { "font": "default-font", "fontColor": "white", "downFontColor": "gray" }
-  }
-}
+*** Binary file (.json extension). Content not included. ***
+
+
 ================================================================================
 
 --- File: .\assets\uiskin.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\audio\Acceptance of hopelessness.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\audio\ds vu.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\audio\proximity to the inevitable.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\audio\shaping.mp3 ---
-*** Non-text file detected (.mp3). Content not displayed. ***
+*** Binary file (.mp3 extension). Content not included. ***
+
 
 ================================================================================
 
@@ -1525,1033 +1534,777 @@ Feel free to create any tiles you see here and send them to me at DragonDePlatin
  == UPDATE 7/26/2015 ==
   - Alternate up/down stairs, spikes, floor spears, coffins, portals, hexes and the rock mole graphic from DawnHack.
  - Added the 6 missing configurations of tree tiles, courtesy congusbongus.
+
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Aquatic0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Aquatic1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Avian0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Avian1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Cat0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Cat1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\CatAnimated.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Demon0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Demon1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Dog0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Dog1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Elemental0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Elemental1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Humanoid0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Humanoid1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\HumanoidAnimated.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Misc0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Misc1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Pest0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Pest1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Plant0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Plant1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Player0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Player1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\PlayerAnimated.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Quadraped0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Quadraped1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Reptile0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Reptile1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Rodent0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Rodent1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Slime0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Slime1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Undead0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Characters\Undead1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Engineer Clothes.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Engineer.ase ---
-*** Non-text file detected (.ase). Content not displayed. ***
+*** Binary file (.ase extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Engineer.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Icons.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Mage Clothes.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Mage.ase ---
-*** Non-text file detected (.ase). Content not displayed. ***
+*** Binary file (.ase extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Mage.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Paladin Clothes.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Paladin.ase ---
-*** Non-text file detected (.ase). Content not displayed. ***
+*** Binary file (.ase extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Paladin.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Rogue Clothes.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Rogue.ase ---
-*** Non-text file detected (.ase). Content not displayed. ***
+*** Binary file (.ase extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Rogue.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Template.ase ---
-*** Non-text file detected (.ase). Content not displayed. ***
+*** Binary file (.ase extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Template.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Warrior Clothes Back.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Warrior Clothes.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Warrior.ase ---
-*** Non-text file detected (.ase). Content not displayed. ***
+*** Binary file (.ase extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Commissions\Warrior.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Blank.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Wall" tilewidth="16" tileheight="16">
-  <image source="../Objects/Wall.png" width="320" height="432"/>
- </tileset>
- <tileset firstgid="541" name="Floor" tilewidth="16" tileheight="16">
-  <image source="../Objects/Floor.png" width="336" height="432"/>
- </tileset>
- <tileset firstgid="1108" name="Pit0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Pit0.png" width="128" height="352"/>
- </tileset>
- <tileset firstgid="1284" name="Door0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Door0.png" width="128" height="80"/>
- </tileset>
- <tileset firstgid="1324" name="Decor0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Decor0.png" width="128" height="288"/>
- </tileset>
- <tileset firstgid="1468" name="Ground0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Ground0.png" width="128" height="48"/>
- </tileset>
- <layer name="Tiles" width="20" height="15">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <layer name="Sprites" width="20" height="15">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Dungeon.gif ---
-*** Non-text file detected (.gif). Content not displayed. ***
+*** Binary file (.gif extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Dungeon.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Wall" tilewidth="16" tileheight="16">
-  <image source="../Objects/Wall.png" width="320" height="816"/>
- </tileset>
- <tileset firstgid="1021" name="Floor" tilewidth="16" tileheight="16">
-  <image source="../Objects/Floor.png" width="336" height="624"/>
- </tileset>
- <tileset firstgid="1840" name="Pit0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Pit0.png" width="128" height="512"/>
- </tileset>
- <tileset firstgid="2096" name="Door0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Door0.png" width="128" height="80"/>
- </tileset>
- <tileset firstgid="2136" name="Decor0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Decor0.png" width="128" height="352"/>
- </tileset>
- <tileset firstgid="2312" name="Ground0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Ground0.png" width="128" height="112"/>
- </tileset>
- <tileset firstgid="2368" name="Player0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Player0.png" width="128" height="240"/>
- </tileset>
- <tileset firstgid="2488" name="Pest0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Pest0.png" width="128" height="176"/>
- </tileset>
- <tileset firstgid="2576" name="Rodent0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Rodent0.png" width="128" height="64"/>
- </tileset>
- <tileset firstgid="2608" name="Undead0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Undead0.png" width="128" height="160"/>
- </tileset>
- <tileset firstgid="2688" name="Money" tilewidth="16" tileheight="16">
-  <image source="../Items/Money.png" width="128" height="128"/>
- </tileset>
- <tileset firstgid="2752" name="Chest0" tilewidth="16" tileheight="16">
-  <image source="../Items/Chest0.png" width="128" height="48"/>
- </tileset>
- <layer name="Tiles" width="20" height="15">
-  <data encoding="csv">
-1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,1031,
-1031,181,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,183,1031,1031,
-1031,201,1210,1211,1211,1211,1212,1232,1235,1236,1236,1236,1236,1236,1236,1236,1212,201,1031,1031,
-1031,201,1231,1232,1232,1232,1233,181,182,182,182,182,182,182,182,183,1234,201,1031,1031,
-1031,201,1231,1232,1232,1232,1233,223,1031,1031,1031,1031,1031,1031,1031,201,1234,201,1031,1031,
-1031,201,1231,1232,1462,1463,1464,381,1031,181,182,182,182,182,182,182,1255,182,183,1031,
-1031,201,1252,1253,1483,1484,1506,381,1031,201,1856,1857,1857,1857,1857,1857,1556,1858,201,1031,
-1031,221,182,182,363,1506,361,403,1031,201,1864,1865,1865,1865,1865,1865,1556,1866,201,1031,
-1031,1031,1031,1031,401,362,403,1031,1031,201,1864,1532,1558,1558,1558,1558,1576,1866,201,1031,
-181,182,182,182,182,182,182,183,1031,201,1864,1556,1865,1865,1865,1865,1865,1866,201,1031,
-201,1210,1211,1211,1211,1212,1535,201,1031,201,1864,1556,1865,1865,1865,1865,1865,1866,201,1031,
-201,1231,1232,1232,1232,1233,1556,201,1031,221,183,1213,181,182,182,182,182,182,223,1031,
-201,1252,1253,1253,1253,1254,1556,201,1031,1031,201,1234,201,1031,1031,1031,1031,1031,1031,1031,
-221,182,182,182,182,183,1556,201,1031,1031,201,1234,201,1031,1031,1031,1031,1031,1031,1031,
-1031,1031,1031,1031,1031,201,1556,201,1031,1031,201,1234,201,1031,1031,1031,1031,1031,1031,1031
-</data>
- </layer>
- <layer name="Sprites" width="20" height="15">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2200,0,0,0,0,0,0,0,2200,0,0,0,0,0,0,0,
-0,0,2317,0,0,0,0,2097,0,0,2147486304,0,0,0,0,0,2317,0,0,0,
-0,0,0,2692,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,2691,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,2147486401,0,2147486154,0,2326,0,0,0,0,2200,0,0,2200,0,2098,0,0,0,
-0,0,0,2317,2315,2319,2585,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2592,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,2569,0,0,0,0,0,
-0,0,2200,0,2200,0,0,0,0,0,0,2147486041,0,0,0,0,0,0,0,0,
-0,2304,0,2208,2166,2113,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,2147486276,0,0,2117,0,0,0,0,0,2096,0,0,0,0,0,0,0,0,
-0,2160,2192,2193,0,2113,0,0,0,0,0,2316,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,2104,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,2147486233,0,0,0,0,0,0,0,0
-</data>
- </layer>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Ideas.gif ---
-*** Non-text file detected (.gif). Content not displayed. ***
+*** Binary file (.gif extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Logo.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Logo.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="15" height="12" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Wall" tilewidth="16" tileheight="16">
-  <image source="../Objects/Wall.png" width="320" height="432"/>
- </tileset>
- <layer name="Tile Layer 1" width="15" height="12">
-  <data encoding="csv">
-121,123,83,83,83,141,83,0,141,83,141,83,141,83,141,
-141,161,123,83,121,165,123,0,141,83,141,83,144,123,141,
-141,0,141,83,141,0,141,0,141,141,141,83,141,141,141,
-141,0,141,83,144,122,146,0,141,141,141,83,141,141,141,
-141,121,163,83,141,83,141,0,144,122,146,83,141,161,146,
-161,163,83,83,142,83,142,0,142,83,142,83,142,83,142,
-381,83,381,83,83,381,83,83,83,361,362,83,381,83,381,
-381,83,381,83,361,405,363,83,361,403,83,83,381,361,403,
-384,362,386,83,381,83,381,83,381,83,83,83,384,386,83,
-381,83,381,83,384,362,386,83,381,83,83,83,381,401,363,
-381,83,381,83,381,83,381,83,401,363,83,83,381,83,381,
-382,83,382,83,382,83,382,83,83,401,362,83,382,83,382
-</data>
- </layer>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Mine.gif ---
-*** Non-text file detected (.gif). Content not displayed. ***
+*** Binary file (.gif extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Mine.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Wall" tilewidth="16" tileheight="16">
-  <image source="../Objects/Wall.png" width="320" height="816"/>
- </tileset>
- <tileset firstgid="1021" name="Floor" tilewidth="16" tileheight="16">
-  <image source="../Objects/Floor.png" width="336" height="624"/>
- </tileset>
- <tileset firstgid="1840" name="Pit0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Pit0.png" width="128" height="512"/>
- </tileset>
- <tileset firstgid="2096" name="Door0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Door0.png" width="128" height="80"/>
- </tileset>
- <tileset firstgid="2136" name="Decor0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Decor0.png" width="128" height="352"/>
- </tileset>
- <tileset firstgid="2312" name="Ground0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Ground0.png" width="128" height="112"/>
- </tileset>
- <tileset firstgid="2368" name="Player0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Player0.png" width="128" height="240"/>
- </tileset>
- <tileset firstgid="2488" name="Food" tilewidth="16" tileheight="16">
-  <image source="../Items/Food.png" width="128" height="96"/>
- </tileset>
- <tileset firstgid="2536" name="Ore0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Ore0.png" width="144" height="112"/>
- </tileset>
- <tileset firstgid="2599" name="Elemental0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Elemental0.png" width="128" height="176"/>
- </tileset>
- <tileset firstgid="2687" name="Misc0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Misc0.png" width="128" height="128"/>
- </tileset>
- <tileset firstgid="2751" name="LongWep" tilewidth="16" tileheight="16">
-  <image source="../Items/LongWep.png" width="128" height="112"/>
- </tileset>
- <tileset firstgid="2807" name="Avian0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Avian0.png" width="128" height="208"/>
- </tileset>
- <layer name="Tiles" width="20" height="15">
-  <data encoding="csv">
-10,10,10,361,362,363,1423,381,361,403,1928,1930,401,362,363,10,10,10,10,10,
-10,361,362,403,1402,382,1423,401,403,1402,1928,1927,1922,1404,401,362,363,10,10,10,
-10,382,1424,1425,1421,1400,1421,1400,1400,1422,1928,1913,1927,1922,1399,1401,381,10,10,10,
-1873,1873,1873,1873,1420,1421,1442,1442,1442,1422,1928,1913,1913,1930,1420,1443,381,10,10,10,
-1881,1881,1882,1399,1421,1443,361,362,363,1441,1426,1928,1930,1424,1443,361,403,10,10,10,
-10,1882,1399,1421,1422,361,403,10,401,362,362,362,362,362,362,403,10,10,10,10,
-136,136,1441,1442,1443,175,136,136,136,136,136,136,136,136,136,136,136,136,136,136,
-1432,1432,1432,1432,1432,1424,1425,1426,1432,1432,1432,1424,1426,1432,1432,1432,1404,1432,1404,1432,
-136,136,136,136,136,136,136,136,1424,1400,1426,135,137,1404,135,136,136,136,136,136,
-10,10,10,361,362,362,365,362,363,1423,361,403,155,1430,155,0,0,0,0,0,
-10,10,361,403,1399,1400,401,362,403,1423,381,10,155,1430,175,136,136,136,136,136,
-361,362,403,1399,1157,1421,1154,1156,1400,1159,381,10,155,1424,1426,1432,1432,1432,1432,1424,
-381,1399,1400,1442,1199,1154,1176,1176,1177,1444,381,10,175,136,136,136,136,136,136,136,
-403,1420,1443,381,1441,1196,1176,1176,1176,361,403,10,10,10,10,10,10,10,10,10,
-1399,1422,361,405,362,362,362,362,362,403,10,10,10,10,10,10,10,10,10,10
-</data>
- </layer>
- <layer name="Sprites" width="20" height="15">
-  <data encoding="csv">
-0,0,0,0,0,0,2316,0,0,2545,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,2895,0,0,2327,0,0,0,0,0,2554,0,0,0,0,
-0,0,2327,0,0,0,0,0,2895,0,0,2895,0,0,0,2316,2569,0,0,0,
-0,0,0,0,0,2522,0,0,0,0,0,0,0,0,0,2759,2569,0,0,0,
-0,0,0,2147485973,0,0,0,0,0,2325,0,0,0,0,2500,0,0,0,0,0,
-0,0,2319,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,2147486132,0,0,0,0,0,2568,0,0,0,2554,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,2608,0,0,0,0,0,0,
-0,0,0,0,2586,0,0,0,0,0,0,0,2574,0,0,0,0,0,0,0,
-0,0,0,0,2166,0,0,0,0,0,2587,0,0,2147486107,0,0,0,2581,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2459,0,0,0,0,
-0,2319,0,0,0,0,2331,2488,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,2330,0,2147485979,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Town.gif ---
-*** Non-text file detected (.gif). Content not displayed. ***
+*** Binary file (.gif extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Town.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Wall" tilewidth="16" tileheight="16">
-  <image source="../Objects/Wall.png" width="320" height="816"/>
- </tileset>
- <tileset firstgid="1021" name="Floor" tilewidth="16" tileheight="16">
-  <image source="../Objects/Floor.png" width="336" height="624"/>
- </tileset>
- <tileset firstgid="1840" name="Pit0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Pit0.png" width="128" height="512"/>
- </tileset>
- <tileset firstgid="2096" name="Door0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Door0.png" width="128" height="80"/>
- </tileset>
- <tileset firstgid="2136" name="Decor0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Decor0.png" width="128" height="352"/>
- </tileset>
- <tileset firstgid="2312" name="Ground0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Ground0.png" width="128" height="112"/>
- </tileset>
- <tileset firstgid="2368" name="Player0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Player0.png" width="128" height="240"/>
- </tileset>
- <tileset firstgid="2488" name="Tree0" tilewidth="16" tileheight="16">
-  <image source="../Objects/Tree0.png" width="128" height="528"/>
- </tileset>
- <tileset firstgid="2752" name="Humanoid0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Humanoid0.png" width="128" height="432"/>
- </tileset>
- <tileset firstgid="2968" name="Cat0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Cat0.png" width="128" height="80"/>
- </tileset>
- <tileset firstgid="3008" name="Quadraped0" tilewidth="16" tileheight="16">
-  <image source="../Characters/Quadraped0.png" width="128" height="192"/>
- </tileset>
- <tileset firstgid="3104" name="Container0" tilewidth="16" tileheight="16">
-  <image source="../Items/Chest0.png" width="128" height="48"/>
- </tileset>
- <layer name="Tiles" width="20" height="15">
-  <data encoding="csv">
-1176,1176,1176,1176,1176,1176,1177,1171,1175,1176,1176,1176,1176,1176,1176,1176,1176,1176,1176,1176,
-1176,1176,1176,1176,1176,1176,1177,1171,1175,1197,1197,1197,1197,1197,1197,1197,1197,1197,1197,1176,
-1176,1176,1176,1176,1176,1176,1177,1171,1178,1421,129,129,129,129,129,129,129,129,1421,1175,
-1176,1176,1176,1176,1176,1176,1177,1171,1178,148,1406,1408,1411,1406,1407,1407,1407,1408,148,1175,
-1197,1197,1197,1197,1197,1176,1177,1171,1178,148,1448,1450,132,1427,1428,1428,1428,1429,148,1175,
-129,129,129,129,1421,1175,1177,1171,1178,1421,129,129,153,1427,1428,1428,1428,1429,148,1196,
-1407,1407,1407,1408,148,1175,1177,1171,1175,1155,1155,1156,148,1427,1428,1428,1428,1429,129,129,
-1428,1428,1428,1429,148,1175,1177,1171,1175,1176,1176,1177,148,1427,1428,1428,1428,1429,1431,1432,
-1428,1428,1428,1429,148,1175,1198,1171,1196,1197,1197,1177,148,1427,1428,1428,1428,1429,128,129,
-1449,1449,1449,1450,148,1178,1147,1169,1148,1148,1149,1178,148,1448,1449,1449,1449,1450,148,1154,
-129,1411,129,129,1421,1178,1168,1169,1169,1169,1170,1178,1421,129,129,1411,129,129,1421,1175,
-1155,1402,1155,1155,1155,1177,1168,1169,1169,1169,1170,1175,1155,1155,1156,1402,1154,1155,1155,1176,
-1197,1444,1197,1197,1197,1198,1168,1169,1169,1169,1170,1196,1197,1197,1198,1444,1196,1197,1197,1197,
-1148,1148,1148,1173,1173,1173,1190,1169,1169,1169,1190,1173,1173,1173,1173,1148,1148,1148,1148,1148,
-1190,1190,1191,1154,1155,1155,1156,1168,1169,1170,1154,1155,1155,1155,1156,1168,1169,1169,1169,1169
-</data>
- </layer>
- <layer name="Sprites" width="20" height="15">
-  <data encoding="csv">
-2497,2497,2498,2504,2505,2506,7,0,7,2147485969,7,2147485969,2313,2147486720,3073,2491,2147485969,2491,2496,2497,
-2497,2497,2498,2491,2321,7,2491,0,7,7,2147485969,2147485969,7,2491,7,7,2491,7,2504,2505,
-2497,2497,2498,2321,2491,2147485968,7,0,2461,128,7,7,7,7,7,7,7,7,130,2147485969,
-2505,2505,2506,7,2321,2491,7,0,7,7,2147486752,7,2097,2164,2147486640,0,2848,2160,7,7,
-2491,7,2321,7,2321,7,2147486109,0,7,7,3120,3120,7,2216,2217,2217,2217,2218,7,2147485969,
-7,7,7,7,130,7,7,2147486109,2147485969,168,7,7,7,2192,7,2192,2800,2147485840,7,7,
-2227,7,2849,2225,7,2147485961,7,0,7,2330,2330,2331,7,7,2248,2249,2250,7,7,7,
-2217,2217,2217,2218,7,7,2313,0,2147485961,2331,2331,2330,7,7,2256,2257,2258,2832,2097,7,
-2252,2252,2252,2253,7,2491,7,0,7,2147485961,2491,2491,7,2195,2264,2265,2266,2147485843,7,7,
-2268,2268,2268,2269,7,2321,0,0,0,0,0,7,7,2196,2147485843,7,2195,2196,7,2491,
-7,2096,7,2186,170,7,0,7,2305,7,2826,7,168,2185,7,2096,7,2185,170,2147485961,
-2334,0,2334,2147485968,2491,7,0,7,7,2827,0,3050,7,7,2332,0,2332,2491,7,7,
-0,0,0,0,7,2147485968,0,2147486472,7,7,0,7,2177,7,2320,0,7,7,2147485969,7,
-0,0,0,2147486018,0,0,0,0,0,0,0,0,0,2460,0,0,0,0,7,7,
-0,0,0,0,2491,2491,7,0,2374,0,2491,7,2491,7,7,0,0,0,2825,0
-</data>
- </layer>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Underworld.gif ---
-*** Non-text file detected (.gif). Content not displayed. ***
+*** Binary file (.gif extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Examples\Underworld.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="16" tileheight="16">
- <tileset firstgid="1" name="Wall" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Wall.png" width="320" height="816"/>
- </tileset>
- <tileset firstgid="1021" name="Floor" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Floor.png" width="336" height="624"/>
- </tileset>
- <tileset firstgid="1840" name="Pit0" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Pit0.png" width="128" height="512"/>
- </tileset>
- <tileset firstgid="2096" name="Door0" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Door0.png" width="128" height="80"/>
- </tileset>
- <tileset firstgid="2136" name="Decor0" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Decor0.png" width="128" height="352"/>
- </tileset>
- <tileset firstgid="2312" name="Ground0" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Ground0.png" width="128" height="112"/>
- </tileset>
- <tileset firstgid="2368" name="Player0" tilewidth="16" tileheight="16">
-  <image source="../../Characters/Player0.png" width="128" height="240"/>
- </tileset>
- <tileset firstgid="2488" name="Tile" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Tile.png" width="128" height="64"/>
- </tileset>
- <tileset firstgid="2520" name="Demon0" tilewidth="16" tileheight="16">
-  <image source="../../Characters/Demon0.png" width="128" height="144"/>
- </tileset>
- <tileset firstgid="2592" name="Dog0" tilewidth="16" tileheight="16">
-  <image source="../../Characters/Dog0.png" width="128" height="112"/>
- </tileset>
- <tileset firstgid="2648" name="Tree0" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Tree0.png" width="128" height="528"/>
- </tileset>
- <tileset firstgid="2912" name="Money" tilewidth="16" tileheight="16">
-  <image source="../../Items/Money.png" width="128" height="128"/>
- </tileset>
- <tileset firstgid="2976" name="Book" tilewidth="16" tileheight="16">
-  <image source="../../Items/Book.png" width="128" height="144"/>
- </tileset>
- <tileset firstgid="3048" name="Amulet" tilewidth="16" tileheight="16">
-  <image source="../../Items/Amulet.png" width="128" height="48"/>
- </tileset>
- <tileset firstgid="3072" name="Elemental0" tilewidth="16" tileheight="16">
-  <image source="../../Characters/Elemental0.png" width="128" height="176"/>
- </tileset>
- <tileset firstgid="3160" name="Pest0" tilewidth="16" tileheight="16">
-  <image source="../../Characters/Pest0.png" width="128" height="176"/>
- </tileset>
- <tileset firstgid="3248" name="Chest0" tilewidth="16" tileheight="16">
-  <image source="../../Items/Chest0.png" width="128" height="48"/>
- </tileset>
- <tileset firstgid="3272" name="Fence" tilewidth="16" tileheight="16">
-  <image source="../../Objects/Fence.png" width="128" height="192"/>
- </tileset>
- <layer name="Tiles" width="20" height="15">
-  <data encoding="csv">
-10,261,1234,261,241,285,285,285,285,285,285,285,285,285,285,243,261,1234,261,10,
-10,261,1234,261,261,1273,1274,1299,1299,1299,1299,1299,1299,1274,1275,261,261,1234,261,10,
-10,261,1234,261,261,1294,262,1210,1211,1211,1211,1211,1212,262,1296,261,261,1234,261,10,
-10,261,1234,281,283,1294,1296,1231,1232,1232,1232,1232,1233,1294,1296,281,283,1234,261,10,
-285,283,1234,1298,1299,1316,262,1231,1232,1232,1232,1232,1233,262,1316,1299,1300,1234,281,285,
-1236,1236,1253,1236,1236,1236,1236,1253,1253,1232,1232,1253,1253,1236,1236,1236,1236,1253,1236,1236,
-285,243,1273,1274,1274,1274,1275,2048,2050,1231,1233,2048,2050,1273,1274,1274,1274,1275,241,285,
-10,261,1315,1316,1295,1316,1317,2056,2058,1231,1233,2056,2058,1315,1316,1295,1316,1317,261,10,
-10,281,285,285,1316,285,285,2056,2055,2049,2049,2053,2058,285,285,1316,285,285,283,10,
-375,376,1462,1463,1463,1463,1464,2056,2058,1231,1233,2056,2058,1462,1463,1463,1464,376,377,10,
-395,1462,1484,1484,1484,1484,1485,2056,2058,1231,1233,2056,2058,1483,1484,1484,1484,1485,395,10,
-417,1504,1505,1484,1484,1484,1485,2056,2058,1231,1233,2056,2058,1483,1484,1484,1506,375,417,10,
-2049,2049,2050,1504,1505,1505,1506,2056,2058,1231,1233,2056,2058,1483,1484,1485,375,400,10,10,
-2057,2057,2055,2049,2049,2049,2049,2053,2055,2049,1233,2056,2058,1483,1484,1485,415,419,377,10,
-2057,2057,2057,2057,2058,1462,1464,2056,2058,1231,1233,2056,2058,1483,1484,1484,1463,1464,415,376
-</data>
- </layer>
- <layer name="Sprites" width="20" height="15">
-  <data encoding="csv">
-0,0,0,0,0,0,2201,0,2200,0,0,2200,0,2201,0,0,0,0,0,0,
-0,0,2147486722,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,2147486897,0,0,2920,2924,2916,2913,0,0,3251,0,0,0,0,0,
-0,0,2106,2200,0,0,0,2920,2922,2147486713,3040,2924,2925,0,0,0,2200,2104,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,2105,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2105,0,
-0,0,0,0,0,0,0,0,0,2147486282,0,0,0,0,0,0,3114,0,0,0,
-0,0,0,2147486746,0,0,0,0,0,0,2633,0,0,0,0,0,0,0,0,0,
-0,0,0,2200,3321,2200,0,0,0,2512,2512,0,0,0,2200,3321,2200,0,0,0,
-0,0,2943,2318,0,0,2655,0,0,0,0,0,0,0,2319,0,2147485975,0,0,0,
-0,2655,0,2276,2273,2282,0,0,0,0,0,0,0,0,3106,0,0,2147486303,0,0,
-0,2930,0,2147486177,0,0,0,0,0,0,2467,0,0,0,0,2655,0,0,0,0,
-0,0,0,0,2147486179,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,2147486842,0,0,0,0,0,0,0,0,0,0,0,0,2147486303,2147486201,0,0,0,0,
-0,0,0,0,0,2147486303,0,0,0,0,0,0,0,2318,0,0,2147486202,2553,0,0
-</data>
- </layer>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\GUI\GUI0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\GUI\GUI1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\GUI\SDS_6x6.ttf ---
-*** Non-text file detected (.ttf). Content not displayed. ***
+*** Binary file (.ttf extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\GUI\SDS_8x8.ttf ---
-*** Non-text file detected (.ttf). Content not displayed. ***
+*** Binary file (.ttf extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Ammo.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Amulet.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Armor.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Book.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Boot.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Chest0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Chest1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Flesh.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Food.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Glove.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Hat.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Key.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Light.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\LongWep.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\MedWep.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Money.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Music.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Potion.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Ring.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Rock.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Scroll.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Shield.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\ShortWep.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Tool.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Items\Wand.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Decor0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Decor1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\DecorAnimated.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Door0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Door1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\DoorAnimated.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Effect0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Effect1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Fence.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Floor.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Ground0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Ground1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Hill0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Hill1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Map0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Map1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Ore0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Ore1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Pit0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Pit1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Tile.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Trap0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Trap1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Tree0.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Tree1.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\DawnLike\Objects\Wall.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
---- File: .\assets\gamelog\gamelog.txt ---
-[2025-07-18 09:23:31] Game application started.
-[2025-07-18 09:23:31] Loading game from slot: 1
-[2025-07-18 09:23:34] New game started.
-[2025-07-18 09:23:48] Game paused.
-[2025-07-18 09:23:50] New game started.
-[2025-07-18 09:23:52] Player started dialogue with 'The Laughing One'.
-[2025-07-18 09:23:53] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
-[2025-07-18 09:23:53] Player gave a crystal to 'The Laughing One'.
-[2025-07-18 09:23:53] Player chose dialogue option: '...'
-[2025-07-18 09:24:01] Game paused.
-[2025-07-18 09:24:04] New game started.
-[2025-07-18 09:24:06] Player started dialogue with 'The Laughing One'.
-[2025-07-18 09:24:07] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
-[2025-07-18 09:24:07] Player gave a crystal to 'The Laughing One'.
-[2025-07-18 09:24:08] Player chose dialogue option: '...'
+--- File: .\assets\gamelog\gamelog-20250718-100445.txt ---
+[2025-07-18 10:04:45] Game application started.
+[2025-07-18 10:04:45] Loading game from slot: 1
+[2025-07-18 10:04:47] New game started.
+[2025-07-18 10:04:49] Player started dialogue with 'The Laughing One'.
+[2025-07-18 10:04:50] Player chose dialogue option: 'Ask about this place.'
+[2025-07-18 10:04:50] Player chose dialogue option: 'I see.'
+[2025-07-18 10:04:52] Player started dialogue with 'The Whisper'.
+
+
+================================================================================
+
+--- File: .\assets\gamelog\gamelog-20250718-101057.txt ---
+[2025-07-18 10:10:57] Game application started.
+[2025-07-18 10:10:57] Loading game from slot: 1
+[2025-07-18 10:24:18] New game started.
+
+
+================================================================================
+
+--- File: .\assets\gamelog\gamelog-20250721-104211.txt ---
+[2025-07-21 10:42:11] Game application started.
+[2025-07-21 10:42:11] Loading game from slot: 1
+[2025-07-21 10:42:14] New game started.
+[2025-07-21 10:42:18] Player started dialogue with 'The Laughing One'.
+[2025-07-21 10:42:19] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
+[2025-07-21 10:42:19] Player gave a crystal to 'The Laughing One'.
+[2025-07-21 10:42:20] Player chose dialogue option: '...'
+[2025-07-21 10:42:20] Player started dialogue with 'The Laughing One'.
+[2025-07-21 10:42:25] Player entered room: Tiled/Kanan.tmx
+[2025-07-21 10:42:27] Player started dialogue with 'The Stranger'.
+[2025-07-21 10:42:28] Player chose dialogue option: '[Give a Crystal] Quell his anger.'
+[2025-07-21 10:42:28] Player gave a crystal to 'The Stranger'.
+[2025-07-21 10:42:29] Player chose dialogue option: '...'
+[2025-07-21 10:42:30] Player started dialogue with 'The Stranger'.
+[2025-07-21 10:42:33] Player entered room: Tiled/Tengah.tmx
+[2025-07-21 10:42:43] New game started.
+[2025-07-21 10:42:55] New game started.
+[2025-07-21 10:42:58] Player started dialogue with 'The Laughing One'.
+[2025-07-21 10:43:00] Player chose dialogue option: 'Say nothing.'
+[2025-07-21 10:43:12] New game started.
+
 
 ================================================================================
 
@@ -2588,6 +2341,7 @@ void main() {
 
     gl_FragColor = sum * v_color;
 } 
+
 ================================================================================
 
 --- File: .\assets\shaders\blur.vert ---
@@ -2605,768 +2359,186 @@ void main() {
     v_texCoords = a_texCoord0;
     gl_Position = u_projTrans * a_position;
 } 
+
 ================================================================================
 
 --- File: .\assets\Tiled\Cat0A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Cat0A" tilewidth="16" tileheight="16" tilecount="40" columns="8">
- <image source="../DawnLike/Characters/Cat0.png" width="128" height="80"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Cat1A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Cat1A" tilewidth="16" tileheight="16" tilecount="40" columns="8">
- <image source="../DawnLike/Characters/Cat1.png" width="128" height="80"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\CatAnimated.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="CatAnimated" tilewidth="16" tileheight="16" tilecount="80" columns="8">
- <image source="../DawnLike/Characters/CatAnimated.png" width="128" height="160"/>
- <tile id="9">
-  <animation>
-   <frame tileid="9" duration="1000"/>
-   <frame tileid="8" duration="1000"/>
-  </animation>
- </tile>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Chest0A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Chest0A" tilewidth="16" tileheight="16" tilecount="24" columns="8">
- <image source="../DawnLike/Items/Chest0.png" width="128" height="48"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Chest1A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Chest1A" tilewidth="16" tileheight="16" tilecount="24" columns="8">
- <image source="../DawnLike/Items/Chest1.png" width="128" height="48"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Decor0A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Decor0A" tilewidth="16" tileheight="16" tilecount="176" columns="8">
- <image source="../DawnLike/Objects/Decor0.png" width="128" height="352"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Decor1A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Decor1A" tilewidth="16" tileheight="16" tilecount="176" columns="8">
- <image source="../DawnLike/Objects/Decor1.png" width="128" height="352"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\DecorAnimated.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="DecorAnimated" tilewidth="16" tileheight="16" tilecount="352" columns="16">
- <image source="../DawnLike/Objects/DecorAnimated.png" width="256" height="352"/>
- <tile id="0">
-  <animation>
-   <frame tileid="130" duration="500"/>
-   <frame tileid="138" duration="500"/>
-  </animation>
- </tile>
- <tile id="128">
-  <animation>
-   <frame tileid="128" duration="1000"/>
-   <frame tileid="136" duration="1000"/>
-  </animation>
- </tile>
- <tile id="129">
-  <animation>
-   <frame tileid="129" duration="1000"/>
-   <frame tileid="137" duration="1000"/>
-  </animation>
- </tile>
- <tile id="130">
-  <animation>
-   <frame tileid="130" duration="1000"/>
-   <frame tileid="138" duration="1000"/>
-  </animation>
- </tile>
- <tile id="131">
-  <animation>
-   <frame tileid="131" duration="1000"/>
-   <frame tileid="139" duration="1000"/>
-  </animation>
- </tile>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\DoorAnimated.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="DoorAnimated" tilewidth="16" tileheight="16" tilecount="96" columns="8">
- <image source="../DawnLike/Objects/DoorAnimated.png" width="128" height="192"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\FinalPuni.jpg ---
-*** Non-text file detected (.jpg). Content not displayed. ***
+*** Binary file (.jpg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\FleshA.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="FleshA" tilewidth="16" tileheight="16" tilecount="72" columns="8">
- <image source="../DawnLike/Items/Flesh.png" width="128" height="144"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\FloorA.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="FloorA" tilewidth="16" tileheight="16" tilecount="819" columns="21">
- <image source="../DawnLike/Objects/Floor.png" width="336" height="624"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Humanoid0A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Humanoid0A" tilewidth="16" tileheight="16" tilecount="216" columns="8">
- <image source="../DawnLike/Characters/Humanoid0.png" width="128" height="432"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Humanoid1A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Humanoid1A" tilewidth="16" tileheight="16" tilecount="216" columns="8">
- <image source="../DawnLike/Characters/Humanoid1.png" width="128" height="432"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\HumanoidAnimated.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="HumanoidAnimated" tilewidth="16" tileheight="16" tilecount="432" columns="16">
- <image source="../DawnLike/Characters/HumanoidAnimated.png" width="256" height="432"/>
- <tile id="58">
-  <animation>
-   <frame tileid="58" duration="1000"/>
-   <frame tileid="50" duration="1000"/>
-  </animation>
- </tile>
- <tile id="234">
-  <animation>
-   <frame tileid="234" duration="1000"/>
-   <frame tileid="226" duration="1000"/>
-  </animation>
- </tile>
- <tile id="290">
-  <animation>
-   <frame tileid="290" duration="1000"/>
-   <frame tileid="298" duration="1000"/>
-  </animation>
- </tile>
- <tile id="377">
-  <animation>
-   <frame tileid="377" duration="1000"/>
-   <frame tileid="369" duration="1000"/>
-  </animation>
- </tile>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Kanan.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="65">
- <tileset firstgid="1" source="WallA.tsx"/>
- <tileset firstgid="1021" source="FloorA.tsx"/>
- <tileset firstgid="1840" source="Decor0A.tsx"/>
- <tileset firstgid="2016" source="DoorAnimated.tsx"/>
- <tileset firstgid="2112" source="DecorAnimated.tsx"/>
- <tileset firstgid="2464" source="Chest0A.tsx"/>
- <tileset firstgid="2488" source="Chest1A.tsx"/>
- <tileset firstgid="2512" source="HumanoidAnimated.tsx"/>
- <layer id="1" name="bakground hitam" width="30" height="20">
-  <data encoding="csv">
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-10,10,10,10,181,182,182,182,205,182,205,182,182,182,205,182,205,182,182,182,205,182,205,182,182,182,182,183,10,10,
-10,10,10,10,201,1210,1211,1211,201,1211,201,1211,1211,1211,201,1211,201,1211,1211,1211,201,1211,201,1211,1211,1211,1212,201,10,10,
-10,10,10,10,201,1231,1232,1232,221,1232,223,1232,1232,1232,221,1232,223,1232,1232,1232,221,1232,223,1232,1232,1232,1233,201,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,
-182,182,182,182,223,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,
-1210,1211,1211,1211,1211,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,
-1252,1253,1253,1253,1253,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1253,1253,1254,201,10,10,
-182,182,182,182,183,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,181,182,182,182,2684354765,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1211,1211,1211,1212,201,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1253,1253,1253,1253,1253,1253,1254,201,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,181,182,182,182,182,182,182,223,10,10,
-10,10,10,10,201,1231,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,10,10,10,10,10,10,10,
-10,10,10,10,201,1252,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1254,201,10,10,10,10,10,10,10,10,10,
-10,10,10,10,221,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,223,10,10,10,10,10,10,10,10,10,
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10
-</data>
- </layer>
- <layer id="2" name="Tile Layer 1" width="30" height="20">
-  <data encoding="csv">
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2026,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2289,2054,2286,2054,2291,2054,2288,2054,2286,2054,2290,2054,2288,2054,2286,2054,2290,2435,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2384,2054,2242,2054,2054,2054,2404,2054,2242,2054,2054,2054,2388,2054,2246,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2241,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,0,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2332,2333,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2033,2684356846,2684356846,2684356846,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2033,2684356846,2684356846,2684356846,2054,2054,2054,
-2054,2054,2054,2054,2054,2497,2475,2475,2497,2475,2497,2497,2054,2054,2054,2054,2054,2054,2054,2054,2054,2026,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2475,2473,2497,2473,2473,2497,2475,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,
-2054,2054,2054,2054,2054,2473,2473,2473,2475,2473,2497,2475,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,2054,0,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,0,
-0,2054,2054,2054,2054,0,0,0,0,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,2054,2054,2054,2054,2054,2054
-</data>
- </layer>
- <layer id="3" name="decor" width="30" height="20">
-  <data encoding="csv">
-2311,2311,2311,2311,2311,2311,2311,2311,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2311,2311,0,0,
-0,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,
-0,0,0,2054,2311,2311,2311,2311,2311,2419,2311,2311,2311,2311,2311,2419,2311,2420,2311,2311,2311,2433,2311,2311,2311,2311,2311,2311,2311,2311,
-0,0,0,0,2054,2054,2054,2311,2417,2056,2418,2311,2311,2311,2417,2056,2418,2311,2311,2311,2417,2056,2418,2311,2311,2311,2054,2054,0,0,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,0,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2420,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2684356612,2684356658,2684356612,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2684356658,2684356612,2684356612,2054,2054,2054,
-2054,2054,2054,2054,2054,2416,2417,2416,2418,2418,2420,2418,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2418,2054,2418,2054,2419,2054,2416,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,2054,2054,2054,2054,2417,2054,2054,2416,2054,2054,2420,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,0,0,0,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,
-0,0,0,0,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,0,0,0,0,0,0,0,0,0,0,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <layer id="5" name="decor 2" width="30" height="20">
-  <data encoding="csv">
-0,0,0,0,2054,2054,2054,2054,2054,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,2054,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2054,2054,2054,2054,2054,2054,2054,0,0,
-0,0,0,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2054,0,0,
-0,0,0,0,2054,2054,2054,2311,2311,2100,2311,2311,2311,2311,2311,2098,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2054,
-2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2311,2054,2054,2311,2311,2311,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,0,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2165,2054,2054,2240,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,0,0,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2165,2054,2054,2054,2054,2054,2054,2054,2054,2054,0,
-2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,0,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,2054,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2054,2054,2054,2054,2054,2054,0,0,0,0
-</data>
- </layer>
- <objectgroup id="6" name="Collision">
-  <object id="34" x="1.33333" y="128.667" width="77.3333" height="12.6667"/>
-  <object id="35" x="64.6667" y="15.3333" width="13.3333" height="125.333"/>
-  <object id="36" x="66.6667" y="14.6667" width="381.333" height="16.6667"/>
-  <object id="37" x="432.667" y="16.6667" width="14" height="222"/>
-  <object id="40" x="320.667" y="225.333" width="48" height="13.3333"/>
-  <object id="41" x="322" y="224.667" width="14" height="67.3333"/>
-  <object id="42" x="64.6667" y="272.667" width="271.333" height="12.6667"/>
-  <object id="43" x="0" y="176" width="63.771" height="14"/>
-  <object id="44" x="64" y="177.333" width="15.3333" height="98"/>
-  <object id="45" x="77.3333" y="224.667" width="113.333" height="50.6667"/>
-  <object id="46" x="115.333" y="29.3333" width="74" height="17.3333"/>
-  <object id="47" x="130" y="46" width="60.6667" height="17.3333"/>
-  <object id="48" x="209.333" y="28.6667" width="78" height="17.3333"/>
-  <object id="50" x="225.333" y="45.3333" width="60.6667" height="18"/>
-  <object id="51" x="304.667" y="31.3333" width="94" height="16"/>
-  <object id="52" x="320.667" y="46" width="62.6667" height="16.6667"/>
-  <object id="56" x="374" y="176.667" width="66.6667" height="16"/>
-  <object id="57" x="386.667" y="192.667" width="46.6667" height="43.3333"/>
-  <object id="60" x="367.333" y="224.667" width="68" height="13.3333"/>
-  <object id="62" x="374.667" y="187.333" width="12" height="40"/>
- </objectgroup>
- <objectgroup id="9" name="Spawns">
-  <object id="63" x="262.5" y="164.5">
-   <properties>
-    <property name="name" value="The Stranger"/>
-    <property name="type" value="NPC"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="64" x="34" y="160.5">
-   <properties>
-    <property name="type" value="Player"/>
-   </properties>
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup id="10" name="Entities">
-  <object id="53" name="The Stranger" gid="2802" x="255.333" y="168" width="16" height="16">
-   <properties>
-    <property name="name" value="The Stranger"/>
-    <property name="type" value="NPC"/>
-   </properties>
-  </object>
- </objectgroup>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Kiri.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="31">
- <tileset firstgid="1" source="WallA.tsx"/>
- <tileset firstgid="1021" source="FloorA.tsx"/>
- <tileset firstgid="1840" source="FleshA.tsx"/>
- <tileset firstgid="1912" source="Pest0A.tsx"/>
- <tileset firstgid="2000" source="Decor1A.tsx"/>
- <tileset firstgid="2176" source="Decor0A.tsx"/>
- <tileset firstgid="2352" source="Tree0A.tsx"/>
- <tileset firstgid="2784" source="Humanoid0A.tsx"/>
- <tileset firstgid="3000" source="Cat1A.tsx"/>
- <tileset firstgid="3040" source="Chest0A.tsx"/>
- <tileset firstgid="3064" source="Chest1A.tsx"/>
- <tileset firstgid="3088" source="PlayerAnimated.tsx"/>
- <tileset firstgid="3328" source="DecorAnimated.tsx"/>
- <tileset firstgid="3680" source="HumanoidAnimated.tsx"/>
- <tileset firstgid="4112" source="CatAnimated.tsx"/>
- <layer id="1" name="Layer" width="30" height="20" locked="1">
-  <data encoding="csv">
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-10,10,10,181,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,183,10,10,10,
-10,10,10,201,1217,1218,1218,1218,1218,1218,1219,1227,1211,1211,1211,1211,1211,1211,1211,1211,1211,1211,1211,1211,1211,1212,201,10,10,10,
-10,10,10,201,1259,1260,1260,1260,1260,1260,1261,1248,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,10,
-10,10,10,201,1249,1250,1250,1250,1250,1250,1251,1269,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,10,
-10,10,10,201,1217,1218,1219,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,10,
-10,10,10,201,1238,1239,1240,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,221,182,182,182,
-10,10,10,201,1238,1239,1240,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,1235,1236,1236,1236,
-10,10,10,201,1238,1239,1240,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,1235,1236,1236,1236,
-10,10,10,201,1238,1239,1240,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,181,182,182,182,
-10,10,10,201,1238,1239,1240,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,10,
-10,10,10,201,1238,1239,1240,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,10,
-10,10,10,201,1238,1239,1240,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1232,1233,201,10,10,10,
-10,10,10,201,1259,1260,1261,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1253,1254,201,10,10,10,
-10,10,10,221,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,182,223,10,10,10,
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10
-</data>
- </layer>
- <layer id="4" name="2" width="30" height="20">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3457,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,1953,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2281,0,2272,2147487769,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,1953,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3457,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2272,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,2281,2272,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2281,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3051,3051,3049,3073,0,0,0,0,
-0,0,0,0,0,0,2273,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3073,2280,2281,3049,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <layer id="2" name="Decor" width="30" height="20" locked="1">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,1846,0,1912,0,0,0,1904,3221227346,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,1912,0,3221227346,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,3221227346,3221227346,3221227346,3221227346,3221227346,3221227346,3221227346,1874,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2388,2391,2397,0,0,0,0,0,0,0,0,0,0,0,0,0,2232,2233,2234,0,0,0,0,0,0,0,
-0,0,0,0,2400,2401,2402,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2412,2413,2414,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2394,2389,2390,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2406,2407,2391,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2418,2413,2414,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2394,2391,2396,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2406,2391,2391,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2332,0,2330,0,0,0,0,
-0,0,0,0,2418,2419,2420,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2329,0,0,2332,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <layer id="3" name="Decor2" width="30" height="20" locked="1">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2153,0,0,0,0,0,2154,2684356434,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,2684356434,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,2684356434,2684356434,2684356434,2684356434,2684356434,2684356434,2684356434,2684356434,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <objectgroup id="6" name="Collision">
-  <object id="7" x="182" y="59.3333" height="1.33333"/>
-  <object id="8" x="182" y="56"/>
-  <object id="9" x="182" y="75.3333"/>
-  <object id="10" x="182" y="95.3333"/>
-  <object id="11" x="181.333" y="100.667"/>
-  <object id="12" x="66" y="92" width="121.333" height="18.6667"/>
-  <object id="14" x="96" y="96.6667" width="14.6667" height="159.333"/>
-  <object id="16" x="191.333" y="49.3333" width="238.667" height="16"/>
-  <object id="17" x="415.333" y="59.3333" width="17.3333" height="82"/>
-  <object id="18" x="433" y="128" width="46.3334" height="14"/>
-  <object id="19" x="433" y="174.667" width="47.6667" height="16.6667"/>
-  <object id="20" x="418" y="175.333" width="14" height="96"/>
-  <object id="21" x="132" y="256.667" width="288.667" height="14.6667"/>
-  <object id="22" x="96" y="256" width="39.3333" height="14.6667"/>
-  <object id="23" x="320.667" y="112" width="46" height="15.3333"/>
-  <object id="24" x="119.333" y="116.667"/>
-  <object id="25" x="352" y="224" width="66.6667" height="34"/>
- </objectgroup>
- <objectgroup id="11" name="Entities">
-  <object id="30" name="The Laughing Girl" gid="3738" x="260.5" y="175" width="16" height="16">
-   <properties>
-    <property name="name" value="The Laughing Girl"/>
-    <property name="type" value="NPC"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="10" name="Spawns">
-  <object id="28" x="269.333" y="171.667">
-   <properties>
-    <property name="name" value="The Laughing Girl"/>
-    <property name="type" value="NPC"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="29" x="433.333" y="170">
-   <properties>
-    <property name="type" value="Player"/>
-   </properties>
-   <point/>
-  </object>
- </objectgroup>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\MageA.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="MageA" tilewidth="16" tileheight="16" tilecount="16" columns="4">
- <image source="../DawnLike/Commissions/Mage.png" width="64" height="64"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Pest0A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Pest0A" tilewidth="16" tileheight="16" tilecount="88" columns="8">
- <image source="../DawnLike/Characters/Pest0.png" width="128" height="176"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Pest1A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Pest1A" tilewidth="16" tileheight="16" tilecount="88" columns="8">
- <image source="../DawnLike/Characters/Pest1.png" width="128" height="176"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\PlayerAnimated.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="PlayerAnimated" tilewidth="16" tileheight="16" tilecount="240" columns="16">
- <image source="../DawnLike/Characters/PlayerAnimated.png" width="256" height="240"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Roblox.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\RockA.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="RockA" tilewidth="16" tileheight="16" tilecount="16" columns="8">
- <image source="../DawnLike/Items/Rock.png" width="128" height="32"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\RogueA.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="RogueA" tilewidth="16" tileheight="16" tilecount="16" columns="4">
- <image source="../DawnLike/Commissions/Rogue.png" width="64" height="64"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\ScrollA.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="ScrollA" tilewidth="16" tileheight="16" tilecount="48" columns="8">
- <image source="../DawnLike/Items/Scroll.png" width="128" height="96"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Shinking.jpg ---
-*** Non-text file detected (.jpg). Content not displayed. ***
+*** Binary file (.jpg extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Tengah.tmx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="38">
- <tileset firstgid="1" source="Decor0A.tsx"/>
- <tileset firstgid="177" source="Decor1A.tsx"/>
- <tileset firstgid="353" source="Tree1A.tsx"/>
- <tileset firstgid="785" source="Tree0A.tsx"/>
- <tileset firstgid="1217" source="Chest0A.tsx"/>
- <tileset firstgid="1241" source="Chest1A.tsx"/>
- <tileset firstgid="1265" source="FleshA.tsx"/>
- <tileset firstgid="1337" source="RockA.tsx"/>
- <tileset firstgid="1353" source="ScrollA.tsx"/>
- <tileset firstgid="1401" source="MageA.tsx"/>
- <tileset firstgid="1417" source="RogueA.tsx"/>
- <tileset firstgid="1433" source="WallA.tsx"/>
- <tileset firstgid="2453" source="FloorA.tsx"/>
- <tileset firstgid="3272" source="Cat0A.tsx"/>
- <tileset firstgid="3312" source="Cat1A.tsx"/>
- <tileset firstgid="3352" source="Humanoid1A.tsx"/>
- <tileset firstgid="3568" source="Humanoid0A.tsx"/>
- <tileset firstgid="3784" source="Pest0A.tsx"/>
- <tileset firstgid="3872" source="Pest1A.tsx"/>
- <tileset firstgid="3960" source="DecorAnimated.tsx"/>
- <tileset firstgid="4312" source="HumanoidAnimated.tsx"/>
- <layer id="1" name="Wall,Path" width="30" height="20" locked="1">
-  <data encoding="csv">
-2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,1633,2666,2666,1633,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,
-2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,1633,2666,2666,1633,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,
-2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,1633,2666,2666,1633,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,
-2463,2463,2463,1613,1614,1614,1614,1614,1614,1614,1614,1614,1614,1655,2687,2687,1653,1614,1614,1614,1614,1614,1614,1614,1614,1614,1615,2463,2463,2463,
-2463,2463,2463,1633,2642,2643,2643,2643,2643,2643,2643,2643,2643,2643,2664,2664,2643,2643,2643,2643,2643,2643,2643,2643,2643,2644,1633,2463,2463,2463,
-2463,2463,2463,1633,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2665,1633,2463,2463,2463,
-2463,2463,2463,1633,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2665,1633,2463,2463,2463,
-2463,2463,2463,1633,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2665,1633,1442,1442,1442,
-1614,1614,1614,1655,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,1653,1614,1614,1614,
-2668,2668,2668,2669,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2667,2668,2668,2668,
-2668,2668,2668,2669,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2667,2668,2668,2668,
-1614,1614,1614,1615,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2665,1613,1614,1614,1614,
-2463,2463,2463,1633,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2665,1633,2463,2463,2463,
-2463,2463,2463,1633,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2665,1633,2463,2463,2463,
-2463,2463,2463,1633,2663,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2664,2665,1633,2463,2463,2463,
-2463,2463,2463,1633,2684,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2685,2686,1633,2463,2463,2463,
-2463,2463,2463,1653,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1614,1655,2463,2463,2463,
-2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,
-2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,
-2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463,2463
-</data>
- </layer>
- <layer id="3" name="Decor" width="30" height="20" locked="1">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,1360,0,0,0,0,0,0,0,38,38,34,39,209,0,0,0,0,1515,
-0,0,0,0,273,1218,1218,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,95,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4142,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4142,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,116,117,117,117,117,118,0,0,0,0,0,0,0,0,0,0,1442,1442,
-0,0,0,0,0,0,0,0,0,0,0,0,124,125,125,125,125,126,0,0,0,0,0,0,0,0,1536,1536,4089,1536,
-0,0,0,0,0,0,0,0,0,0,0,0,124,125,125,125,125,126,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,124,125,125,125,125,126,64,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,132,133,133,133,133,134,0,0,0,0,0,0,0,1218,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,1226,1226,1226,1252,1250,1250,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,1226,1252,1226,1250,1250,1226,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1515
-</data>
- </layer>
- <layer id="2" name="TimpaDecor" width="30" height="20" locked="1">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3221225491,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,4089,0,0,0,0,0,0,0,0,70,0,17,0,0,331,0,0,0,0,0,
-0,0,0,0,2684354579,1610612756,0,2684354579,0,0,0,0,17,0,0,0,0,0,2684354579,0,1610612756,0,0,0,0,3817,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,0,0,
-0,0,0,0,0,0,0,57,58,59,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3221225491,0,0,1442,1442,
-0,4089,17,0,0,0,0,0,0,0,0,0,0,1292,1292,1292,1292,0,0,0,0,0,0,0,0,0,1536,1536,1536,1536,
-0,0,0,0,0,0,0,0,0,0,0,0,1292,1292,1292,1292,1292,0,0,0,0,0,0,0,0,0,0,0,0,2684354579,
-18,1610612755,1610612755,0,0,0,0,0,0,0,0,0,1292,1292,1292,1292,1292,0,0,1292,0,0,0,0,0,0,0,1610612755,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,1292,1292,1292,1292,1292,1292,0,0,0,0,0,0,333,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,3817,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,2684354580,0,0,18,0,0,0,0,0,0,0,0,0,0,0,0,1610612755,0,0,18,2684354580,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <layer id="4" name="TimpaDecor2" width="30" height="20" locked="1">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1536,1536,1536,1536,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,1610612891,156,156,0,0,155,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,3221225627,0,0,156,0,2684354715,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <objectgroup id="9" name="Spawns">
-  <object id="27" x="239.333" y="147.333">
-   <properties>
-    <property name="type" value="Player"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="28" x="309.333" y="173.333">
-   <properties>
-    <property name="name" value="The Whisper"/>
-    <property name="type" value="NPC"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="29" x="136" y="124.667">
-   <properties>
-    <property name="name" value="The Keeper"/>
-    <property name="type" value="NPC"/>
-   </properties>
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup id="10" name="Entities">
-  <object id="5" name="The Whisper" gid="4689" x="302" y="178" width="16" height="16">
-   <properties>
-    <property name="name" value="The Whisper"/>
-    <property name="type" value="NPC"/>
-   </properties>
-  </object>
-  <object id="37" name="The Laughing One" gid="4585" x="129.667" y="133.333" width="16" height="16">
-   <properties>
-    <property name="name" value="The Laughing One"/>
-    <property name="type" value="NPC"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="7" name="Collision">
-  <object id="8" x="48.5" y="48" width="175.5" height="14"/>
-  <object id="9" x="207.5" y="-2.5" width="15.5" height="52.5"/>
-  <object id="10" x="257" y="-2" width="14" height="64"/>
-  <object id="11" x="65.1667" y="64" width="63.5" height="14.5"/>
-  <object id="12" x="45.5" y="62.8333" width="17" height="78.3333"/>
-  <object id="13" x="-1.5" y="129" width="45.3333" height="12.5"/>
-  <object id="14" x="-1" y="175.5" width="47.6667" height="16"/>
-  <object id="15" x="47.1667" y="175.167" width="14.5" height="92"/>
-  <object id="16" x="62.6667" y="226" width="104.5" height="29"/>
-  <object id="17" x="57.5" y="254.5" width="375.5" height="17"/>
-  <object id="18" x="416.5" y="195.333" width="14" height="58.6667"/>
-  <object id="19" x="416.333" y="179.667" width="70.5" height="14.5"/>
-  <object id="20" x="417" y="127" width="66" height="16"/>
-  <object id="21" x="418" y="50.5" width="17.5" height="79.5"/>
-  <object id="22" x="399.5" y="49" width="18" height="62"/>
-  <object id="23" x="258" y="47.5" width="168" height="14"/>
-  <object id="24" x="114.5" y="95.5" width="44.5" height="15"/>
- </objectgroup>
- <objectgroup id="8" name="DoorZone"/>
-</map>
+*** Binary file (.tmx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Tree0A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Tree0A" tilewidth="16" tileheight="16" tilecount="432" columns="12">
- <image source="../DawnLike/Objects/Tree0.png" width="192" height="576"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\Tree1A.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="Tree1A" tilewidth="16" tileheight="16" tilecount="432" columns="12">
- <image source="../DawnLike/Objects/Tree1.png" width="192" height="576"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\assets\Tiled\WallA.tsx ---
-<?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="WallA" tilewidth="16" tileheight="16" tilecount="1020" columns="20">
- <image source="../DawnLike/Objects/Wall.png" width="320" height="816"/>
-</tileset>
+*** Binary file (.tsx extension). Content not included. ***
+
 
 ================================================================================
 
@@ -3390,10 +2562,12 @@ java {
   targetCompatibility = JavaVersion.VERSION_14
 }
 
+
 ================================================================================
 
 --- File: .\core\bin\main\com\dimmingechoes\Main.class ---
-*** Non-text file detected (.class). Content not displayed. ***
+*** Binary file (.class extension). Content not included. ***
+
 
 ================================================================================
 
@@ -3526,6 +2700,7 @@ public class TheDimmingEcho extends Game {
     }
 }
 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\dialogue\DialogueChoice.java ---
@@ -3540,6 +2715,7 @@ public class DialogueChoice {
         this.next = next;
     }
 }
+
 
 ================================================================================
 
@@ -3561,6 +2737,7 @@ public class DialogueNode {
         this.endDialogue = endDialogue;
     }
 }
+
 
 ================================================================================
 
@@ -3587,6 +2764,7 @@ public class DoorZone {
         this.entryDirection = entryDirection;
     }
 }
+
 
 ================================================================================
 
@@ -3621,6 +2799,7 @@ public class GridBuilder {
         return grid;
     }
 }
+
 
 ================================================================================
 
@@ -3677,6 +2856,7 @@ public class Room {
         doorZones.add(doorZone);
     }
 }
+
 
 ================================================================================
 
@@ -3748,6 +2928,7 @@ public class RoomGraph {
     }
 }
 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\dungeon\RoomType.java ---
@@ -3759,6 +2940,7 @@ public enum RoomType {
     EMPTY,
     FINAL
 }
+
 
 
 ================================================================================
@@ -3814,6 +2996,7 @@ public class Enemy {
         return animation;
     }
 }
+
 
 ================================================================================
 
@@ -4004,6 +3187,7 @@ public class NPC {
     }
 }
 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\entities\Player.java ---
@@ -4058,6 +3242,7 @@ public class Player {
     }
 }
 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\logic\CrystalInventory.java ---
@@ -4091,6 +3276,7 @@ public class CrystalInventory {
     }
 }
 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\logic\DialogueManager.java ---
@@ -4098,6 +3284,7 @@ package com.dimmingechoes.logic;
 
 public class DialogueManager {
 }
+
 
 ================================================================================
 
@@ -4130,6 +3317,7 @@ public class UsageLog {
         npcsGivenCrystal.clear();
     }
 }
+
 
 ================================================================================
 
@@ -4180,6 +3368,7 @@ public class AudioManager {
         sound.dispose();
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\manager\BattleManager.java ---
@@ -4270,6 +3459,7 @@ public class BattleManager {
         }
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\manager\GameLogger.java ---
@@ -4283,8 +3473,8 @@ import java.util.Date;
 public class GameLogger {
     private static GameLogger instance;
     private FileHandle logFile;
-    private static final String LOG_FILE_PATH = "gamelog/gamelog.txt";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HHmmss");
 
     private GameLogger() {}
 
@@ -4299,8 +3489,9 @@ public class GameLogger {
         // Ensure the gamelog directory exists
         java.io.File dir = new java.io.File("gamelog");
         if (!dir.exists()) dir.mkdirs();
-        logFile = com.badlogic.gdx.Gdx.files.absolute(LOG_FILE_PATH);
-        logFile.writeString("", false); // Clear log on start
+        String filename = "gamelog/gamelog-" + FILE_DATE_FORMAT.format(new Date()) + ".txt";
+        logFile = com.badlogic.gdx.Gdx.files.absolute(filename);
+        logFile.writeString("", false); // Start new log file
     }
 
     public void log(String message) {
@@ -4313,6 +3504,7 @@ public class GameLogger {
         // No explicit cleanup needed for FileHandle appends
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\save\SaveData.java ---
@@ -4341,6 +3533,7 @@ public class SaveData {
         return sdf.format(new java.util.Date(saveTimestamp));
     }
 }
+
 
 ================================================================================
 
@@ -4409,6 +3602,7 @@ public class SaveManager {
         delete(1); // Default to slot 1
     }
 }
+
 
 ================================================================================
 
@@ -4752,6 +3946,7 @@ public class BattleScreen implements Screen {
     }
 }
 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\DungeonScreen.java ---
@@ -4847,6 +4042,12 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     // --- NEW: ShapeRenderer for Debugging ---
     private final ShapeRenderer debugRenderer;
+
+    // --- Add fields for the custom ending choice UI ---
+    private boolean showEndingChoiceOverlay = false;
+    private String[] endingChoices = {"Keep the final crystal", "Give the final crystal", "Ignore the voices and keep walking ahead"};
+    private int endingChoiceIndex = 0;
+    private DoorZone lastTriggeredTopDoor = null;
 
     public DungeonScreen(TheDimmingEcho game) {
         this.game = game;
@@ -4949,9 +4150,9 @@ public class DungeonScreen extends InputAdapter implements Screen {
     @Override
     public void render(float delta) {
         stateTime += delta;
-        if (currentDialogueNode == null) {
+        if (currentDialogueNode == null && !showEndingChoiceOverlay) {
             handleMovement(delta);
-        } else {
+        } else if (currentDialogueNode != null) {
             updateTypingEffect(delta);
         }
 
@@ -4981,6 +4182,28 @@ public class DungeonScreen extends InputAdapter implements Screen {
             shapeRenderer.rect(dialogueTable.getX(), dialogueTable.getY(), dialogueTable.getWidth(), dialogueTable.getHeight());
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
+
+        // Draw ending choice overlay if needed
+        if (showEndingChoiceOverlay) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            shapeRenderer.setProjectionMatrix(gameCamera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(0, 0, 0, 0.95f);
+            shapeRenderer.rect(0, 0, gameViewport.getWorldWidth(), gameViewport.getWorldHeight());
+            shapeRenderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+            spriteBatch.setProjectionMatrix(gameCamera.combined);
+            spriteBatch.begin();
+            BitmapFont font = skin.getFont("default-font");
+            float yStart = gameViewport.getWorldHeight() / 2f + 40;
+            for (int i = 0; i < endingChoices.length; i++) {
+                font.setColor(i == endingChoiceIndex ? Color.GOLD : Color.LIGHT_GRAY);
+                font.draw(spriteBatch, endingChoices[i], 0, yStart - i * 40, gameViewport.getWorldWidth(), Align.center, false);
+            }
+            font.setColor(Color.WHITE);
+            font.draw(spriteBatch, "Use UP/DOWN and ENTER to choose", 0, 80, gameViewport.getWorldWidth(), Align.center, false);
+            spriteBatch.end();
         }
 
         uiStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
@@ -5151,6 +4374,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
     }
 
     private void handleMovement(float delta) {
+        if (showEndingChoiceOverlay) return; // Prevent movement while overlay is up
         float moveAmount = PLAYER_SPEED * delta;
         float oldX = player.x;
         float oldY = player.y;
@@ -5160,8 +4384,15 @@ public class DungeonScreen extends InputAdapter implements Screen {
         if (moveUp) player.y += moveAmount;
         if (moveDown) player.y -= moveAmount;
 
+        // Intercept top door in the middle room
         for (DoorZone door : currentRoom.getDoorZones()) {
             if (player.overlaps(door.bounds)) {
+                if (currentRoom.getRoomType() == RoomType.START && door.entryDirection == DoorZone.Direction.TOP && !showEndingChoiceOverlay) {
+                    showEndingChoiceOverlay = true;
+                    endingChoiceIndex = 0;
+                    lastTriggeredTopDoor = door;
+                    return;
+                }
                 changeRoom(door);
                 return;
             }
@@ -5212,6 +4443,28 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (showEndingChoiceOverlay) {
+            if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+                endingChoiceIndex = (endingChoiceIndex - 1 + endingChoices.length) % endingChoices.length;
+                return true;
+            }
+            if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
+                endingChoiceIndex = (endingChoiceIndex + 1) % endingChoices.length;
+                return true;
+            }
+            if (keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {
+                showEndingChoiceOverlay = false;
+                if (endingChoices[endingChoiceIndex].equals("Keep the final crystal")) {
+                    triggerEndingWithChoice("Keep it");
+                } else if (endingChoices[endingChoiceIndex].equals("Give the final crystal")) {
+                    triggerEndingWithChoice("Give the final crystal");
+                } else {
+                    triggerEndingWithChoice("Ignore the voices and keep walking ahead");
+                }
+                return true;
+            }
+            return true;
+        }
         if (currentDialogueNode != null) return false;
         switch (keycode) {
             case Input.Keys.W: case Input.Keys.UP: moveUp = true; break;
@@ -5379,33 +4632,46 @@ public class DungeonScreen extends InputAdapter implements Screen {
 
     private void triggerEndingWithChoice(String choice) {
         if (endingShown) return;
-
         int crystalsUsed = game.getUsageLog().totalGiven();
         int crystalsLost = game.getCrystalsLostToFailure();
-
+        // Failure ending
         if (crystalsLost > 0) {
             game.setScreen(new EndingScreen(game, "FAILURE"));
             endingShown = true;
             return;
         }
-
+        // Skip/Ignore logic
+        if (choice.equals("Ignore the voices and keep walking ahead")) {
+            if (crystalsUsed == 0) {
+                game.setScreen(new EndingScreen(game, "NOMATTER"));
+            } else {
+                game.setScreen(new EndingScreen(game, "PARTIAL"));
+            }
+            endingShown = true;
+            return;
+        }
+        // Keep logic
+        if (choice.equals("Keep it")) {
+            if (crystalsUsed == 0) {
+                game.setScreen(new EndingScreen(game, "STONE"));
+            } else {
+                game.setScreen(new EndingScreen(game, "PARTIAL"));
+            }
+            endingShown = true;
+            return;
+        }
+        // Give logic
         if (choice.equals("Give the final crystal")) {
-            if (crystalsUsed == 3) { // Helped all NPCs
-                game.setScreen(new EndingScreen(game, "VOID")); // Petals in the Void
-            } else if (crystalsUsed == 0) { // Helped no NPCs
-                game.setScreen(new EndingScreen(game, "FADE")); // The Memory That Fades
-            } else { // Helped some NPCs (1 or 2)
-                // This is a selfless act, but incomplete. Let's make it a more hopeful partial ending.
+            if (crystalsUsed == 4) {
+                game.setScreen(new EndingScreen(game, "VOID"));
+            } else if (crystalsUsed > 0 && crystalsUsed < 4) {
+                game.setScreen(new EndingScreen(game, "PARTIAL"));
+            } else if (crystalsUsed == 0) {
                 game.setScreen(new EndingScreen(game, "FADE"));
             }
-        } else { // "Keep it" was chosen
-            if (crystalsUsed == 0) { // Helped no NPCs
-                game.setScreen(new EndingScreen(game, "STONE")); // The Keeper Becomes Stone
-            } else { // Helped 1 or 2 NPCs
-                game.setScreen(new EndingScreen(game, "PARTIAL")); // The Echoes That Linger
-            }
+            endingShown = true;
+            return;
         }
-        endingShown = true;
     }
 
     private void updateChoiceHighlight() {
@@ -5455,6 +4721,7 @@ public class DungeonScreen extends InputAdapter implements Screen {
     }
 }
 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\EndingScreen.java ---
@@ -5501,6 +4768,9 @@ public class EndingScreen implements Screen {
     private boolean allChunksDone = false;
     private boolean showReturnPrompt = false;
 
+    // Add a mapping for ending labels
+    private String endingLabel = "";
+
     public EndingScreen(TheDimmingEcho game, String endingID) {
         this.game = game;
         this.endingID = endingID;
@@ -5540,6 +4810,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "The Keeper is gone, but the love that broke their heart is finally free to heal.";
                 imagePath = "ending1.jpeg";
                 musicPath = "ending1.mp3";
+                endingLabel = "Ending 1: The Memory That Fades";
                 break;
             case "STONE": // The Keeper Becomes Stone
                 narrationChunks = new String[]{
@@ -5550,6 +4821,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "In the heart of the ruin, you stand eternal—a monument to the fear of feeling.";
                 imagePath = "ending2.jpeg";
                 musicPath = "ending2.mp3";
+                endingLabel = "Ending 2: The Keeper Becomes Stone";
                 break;
             case "NOMATTER": // A Place That No Longer Exists
                 narrationChunks = new String[]{
@@ -5560,6 +4832,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "You have become the answer to a question no one can feel.";
                 imagePath = "ending3.jpeg";
                 musicPath = "ending3.mp3";
+                endingLabel = "Ending 3: A Place That No Longer Exists";
                 break;
             case "VOID": // Petals in the Void
                 narrationChunks = new String[]{
@@ -5570,6 +4843,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "The dungeon is no longer a place of sorrow, but a garden of memory, tended by the ghost of the one who gave everything to let it grow.";
                 imagePath = "ending4.jpeg";
                 musicPath = "ending4.mp3";
+                endingLabel = "Ending 4: Petals in the Void";
                 break;
             case "PARTIAL": // The Echoes That Linger
                 narrationChunks = new String[]{
@@ -5579,6 +4853,7 @@ public class EndingScreen implements Screen {
                 finalLineText = "You find a fragile peace in the twilight of your memories, forever caught between the sorrow of forgetting and the pain of remembering.";
                 imagePath = "ending5.jpeg";
                 musicPath = "ending5.mp3";
+                endingLabel = "Ending 5: The Echoes That Linger";
                 break;
             case "FAILURE": // The Echoes Take Their Toll
                 narrationChunks = new String[]{
@@ -5589,12 +4864,14 @@ public class EndingScreen implements Screen {
                 finalLineText = "You came to heal a broken soul, and instead became just another one of its scars.";
                 imagePath = "endingFail.jpeg";
                 musicPath = "audio/ds vu.mp3";
+                endingLabel = "Ending X: The Echoes Take Their Toll";
                 break;
             default:
                 narrationChunks = new String[]{"The story ends, but the echoes remain."};
                 finalLineText = "Ending: Unknown";
                 imagePath = "endingFail.jpeg";
                 musicPath = "audio/ds vu.mp3";
+                endingLabel = "Ending: Unknown";
                 break;
         }
         if (!imagePath.isEmpty()) {
@@ -5683,6 +4960,12 @@ public class EndingScreen implements Screen {
         }
 
         batch.end();
+        // Draw ending label at the bottom 5% of the screen
+        batch.begin();
+        font.setColor(1, 1, 1, fadeAlpha);
+        float labelY = viewport.getWorldHeight() * 0.05f + font.getCapHeight();
+        font.draw(batch, endingLabel, 0, labelY, viewport.getWorldWidth(), Align.center, false);
+        batch.end();
     }
 
     @Override
@@ -5723,6 +5006,7 @@ public class EndingScreen implements Screen {
         font.draw(batch, text, x, y, targetWidth, align, wrap);
     }
 }
+
 
 ================================================================================
 
@@ -5874,6 +5158,7 @@ public class FibonacciScreen implements Screen {
         skin.dispose();
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\LoadGameScreen.java ---
@@ -6047,6 +5332,7 @@ public class LoadGameScreen implements Screen {
         titleFont.dispose();
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\MainMenuScreen.java ---
@@ -6264,6 +5550,7 @@ public class MainMenuScreen implements Screen {
         }
     }
 }
+
 
 ================================================================================
 
@@ -6519,6 +5806,7 @@ public class PauseMenuScreen implements Screen {
         titleFont.dispose();
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\PrologueScreen.java ---
@@ -6665,6 +5953,7 @@ public class PrologueScreen implements Screen {
         font.dispose();
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\WordLadderScreen.java ---
@@ -6902,6 +6191,7 @@ public class WordLadderScreen implements Screen {
         skin.dispose();
     }
 } 
+
 ================================================================================
 
 --- File: .\core\src\main\java\com\dimmingechoes\screens\WordleScreen.java ---
@@ -7164,6 +6454,7 @@ public class WordleScreen implements Screen {
     @Override
     public void dispose() { batch.dispose(); font.dispose(); stage.dispose(); }
 } 
+
 ================================================================================
 
 --- File: .\gradle\gradle-daemon-jvm.properties ---
@@ -7180,10 +6471,12 @@ toolchainUrl.WINDOWS.AARCH64=https\://api.foojay.io/disco/v3.0/ids/43ee83889b87b
 toolchainUrl.WINDOWS.X86_64=https\://api.foojay.io/disco/v3.0/ids/2d57bdd1e17a18f83ff073919daa35ba/redirect
 toolchainVersion=17
 
+
 ================================================================================
 
 --- File: .\gradle\wrapper\gradle-wrapper.jar ---
-*** Non-text file detected (.jar). Content not displayed. ***
+*** Binary file (.jar extension). Content not included. ***
+
 
 ================================================================================
 
@@ -7195,6 +6488,7 @@ networkTimeout=10000
 validateDistributionUrl=true
 zipStoreBase=GRADLE_USER_HOME
 zipStorePath=wrapper/dists
+
 
 ================================================================================
 
@@ -7376,6 +6670,7 @@ if(enableGraalNative == 'true') {
   apply from: file("nativeimage.gradle")
 }
 
+
 ================================================================================
 
 --- File: .\lwjgl3\nativeimage.gradle ---
@@ -7434,60 +6729,72 @@ project(":lwjgl3") {
   }
 }
 
+
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\assets.txt ---
 libgdx.png
 
+
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx128.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx16.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx32.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\libgdx64.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\com\dimmingechoes\lwjgl3\Lwjgl3Launcher.class ---
-*** Non-text file detected (.class). Content not displayed. ***
+*** Binary file (.class extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\bin\main\com\dimmingechoes\lwjgl3\StartupHelper.class ---
-*** Non-text file detected (.class). Content not displayed. ***
+*** Binary file (.class extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\icons\logo.icns ---
-*** Non-text file detected (.icns). Content not displayed. ***
+*** Binary file (.icns extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\icons\logo.ico ---
-*** Non-text file detected (.ico). Content not displayed. ***
+*** Binary file (.ico extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\icons\logo.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
@@ -7525,6 +6832,7 @@ public class Lwjgl3Launcher {
         return configuration;
     }
 }
+
 
 ================================================================================
 
@@ -7651,25 +6959,30 @@ public class StartupHelper {
     }
 }
 
+
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx128.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx16.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx32.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
 --- File: .\lwjgl3\src\main\resources\libgdx64.png ---
-*** Non-text file detected (.png). Content not displayed. ***
+*** Binary file (.png extension). Content not included. ***
+
 
 ================================================================================
 
@@ -7688,6 +7001,7 @@ public class StartupHelper {
     "propertyTypes": [
     ]
 }
+
 
 ================================================================================
 
@@ -7709,6 +7023,7 @@ public class StartupHelper {
     "recentFiles": [
     ]
 }
+
 
 ================================================================================
 

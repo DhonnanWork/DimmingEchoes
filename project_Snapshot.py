@@ -3,132 +3,142 @@ import os
 # --- Configuration ---
 # The name of the output file.
 output_filename = 'project_snapshot.txt'
-
-# A list of files and directories to ignore in both the tree and the content snapshot.
+# A list of files and directories to ignore.
+# We ignore the script itself, its output, and common large/binary directories.
 ignore_list = [
     output_filename,
     os.path.basename(__file__),  # The script's own name
-    '.git',                      # Git version control folder
-    '.gradle',                   # Gradle's cache and wrapper files
-    'build',                     # Compiled output directory
-    '__pycache__',               # Python cache directory
-    '.idea',                     # IDE-specific settings folder
-    'core/bin',                  # Specific compiled output folders
-    'lwjgl3/bin',
+    '.git',
+    '.gradle',
+    'build',
+    '__pycache__',
+    '.idea',
+    '.vs',
+    '.vscode',
 ]
-
-# List of file extensions that should be treated as non-text (binary).
-# The script will not attempt to read the content of these files.
+# List of common non-text file extensions to handle gracefully.
+# This is the master list to prevent reading binary files.
 NON_TEXT_EXTENSIONS = {
     # Images
-    '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp', '.ico',
-    # Fonts
-    '.ttf', '.otf', '.woff', '.woff2',
+    '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp',
+    # Unity specific
+    '.unity', '.asset', '.mat', '.prefab', '.shader', '.anim', '.controller',
     # Audio
     '.wav', '.mp3', '.ogg', '.flac',
-    # Video
-    '.mp4', '.mov', '.avi', '.mkv',
-    # 3D Models & Assets
-    '.fbx', '.obj', '.blend', '.dae', '.ase',
-    # Compiled Code & Binaries
-    '.class', '.jar', '.exe', '.dll', '.so', '.dylib', '.bin',
+    # Fonts
+    '.ttf', '.otf', '.woff', '.woff2',
+    # 3D Models
+    '.fbx', '.obj', '.blend', '.dae',
+    # Binaries/Executables
+    '.dll', '.exe', '.so', '.dylib', '.bin',
     # Archives
-    '.zip', '.rar', '.7z', '.tar', '.gz', '.unitypackage',
-    # Documents & Design Files
-    '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.psd', '.ai', '.eps',
-    # Other
-    '.icns',
+    '.unitypackage', '.zip', '.rar', '.7z', '.tar', '.gz', '.jar',
+    # Documents
+    '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
+    # Design files
+    '.psd', '.ai', '.eps', '.ase',
+    # Videos
+    '.mp4', '.mov', '.avi', '.mkv',
+    # Data files that might be large or have complex structures
+    '.json', '.xml', '.yaml', '.yml', '.atlas',
+    # Misc/OS specific
+    '.crx','.env','.ico', '.icns',
+    # Java & IDE specific
+    '.class', '.iml',
+    # Tiled Map Editor specific
+    '.tmx', '.tsx'
 }
 
 # --- End Configuration ---
 
-def generate_and_write_tree(outfile, start_dir, ignore_list):
+def is_binary_file(filepath):
     """
-    Generates a directory tree structure and writes it to the output file.
+    Checks if a file is likely a binary file based on its extension.
+    Returns True if the extension is in our blocklist, False otherwise.
     """
-    outfile.write("--- Project File Structure ---\n\n")
-    
-    # The root directory doesn't have a prefix.
-    outfile.write(f"{os.path.abspath(start_dir)}\n")
-
-    # We use a recursive helper function to build the tree.
-    _recursive_tree_builder(outfile, start_dir, "", ignore_list)
-    
-    outfile.write("\n" + "=" * 80 + "\n\n")
-    print("✅ Project tree generated.")
-
-def _recursive_tree_builder(outfile, directory, prefix, ignore_list):
-    """A recursive helper to build and write the file tree."""
-    try:
-        # Get all entries in the directory, then filter and sort them.
-        entries = os.listdir(directory)
-        entries = sorted([e for e in entries if e not in ignore_list])
-    except OSError:
-        # Ignore directories we can't read.
-        return
-
-    for i, entry in enumerate(entries):
-        is_last = (i == len(entries) - 1)
-        # Use different connectors for the last item in a directory.
-        connector = "└── " if is_last else "├── "
-        
-        outfile.write(f"{prefix}{connector}{entry}\n")
-        
-        path = os.path.join(directory, entry)
-        if os.path.isdir(path):
-            # The prefix for children is extended based on whether the current item was the last.
-            extension = "    " if is_last else "│   "
-            _recursive_tree_builder(outfile, path, prefix + extension, ignore_list)
-
-def is_text_file(filepath):
-    """
-    Checks if a file is likely a text file based on its extension.
-    """
-    if '.' not in os.path.basename(filepath):
-        return True # Treat files with no extension as text
     _, ext = os.path.splitext(filepath)
-    return ext.lower() not in NON_TEXT_EXTENSIONS
+    return ext.lower() in NON_TEXT_EXTENSIONS
+
+def generate_tree(start_path, prefix="", ignore_list=None):
+    """
+    Recursively generates a visual directory tree structure.
+    """
+    if ignore_list is None:
+        ignore_list = []
+    
+    ignore_set = set(ignore_list)
+    lines = []
+    
+    try:
+        entries = sorted([e for e in os.listdir(start_path) if e not in ignore_set])
+    except OSError:
+        return []
+
+    dirs = [e for e in entries if os.path.isdir(os.path.join(start_path, e))]
+    files = [e for e in entries if os.path.isfile(os.path.join(start_path, e))]
+    all_entries = dirs + files
+    
+    for i, entry in enumerate(all_entries):
+        is_last = i == (len(all_entries) - 1)
+        connector = "└── " if is_last else "├── "
+        lines.append(f"{prefix}{connector}{entry}\n")
+        
+        if entry in dirs:
+            new_prefix = prefix + ("    " if is_last else "│   ")
+            lines.extend(generate_tree(os.path.join(start_path, entry), new_prefix, ignore_list))
+    
+    return lines
 
 def create_project_snapshot():
     """
-    Creates a snapshot of the project, starting with a file tree,
-    followed by the content of all text-based files.
+    Generates a project snapshot including a directory tree and file contents.
     """
+    start_dir = '.'
+    
     with open(output_filename, 'w', encoding='utf-8', errors='replace') as outfile:
-        # --- 1. Generate and write the project tree first ---
-        generate_and_write_tree(outfile, '.', ignore_list)
-
-        # --- 2. Write the content of each file ---
-        outfile.write("--- File Contents ---\n\n")
+        abs_start_dir = os.path.abspath(start_dir)
+        outfile.write(f"--- Project Snapshot of directory: {abs_start_dir} ---\n\n")
         
-        for dirpath, dirnames, filenames in os.walk('.', topdown=True):
-            # Filter directories and files based on the ignore list.
+        print("🌳 Generating project tree...")
+        outfile.write("--- Project Tree ---\n")
+        outfile.write(f"{os.path.basename(abs_start_dir)}/\n")
+        tree_lines = generate_tree(start_dir, ignore_list=ignore_list)
+        outfile.writelines(tree_lines)
+        outfile.write("\n" + "=" * 80 + "\n\n")
+        print("Tree generation complete.")
+
+        print("\n📄 Processing files...")
+        for dirpath, dirnames, filenames in os.walk(start_dir, topdown=True):
             dirnames[:] = [d for d in dirnames if d not in ignore_list]
-            
-            for filename in sorted(filenames): # Sort for consistent order
+
+            for filename in sorted(filenames):
                 if filename in ignore_list:
                     continue
 
                 file_path = os.path.join(dirpath, filename)
-                header = f"--- File: {file_path} ---\n"
-                print(f"Processing: {file_path}")
-                outfile.write(header)
-
-                if is_text_file(file_path):
+                
+                # The critical check happens here
+                if is_binary_file(file_path):
+                    # If it's binary, we log it and write a placeholder.
+                    print(f"  -> Skipping binary file: {file_path}")
+                    outfile.write(f"--- File: {file_path} ---\n")
+                    ext = os.path.splitext(file_path)[1]
+                    outfile.write(f"*** Binary file ({ext} extension). Content not included. ***\n")
+                    outfile.write("\n\n" + "=" * 80 + "\n\n")
+                else:
+                    # Otherwise, we treat it as text and process it.
+                    print(f"  -> Reading text file:    {file_path}")
+                    outfile.write(f"--- File: {file_path} ---\n")
                     try:
                         with open(file_path, 'r', encoding='utf-8', errors='ignore') as infile:
                             content = infile.read()
                             outfile.write(content)
                     except Exception as e:
                         outfile.write(f"*** Could not read file content. Reason: {e} ***\n")
-                else:
-                    ext = os.path.splitext(file_path)[1]
-                    outfile.write(f"*** Non-text file detected ({ext}). Content not displayed. ***\n")
+                    outfile.write("\n\n" + "=" * 80 + "\n\n")
 
-                outfile.write("\n" + "=" * 80 + "\n\n")
-
-    print(f"\n✅ Success! Project snapshot has been written to '{output_filename}'")
+    print(f"\n✅ Success! Snapshot written to '{output_filename}'")
 
 
 if __name__ == "__main__":
-    create_project_snapshot()   
+    create_project_snapshot()

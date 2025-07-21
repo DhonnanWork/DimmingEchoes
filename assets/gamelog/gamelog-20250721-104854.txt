@@ -1,0 +1,27 @@
+[2025-07-21 10:48:54] Game application started.
+[2025-07-21 10:48:54] Loading game from slot: 1
+[2025-07-21 10:49:06] New game started.
+[2025-07-21 10:49:10] Player entered room: Tiled/Kiri.tmx
+[2025-07-21 10:49:11] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 10:49:12] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-21 10:49:12] Player is attempting the Wordle puzzle.
+[2025-07-21 10:49:14] Player solved the Wordle puzzle.
+[2025-07-21 10:49:18] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 10:49:21] Player chose dialogue option: 'I'll come back later.'
+[2025-07-21 10:49:56] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 10:51:11] Player chose dialogue option: '[Attempt the number puzzle]'
+[2025-07-21 10:51:11] Player is attempting the Fibonacci puzzle.
+[2025-07-21 10:51:13] Player solved the Fibonacci puzzle.
+[2025-07-21 10:51:17] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 10:51:18] Player chose dialogue option: '[Attempt the ladder puzzle]'
+[2025-07-21 10:51:18] Player is attempting the Word Ladder puzzle.
+[2025-07-21 10:51:29] Player solved the Word Ladder puzzle.
+[2025-07-21 10:51:34] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 10:51:35] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-21 10:51:35] Player is attempting the Wordle puzzle.
+[2025-07-21 10:51:37] Player solved the Wordle puzzle.
+[2025-07-21 10:51:41] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 10:51:44] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-21 10:51:44] Player is attempting the Wordle puzzle.
+[2025-07-21 10:51:49] Player solved the Wordle puzzle.
+[2025-07-21 10:51:53] Player started dialogue with 'The Laughing Girl'.

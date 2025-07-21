@@ -1,0 +1,40 @@
+[2025-07-21 11:00:36] Game application started.
+[2025-07-21 11:00:36] Loading game from slot: 1
+[2025-07-21 11:00:41] New game started.
+[2025-07-21 11:00:41] New game started.
+[2025-07-21 11:00:41] New game started.
+[2025-07-21 11:00:45] Player entered room: Tiled/Kiri.tmx
+[2025-07-21 11:00:48] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 11:00:49] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-21 11:00:49] Player is attempting the Wordle puzzle.
+[2025-07-21 11:00:51] Player solved the Wordle puzzle.
+[2025-07-21 11:00:56] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 11:00:57] Player chose dialogue option: '[Attempt the ladder puzzle]'
+[2025-07-21 11:00:57] Player is attempting the Word Ladder puzzle.
+[2025-07-21 11:01:04] Player solved the Word Ladder puzzle.
+[2025-07-21 11:01:08] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 11:01:09] Player chose dialogue option: '[Attempt the number puzzle]'
+[2025-07-21 11:01:09] Player is attempting the Fibonacci puzzle.
+[2025-07-21 11:01:11] Player solved the Fibonacci puzzle.
+[2025-07-21 11:01:15] Player started dialogue with 'The Laughing Girl'.
+[2025-07-21 11:01:17] Player chose dialogue option: '[Give a Crystal] Help her remember more.'
+[2025-07-21 11:01:17] Player gave a crystal to 'The Laughing Girl'.
+[2025-07-21 11:01:17] Player chose dialogue option: '...'
+[2025-07-21 11:01:20] Player entered room: Tiled/Tengah.tmx
+[2025-07-21 11:01:22] Player started dialogue with 'The Laughing One'.
+[2025-07-21 11:01:23] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
+[2025-07-21 11:01:23] Player gave a crystal to 'The Laughing One'.
+[2025-07-21 11:01:24] Player chose dialogue option: '...'
+[2025-07-21 11:01:27] Player entered room: Tiled/Kanan.tmx
+[2025-07-21 11:01:30] Player started dialogue with 'The Stranger'.
+[2025-07-21 11:01:31] Player chose dialogue option: '[Give a Crystal] Quell his anger.'
+[2025-07-21 11:01:31] Player gave a crystal to 'The Stranger'.
+[2025-07-21 11:01:31] Player chose dialogue option: '...'
+[2025-07-21 11:01:31] Player started dialogue with 'The Stranger'.
+[2025-07-21 11:01:35] Player entered room: Tiled/Tengah.tmx
+[2025-07-21 11:01:36] Player started dialogue with 'The Laughing One'.
+[2025-07-21 11:01:40] Player started dialogue with 'The Whisper'.
+[2025-07-21 11:01:41] Player started dialogue with 'The Whisper'.
+[2025-07-21 11:01:41] Player chose dialogue option: '[Give the Final Crystal] Learn the truth.'
+[2025-07-21 11:01:41] Player gave a crystal to 'The Whisper'.
+[2025-07-21 11:01:42] Player chose dialogue option: '...'
