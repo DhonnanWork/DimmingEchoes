@@ -1,0 +1,69 @@
+[2025-07-22 10:42:06] Game application started.
+[2025-07-22 10:42:06] Loading game from slot: 1
+[2025-07-22 10:43:02] New game started.
+[2025-07-22 10:43:18] New game started.
+[2025-07-22 10:43:26] Player started dialogue with 'The Whisper'.
+[2025-07-22 10:43:34] Player entered room: Tiled/Kiri.tmx
+[2025-07-22 10:43:38] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 10:43:43] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-22 10:43:43] Player is attempting the Wordle puzzle.
+[2025-07-22 10:44:24] Player failed the Wordle puzzle.
+[2025-07-22 10:57:41] New game started.
+[2025-07-22 10:58:14] Player started dialogue with 'The Laughing One'.
+[2025-07-22 10:58:20] Player chose dialogue option: 'Ask about this place.'
+[2025-07-22 10:58:25] Player chose dialogue option: 'I see.'
+[2025-07-22 10:58:27] Player started dialogue with 'The Laughing One'.
+[2025-07-22 10:58:30] Player chose dialogue option: '[Give Crystal]'
+[2025-07-22 10:58:30] Player gave a crystal to 'The Laughing One'.
+[2025-07-22 10:58:31] Player chose dialogue option: '...'
+[2025-07-22 10:58:32] Player started dialogue with 'The Laughing One'.
+[2025-07-22 10:58:39] Player entered room: Tiled/Kiri.tmx
+[2025-07-22 10:58:43] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 10:58:48] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-22 10:58:48] Player is attempting the Wordle puzzle.
+[2025-07-22 10:59:28] Player solved the Wordle puzzle.
+[2025-07-22 10:59:38] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 10:59:41] Player chose dialogue option: '[Attempt the ladder puzzle]'
+[2025-07-22 10:59:41] Player is attempting the Word Ladder puzzle.
+[2025-07-22 10:59:57] Player solved the Word Ladder puzzle.
+[2025-07-22 11:00:01] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 11:00:03] Player chose dialogue option: '[Attempt the number puzzle]'
+[2025-07-22 11:00:03] Player is attempting the Fibonacci puzzle.
+[2025-07-22 11:00:17] Player solved the Fibonacci puzzle.
+[2025-07-22 11:00:22] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 11:00:26] Player chose dialogue option: '[Give a Crystal] Help her remember more.'
+[2025-07-22 11:00:26] Player gave a crystal to 'The Laughing Girl'.
+[2025-07-22 11:00:26] Player chose dialogue option: '...'
+[2025-07-22 11:00:27] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 11:00:32] Player entered room: Tiled/Tengah.tmx
+[2025-07-22 11:00:34] Player entered room: Tiled/Kanan.tmx
+[2025-07-22 11:00:37] Player started dialogue with 'The Stranger'.
+[2025-07-22 11:00:49] Player chose dialogue option: '[Give a Crystal] Quell his anger.'
+[2025-07-22 11:00:49] Player gave a crystal to 'The Stranger'.
+[2025-07-22 11:00:49] Player chose dialogue option: '...'
+[2025-07-22 11:00:50] Player started dialogue with 'The Stranger'.
+[2025-07-22 11:01:00] Player entered room: Tiled/Tengah.tmx
+[2025-07-22 11:01:03] Player started dialogue with 'The Whisper'.
+[2025-07-22 11:01:04] Player started dialogue with 'The Whisper'.
+[2025-07-22 11:01:07] Player chose dialogue option: '[Give the Final Crystal] Learn the truth.'
+[2025-07-22 11:01:07] Player gave a crystal to 'The Whisper'.
+[2025-07-22 11:01:08] Player chose dialogue option: '...'
+[2025-07-22 11:01:09] Player started dialogue with 'The Whisper'.
+[2025-07-22 11:01:45] New game started.
+[2025-07-22 11:02:07] New game started.
+[2025-07-22 11:02:19] New game started.
+[2025-07-22 11:02:29] New game started.
+[2025-07-22 11:02:31] Player started dialogue with 'The Laughing One'.
+[2025-07-22 11:02:32] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
+[2025-07-22 11:02:32] Player gave a crystal to 'The Laughing One'.
+[2025-07-22 11:02:32] Player chose dialogue option: '...'
+[2025-07-22 11:02:33] Player started dialogue with 'The Laughing One'.
+[2025-07-22 11:02:45] New game started.
+[2025-07-22 11:02:49] Player entered room: Tiled/Kiri.tmx
+[2025-07-22 11:02:51] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 11:02:52] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-22 11:02:52] Player is attempting the Wordle puzzle.
+[2025-07-22 11:02:58] Player failed the Wordle puzzle.
+[2025-07-22 11:03:34] New game started.
+[2025-07-22 11:03:36] Game paused.
+[2025-07-22 11:04:10] New game started.

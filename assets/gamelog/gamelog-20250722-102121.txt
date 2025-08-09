@@ -1,0 +1,23 @@
+[2025-07-22 10:21:21] Game application started.
+[2025-07-22 10:21:21] Loading game from slot: 1
+[2025-07-22 10:21:24] New game started.
+[2025-07-22 10:24:40] New game started.
+[2025-07-22 10:24:40] New game started.
+[2025-07-22 10:24:45] New game started.
+[2025-07-22 10:24:49] New game started.
+[2025-07-22 10:24:51] Player started dialogue with 'The Laughing One'.
+[2025-07-22 10:24:52] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
+[2025-07-22 10:24:52] Player gave a crystal to 'The Laughing One'.
+[2025-07-22 10:24:52] Player chose dialogue option: '...'
+[2025-07-22 10:24:52] Player started dialogue with 'The Laughing One'.
+[2025-07-22 10:24:58] New game started.
+[2025-07-22 10:24:59] New game started.
+[2025-07-22 10:25:04] New game started.
+[2025-07-22 10:25:05] Player started dialogue with 'The Laughing One'.
+[2025-07-22 10:25:06] Player chose dialogue option: '[Give a Crystal] Restore an echo.'
+[2025-07-22 10:25:06] Player gave a crystal to 'The Laughing One'.
+[2025-07-22 10:25:07] Player chose dialogue option: '...'
+[2025-07-22 10:25:07] Player started dialogue with 'The Laughing One'.
+[2025-07-22 10:25:16] New game started.
+[2025-07-22 10:25:20] Player entered room: Tiled/Kiri.tmx
+[2025-07-22 10:34:29] Player entered room: Tiled/Tengah.tmx

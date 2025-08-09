@@ -193,8 +193,6 @@ public class DungeonScreen extends InputAdapter implements Screen {
         return currentRoom;
     }
 
-    // ... (rest of the constructor and other methods are unchanged) ...
-
     @Override
     public void render(float delta) {
         stateTime += delta;
@@ -233,24 +231,31 @@ public class DungeonScreen extends InputAdapter implements Screen {
         }
 
         // Draw ending choice overlay if needed
+        // --- AFTER ---
         if (showEndingChoiceOverlay) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
-            shapeRenderer.setProjectionMatrix(gameCamera.combined);
+            // USE THE UI CAMERA, which is tied to the screen
+            shapeRenderer.setProjectionMatrix(uiStage.getCamera().combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(0, 0, 0, 0.95f);
-            shapeRenderer.rect(0, 0, gameViewport.getWorldWidth(), gameViewport.getWorldHeight());
+            // Draw the rectangle using the ACTUAL SCREEN DIMENSIONS in pixels
+            shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
-            spriteBatch.setProjectionMatrix(gameCamera.combined);
+
+            // ALSO USE THE UI CAMERA for the text
+            spriteBatch.setProjectionMatrix(uiStage.getCamera().combined);
             spriteBatch.begin();
             BitmapFont font = skin.getFont("default-font");
-            float yStart = gameViewport.getWorldHeight() / 2f + 40;
+            // Position the text relative to the screen height
+            float yStart = Gdx.graphics.getHeight() / 2f + 40;
             for (int i = 0; i < endingChoices.length; i++) {
                 font.setColor(i == endingChoiceIndex ? Color.GOLD : Color.LIGHT_GRAY);
-                font.draw(spriteBatch, endingChoices[i], 0, yStart - i * 40, gameViewport.getWorldWidth(), Align.center, false);
+                // Draw the text relative to the screen width
+                font.draw(spriteBatch, endingChoices[i], 0, yStart - i * 40, Gdx.graphics.getWidth(), Align.center, false);
             }
             font.setColor(Color.WHITE);
-            font.draw(spriteBatch, "Use UP/DOWN and ENTER to choose", 0, 80, gameViewport.getWorldWidth(), Align.center, false);
+            font.draw(spriteBatch, "Use UP/DOWN and ENTER to choose", 0, 80, Gdx.graphics.getWidth(), Align.center, false);
             spriteBatch.end();
         }
 

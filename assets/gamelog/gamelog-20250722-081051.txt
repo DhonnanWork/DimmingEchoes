@@ -1,0 +1,5 @@
+[2025-07-22 08:10:51] Game application started.
+[2025-07-22 08:10:52] Loading game from slot: 1
+[2025-07-22 08:11:02] New game started.
+[2025-07-22 08:11:05] Player started dialogue with 'The Laughing One'.
+[2025-07-22 08:14:08] Player chose dialogue option: 'Say nothing.'
