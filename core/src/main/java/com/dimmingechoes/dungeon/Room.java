@@ -30,7 +30,7 @@ public class Room {
     }
     public Color getBackgroundColor() {
         return backgroundColor;
-    } // <-- ADDED
+    }
     public List<NPC> getNpcs() {
         return npcs;
     }

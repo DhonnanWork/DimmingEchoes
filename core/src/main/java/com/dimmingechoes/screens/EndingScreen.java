@@ -91,7 +91,7 @@ public class EndingScreen implements Screen {
                     "From your feet upwards, your form hardens. The flowing cloak becomes rigid, the sorrowful posture is frozen in time. The ruins around you cease their slow, dreamlike drift, becoming a fixed and silent tomb. You have won the battle against pain by building a fortress of flesh and bone so absolute that nothing can ever touch you again.",
                     "You are safe. You are whole. You are utterly, completely alone."
                 };
-                finalLineText = "In the heart of the ruin, you stand eternal—a monument to the fear of feeling.";
+                finalLineText = "In the heart of the ruin, you stand eternal. a monument to the fear of feeling.";
                 imagePath = "ending2.jpeg";
                 musicPath = "ending2.mp3";
                 endingLabel = "Ending 2: The Keeper Becomes Stone";

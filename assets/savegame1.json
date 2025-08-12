@@ -1,13 +1,6 @@
 {
-crystalCount: 4
-crystalRecipients: {
-	class: java.util.HashSet
-	items: [
-		The Laughing One
-	]
-}
-saveTimestamp: 1752764308284
-playerX: 451.3206
-playerY: 502.1176
+crystalCount: 5
+playerX: 638.2213
+playerY: 460.44537
 currentRoomTmxPath: Tiled/Tengah.tmx
 }

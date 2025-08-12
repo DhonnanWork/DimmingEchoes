@@ -1,0 +1,8 @@
+[2025-07-22 08:45:50] Game application started.
+[2025-07-22 08:45:50] Loading game from slot: 1
+[2025-07-22 08:45:51] New game started.
+[2025-07-22 08:45:56] Player entered room: Tiled/Kiri.tmx
+[2025-07-22 08:46:04] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 08:46:11] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-22 08:46:11] Player is attempting the Wordle puzzle.
+[2025-07-22 08:46:19] Player failed the Wordle puzzle.

@@ -1,0 +1,2 @@
+[2025-07-20 20:46:24] Game application started.
+[2025-07-20 20:46:24] Loading game from slot: 1

@@ -1,0 +1,25 @@
+[2025-07-22 08:09:14] Game application started.
+[2025-07-22 08:09:14] Loading game from slot: 1
+[2025-07-22 08:09:15] New game started.
+[2025-07-22 08:10:08] New game started.
+[2025-07-22 08:10:11] Player started dialogue with 'The Laughing One'.
+[2025-07-22 08:10:27] Player chose dialogue option: 'Say nothing.'
+[2025-07-22 08:10:28] Player started dialogue with 'The Laughing One'.
+[2025-07-22 08:10:29] Player chose dialogue option: '[Give Crystal]'
+[2025-07-22 08:10:29] Player gave a crystal to 'The Laughing One'.
+[2025-07-22 08:10:30] Player chose dialogue option: '...'
+[2025-07-22 08:10:32] Player started dialogue with 'The Whisper'.
+[2025-07-22 08:10:33] Player started dialogue with 'The Whisper'.
+[2025-07-22 08:10:36] Player entered room: Tiled/Kanan.tmx
+[2025-07-22 08:10:38] Player started dialogue with 'The Stranger'.
+[2025-07-22 08:10:44] Player chose dialogue option: 'Why are you so angry?'
+[2025-07-22 08:10:44] Player chose dialogue option: 'I will find out.'
+[2025-07-22 08:10:48] Player entered room: Tiled/Tengah.tmx
+[2025-07-22 08:10:50] Player entered room: Tiled/Kiri.tmx
+[2025-07-22 08:10:52] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 08:10:53] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-22 08:10:53] Player is attempting the Wordle puzzle.
+[2025-07-22 08:10:58] Player solved the Wordle puzzle.
+[2025-07-22 08:11:03] Player started dialogue with 'The Laughing Girl'.
+[2025-07-22 08:11:04] Player chose dialogue option: '[Attempt the ladder puzzle]'
+[2025-07-22 08:11:04] Player is attempting the Word Ladder puzzle.

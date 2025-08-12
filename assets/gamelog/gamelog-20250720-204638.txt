@@ -1,0 +1,58 @@
+[2025-07-20 20:46:38] Game application started.
+[2025-07-20 20:46:38] Loading game from slot: 1
+[2025-07-20 20:46:43] New game started.
+[2025-07-20 20:47:17] Player started dialogue with 'The Laughing One'.
+[2025-07-20 20:47:35] Player chose dialogue option: 'Ask about this place.'
+[2025-07-20 20:47:37] Player chose dialogue option: 'I see.'
+[2025-07-20 20:47:38] Player started dialogue with 'The Laughing One'.
+[2025-07-20 20:47:39] Player chose dialogue option: 'Leave.'
+[2025-07-20 20:47:43] Player entered room: Tiled/Kiri.tmx
+[2025-07-20 20:47:45] Player started dialogue with 'The Laughing Girl'.
+[2025-07-20 20:47:46] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-20 20:47:46] Player is attempting the Wordle puzzle.
+[2025-07-20 20:47:56] Player solved the Wordle puzzle.
+[2025-07-20 20:48:02] Player started dialogue with 'The Laughing Girl'.
+[2025-07-20 20:48:03] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-20 20:48:03] Player is attempting the Wordle puzzle.
+[2025-07-20 20:48:06] Player solved the Wordle puzzle.
+[2025-07-20 20:48:10] Player started dialogue with 'The Laughing Girl'.
+[2025-07-20 20:48:13] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-20 20:48:13] Player is attempting the Wordle puzzle.
+[2025-07-20 20:48:14] Player solved the Wordle puzzle.
+[2025-07-20 20:48:19] Player started dialogue with 'The Laughing Girl'.
+[2025-07-20 20:48:20] Player chose dialogue option: '[Attempt the ladder puzzle]'
+[2025-07-20 20:48:20] Player is attempting the Word Ladder puzzle.
+[2025-07-20 20:48:26] Player solved the Word Ladder puzzle.
+[2025-07-20 20:48:30] Player started dialogue with 'The Laughing Girl'.
+[2025-07-20 20:48:33] Player chose dialogue option: '[Attempt the number puzzle]'
+[2025-07-20 20:48:33] Player is attempting the Fibonacci puzzle.
+[2025-07-20 20:48:35] Player solved the Fibonacci puzzle.
+[2025-07-20 20:48:40] Player started dialogue with 'The Laughing Girl'.
+[2025-07-20 20:48:40] Player chose dialogue option: '[Attempt the word puzzle]'
+[2025-07-20 20:48:40] Player is attempting the Wordle puzzle.
+[2025-07-20 20:48:42] Player solved the Wordle puzzle.
+[2025-07-20 20:48:46] Player started dialogue with 'The Laughing Girl'.
+[2025-07-20 20:48:47] Player chose dialogue option: 'I'll come back later.'
+[2025-07-20 20:48:50] Player entered room: Tiled/Tengah.tmx
+[2025-07-20 20:48:51] Player started dialogue with 'The Whisper'.
+[2025-07-20 20:48:52] Player started dialogue with 'The Whisper'.
+[2025-07-20 20:48:54] Player entered room: Tiled/Kanan.tmx
+[2025-07-20 20:48:56] Player started dialogue with 'The Stranger'.
+[2025-07-20 20:48:58] Player chose dialogue option: '[Give a Crystal] Quell his anger.'
+[2025-07-20 20:48:58] Player gave a crystal to 'The Stranger'.
+[2025-07-20 20:48:59] Player chose dialogue option: '...'
+[2025-07-20 20:49:03] Player entered room: Tiled/Tengah.tmx
+[2025-07-20 20:49:05] Player started dialogue with 'The Laughing One'.
+[2025-07-20 20:49:06] Player chose dialogue option: 'Ask about the others.'
+[2025-07-20 20:49:07] Player chose dialogue option: 'I understand.'
+[2025-07-20 20:49:08] Player started dialogue with 'The Laughing One'.
+[2025-07-20 20:49:08] Player chose dialogue option: '[Give Crystal]'
+[2025-07-20 20:49:08] Player gave a crystal to 'The Laughing One'.
+[2025-07-20 20:49:09] Player chose dialogue option: '...'
+[2025-07-20 20:49:10] Player started dialogue with 'The Laughing One'.
+[2025-07-20 20:51:46] New game started.
+[2025-07-20 20:51:52] Game paused.
+[2025-07-20 20:51:55] Saved game to slot: 1
+[2025-07-20 20:51:58] Saved game to slot: 1
+[2025-07-20 20:52:32] New game started.
+[2025-07-20 20:54:53] Loading game from slot: 1
